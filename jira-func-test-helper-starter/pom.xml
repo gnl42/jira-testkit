@@ -13,7 +13,7 @@
 
 	<scm>
 		<connection>scm:git:ssh://git@bitbucket.org/pniewiadomski/jira-func-test-helper.git</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-func-test-helper.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@bitbucket.org/pniewiadomski/jira-func-test-helper.git</developerConnection>
 		<url>http://bitbucket.org/pniewiadomski/jira-func-test-helper</url>
 	</scm>
 
