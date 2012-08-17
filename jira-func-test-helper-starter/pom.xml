@@ -53,16 +53,6 @@
 					<skip>${maven.test.unit.skip}</skip>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<version>${clover.version}</version>
-				<configuration>
-					<excludes>
-						<exclude>**/**</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
 		</plugins>
 		<resources>
 			<resource>
