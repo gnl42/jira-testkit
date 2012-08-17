@@ -105,6 +105,6 @@
 	</dependencies>
 
 	<properties>
-		<jira.version>5.2-SNAPSHOT</jira.version>
+		<jira.version>5.2-m02</jira.version>
 	</properties>
 </project>
