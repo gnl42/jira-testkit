@@ -12,8 +12,8 @@
 	<name>Atlassian JIRA - Testing - Base Classes for Func Tests</name>
 
 	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/pniewiadomski/jira-func-test-helper.git</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/pniewiadomski/jira-func-test-helper.git</developerConnection>
+		<connection>scm:git:ssh://git@bitbucket.org/pniewiadomski/jira-func-test-helper.git/jira-func-test-helper-starter</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.org/pniewiadomski/jira-func-test-helper.git/jira-func-test-helper-starter</developerConnection>
 		<url>http://bitbucket.org/pniewiadomski/jira-func-test-helper</url>
 	</scm>
 
