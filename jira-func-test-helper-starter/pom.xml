@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-func-test-helper-starter</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>Atlassian JIRA - Testing - Base Classes for Func Tests</name>
 
 	<scm>
