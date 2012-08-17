@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.selenium:atlassian-pageobjects-api:2.1-m18">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/selenium/atlassian-pageobjects-api/2.1-m18/atlassian-pageobjects-api-2.1-m18.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/selenium/atlassian-pageobjects-api/2.1-m18/atlassian-pageobjects-api-2.1-m18-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/selenium/atlassian-pageobjects-api/2.1-m18/atlassian-pageobjects-api-2.1-m18-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
