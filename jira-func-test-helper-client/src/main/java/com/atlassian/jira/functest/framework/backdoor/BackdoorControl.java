@@ -32,7 +32,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     {
         super(environmentData);
         this.rootPath = environmentData.getBaseUrl().toExternalForm();
-        this.restPathRootLength = (environmentData.getContext() + "/rest/func-test/1.0").length();
+        this.restPathRootLength = (environmentData.getContext() + "/rest/func-test-helper/1.0").length();
         this.logger = new FuncTestLoggerImpl(2);
     }
 
@@ -115,7 +115,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
      */
     protected WebResource createResource()
     {
-        return resourceRoot(rootPath).path("rest").path("func-test").path("1.0");
+        return resourceRoot(rootPath).path("rest").path("func-test-helper").path("1.0");
     }
 
     @Override
