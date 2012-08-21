@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.atlassian.jira.tests</groupId>
 		<artifactId>jira-func-test-helper-parent</artifactId>
-		<version>1.7-SNAPSHOT</version>
+		<version>1.7</version>
 	</parent>
 
 	<artifactId>jira-func-test-helper-plugin</artifactId>
