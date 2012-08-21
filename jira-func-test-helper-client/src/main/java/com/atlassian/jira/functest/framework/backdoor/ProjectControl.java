@@ -2,7 +2,6 @@ package com.atlassian.jira.functest.framework.backdoor;
 
 import com.atlassian.jira.webtests.util.JIRAEnvironmentData;
 import com.sun.jersey.api.client.WebResource;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Projects.
@@ -34,6 +33,11 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
                 .queryParam("key", key)
                 .queryParam("lead", lead));
     }
+
+	public boolean deleteProject(String key)
+	{
+		return get(createResource().path("project/delete").queryParam("key", key), Boolean.class);
+	}
 
     /**
      * Sets the permission scheme for the given Project to be the given Scheme.
