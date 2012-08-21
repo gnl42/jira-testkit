@@ -40,8 +40,12 @@ public class Backdoor
     private final AdvancedSettingsControl advancedSettingsControl;
     private final SearchClient searchClient;
     private final CustomFieldsControl customFieldsControl;
+	private final AttachmentsControl attachmentsControl;
+	private final LicenseControl licenseControl;
+	private final IndexingControl indexingControl;
+	private final TimeTrackingControl timeTrackingControl;
 
-    public Backdoor(JIRAEnvironmentData environmentData)
+	public Backdoor(JIRAEnvironmentData environmentData)
     {
         this.plugins = new PluginsControl(environmentData);
         this.usersAndGroups = new UsersAndGroupsControl(environmentData);
@@ -71,6 +75,10 @@ public class Backdoor
         this.advancedSettingsControl = new AdvancedSettingsControl(environmentData);
         this.searchClient = new SearchClient(environmentData);
         this.customFieldsControl = new CustomFieldsControl(environmentData);
+		this.attachmentsControl = new AttachmentsControl(environmentData);
+		this.licenseControl = new LicenseControl(environmentData);
+		this.indexingControl = new IndexingControl(environmentData);
+		this.timeTrackingControl = new TimeTrackingControl(environmentData);
     }
 
     public UsersAndGroupsControl usersAndGroups()
@@ -241,4 +249,20 @@ public class Backdoor
     {
         return searchClient;
     }
+
+	public AttachmentsControl attachments() {
+		return attachmentsControl;
+	}
+
+	public LicenseControl license() {
+		return licenseControl;
+	}
+
+	public IndexingControl indexing() {
+		return indexingControl;
+	}
+
+	public TimeTrackingControl timeTracking() {
+		return timeTrackingControl;
+	}
 }

@@ -114,6 +114,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         get(createResource().path("user").path("delete").queryParam("userName", username));
     }
 
+	public boolean userExists(String username)
+	{
+		return get(createResource().path("user").path("exists").queryParam("userName", username), Boolean.class);
+	}
+
     public void addUserToGroup(String username, String groupName)
     {
         get(createResource().path("user").path("addToGroup").queryParam("userName", username).queryParam("groupName", groupName));
@@ -123,6 +128,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     {
         get(createResource().path("user").path("removeFromGroup").queryParam("userName", username).queryParam("groupName", groupName));
     }
+
+	public boolean isUserInGroup(String username, String groupName)
+	{
+		return get(createResource().path("group").path("includes").queryParam("userName", username).queryParam("groupName", groupName), Boolean.class);
+	}
 
     public void addGroup(String groupName)
     {

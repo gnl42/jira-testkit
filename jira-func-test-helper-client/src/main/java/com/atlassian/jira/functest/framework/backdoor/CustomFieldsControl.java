@@ -2,6 +2,8 @@ package com.atlassian.jira.functest.framework.backdoor;
 
 import com.atlassian.jira.webtests.util.JIRAEnvironmentData;
 
+import javax.annotation.Nonnull;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Custom fields.
  *
@@ -68,4 +70,8 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
         public String name;
         public String id;
     }
+
+	public boolean exists(@Nonnull String customFieldName) {
+		return get(createResource().path("customFields").path("exists").path(customFieldName), Boolean.class);
+	}
 }

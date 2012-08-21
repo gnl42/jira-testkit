@@ -18,6 +18,7 @@ import org.ofbiz.core.entity.GenericEntityException;
 import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,6 +28,8 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import static com.atlassian.jira.dev.backdoor.util.CacheControl.never;
 
 /**
  * A backdoor for manipulating custom fields.
@@ -118,6 +121,12 @@ public class CustomFieldsBackdoor
         }
 
     }
+
+	@GET
+	@Path("exists/{customFieldName}")
+	public Response exists(@PathParam("customFieldName") String customFieldName) {
+		return Response.ok(customFieldManager.getCustomFieldObjectByName(customFieldName) != null).cacheControl(never()).build();
+	}
 
     public static class CustomFieldRequest
     {
