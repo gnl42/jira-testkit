@@ -15,13 +15,13 @@
         <url-pattern>/timezone-servlet</url-pattern>
     </servlet>
 
-    <!--servlet-filter name="Slow Motion Filter" key="slomo-filter" class="com.atlassian.jira.dev.backdoor.SlowMotionFilter" location="after-encoding" weight="200">
+    <servlet-filter name="Slow Motion Filter" key="slomo-filter" class="com.atlassian.jira.dev.backdoor.SlowMotionFilter" location="after-encoding" weight="200">
         <description>Slows down responses to simulate slower response server deployments for the purpose of locating overly timing-dependent tests.</description>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
-    </servlet-filter-->
+    </servlet-filter>
 
-    <!--web-resource key="slomo-ui">
+    <web-resource key="slomo-ui">
 
         <context>atl.general</context>
         <context>atl.admin</context>
@@ -44,7 +44,7 @@
         <resource type="download" name="slomo.js" location="js/slomo.js">
             <property key="content-type" value="text/javascript"/>
         </resource>
-    </web-resource-->
+    </web-resource>
 
     <web-resource key="func-test-tracer">
 
@@ -69,7 +69,7 @@
         <resource type="download" name="sinon.js" location="js/sinon-1.3.2.js"/>
     </web-resource>
 
-    <!--keyboard-shortcut key="slomo.activate" i18n-name-key="keyboard.shortcut.slomo.activate" name="Slo-mo" state='enabled'>
+    <keyboard-shortcut key="slomo.activate" i18n-name-key="keyboard.shortcut.slomo.activate" name="Slo-mo" state='enabled'>
         <order>99</order>
         <description key="Activate Slomo">Activate Slow Motion</description>
         <shortcut>@</shortcut>
@@ -78,7 +78,7 @@
                 JIRA.Slomo.activate();
             ]]>
         </operation>
-    </keyboard-shortcut-->
+    </keyboard-shortcut>
 
     <component-import key="lifeCycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager"/>
 
