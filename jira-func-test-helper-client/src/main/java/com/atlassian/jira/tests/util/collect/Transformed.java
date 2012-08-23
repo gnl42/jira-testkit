@@ -1,10 +1,6 @@
 package com.atlassian.jira.tests.util.collect;
 
 import com.atlassian.jira.tests.util.Function;
-import com.atlassian.jira.util.collect.*;
-import com.atlassian.jira.util.collect.EnclosedIterable;
-import com.atlassian.jira.util.collect.TransformingIterable;
-import com.atlassian.jira.util.collect.TransformingIterator;
 
 import java.util.Collection;
 import java.util.Iterator;
