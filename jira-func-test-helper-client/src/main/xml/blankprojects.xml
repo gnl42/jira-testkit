@@ -1160,7 +1160,7 @@ Examples: 4d, 5h 30m, 60m and 3w.]]></value>
     <PluginVersion id="10100" name="Atlassian Universal Plugin Manager Plugin" key="com.atlassian.upm.atlassian-universal-plugin-manager-plugin" version="1.4.1" created="2011-07-27 11:52:10.03"/>
     <PluginVersion id="10101" name="Atlassian OAuth Service Provider SPI" key="com.atlassian.oauth.atlassian-oauth-service-provider-spi-1.2.2" version="1.2.2" created="2011-07-27 11:52:10.03"/>
     <PluginVersion id="10102" name="Streams Plugin" key="com.atlassian.streams" version="5.0.m1" created="2011-07-27 11:52:10.03"/>
-    <PluginVersion id="10103" name="Atlassian JIRA - Plugins - DevMode - Func Test Plugin" key="com.atlassian.jira.dev.func-test-plugin" version="5.0-SNAPSHOT" created="2011-07-27 11:52:10.031"/>
+    <PluginVersion id="10103" name="Atlassian JIRA - Plugins - DevMode - Func Test Plugin" key="com.atlassian.jira.tests.func-test-plugin" version="5.0-SNAPSHOT" created="2011-07-27 11:52:10.031"/>
     <PluginVersion id="10104" name="Functional Test Plugin" key="com.atlassian.functest.functest-plugin" version="0.3" created="2011-07-27 11:52:10.031"/>
     <PluginVersion id="10105" name="Atlassian JIRA - Plugins - Admin Summary Component" key="com.atlassian.jira.jira-admin-summary-plugin" version="5.0-SNAPSHOT" created="2011-07-27 11:52:10.034"/>
     <PluginVersion id="10106" name="Opensocial Plugin" key="com.atlassian.gadgets.opensocial" version="3.1.8" created="2011-07-27 11:52:10.034"/>
