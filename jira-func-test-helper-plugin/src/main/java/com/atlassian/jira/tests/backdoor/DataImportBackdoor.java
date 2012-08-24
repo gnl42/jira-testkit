@@ -1,5 +1,6 @@
 package com.atlassian.jira.tests.backdoor;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.dataimport.DataImportParams;
 import com.atlassian.jira.bc.dataimport.DataImportService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -10,6 +11,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.task.TaskProgressSink;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ws.rs.Consumes;
@@ -32,14 +34,16 @@ import javax.ws.rs.core.Response;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class DataImportBackdoor
 {
-    private ApplicationProperties applicationProperties;
+	private final UserUtil userUtil;
+	private ApplicationProperties applicationProperties;
     private DataImportService dataImportService;
     private JiraHome jiraHome;
     private JiraAuthenticationContext authContext;
 
     public DataImportBackdoor(UserUtil userUtil, JiraHome jiraHome, ApplicationProperties applicationProperties, JiraAuthenticationContext authContext)
     {
-        this.applicationProperties = applicationProperties;
+		this.userUtil = userUtil;
+		this.applicationProperties = applicationProperties;
         this.jiraHome = jiraHome;
         this.authContext = authContext;
     }
@@ -56,8 +60,9 @@ public class DataImportBackdoor
                 .setQuickImport(quickImport)
                 .build();
 
-        DataImportService.ImportValidationResult result = getDataImportService().validateImport(authContext.getLoggedInUser(), params);
-        DataImportService.ImportResult importResult = getDataImportService().doImport(authContext.getLoggedInUser(), result, TaskProgressSink.NULL_SINK);
+		User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+		DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
+        DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
         if (!importResult.isValid())
         {
             // Something went wrong. Die!
