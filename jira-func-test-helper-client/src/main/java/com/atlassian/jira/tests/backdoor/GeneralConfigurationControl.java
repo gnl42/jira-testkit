@@ -1,7 +1,6 @@
 package com.atlassian.jira.tests.backdoor;
 
-import com.atlassian.jira.functest.framework.backdoor.*;
-import com.atlassian.jira.functest.framework.model.JiraMode;
+import com.atlassian.jira.tests.backdoor.model.JiraMode;
 import com.atlassian.jira.webtests.util.JIRAEnvironmentData;
 
 /**

@@ -1,7 +1,5 @@
 package com.atlassian.jira.tests.backdoor;
 
-import com.atlassian.jira.functest.framework.backdoor.*;
-import com.atlassian.jira.functest.framework.backdoor.RestoreDataResources;
 import com.atlassian.jira.functest.framework.dump.FuncTestTimer;
 import com.atlassian.jira.functest.framework.dump.TestInformationKit;
 import com.atlassian.jira.functest.framework.xmlbackup.XmlBackupCopier;

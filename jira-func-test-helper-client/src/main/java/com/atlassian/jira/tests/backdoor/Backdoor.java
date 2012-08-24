@@ -1,29 +1,6 @@
 package com.atlassian.jira.tests.backdoor;
 
 
-import com.atlassian.jira.functest.framework.backdoor.*;
-import com.atlassian.jira.functest.framework.backdoor.ApplicationPropertiesControl;
-import com.atlassian.jira.functest.framework.backdoor.DarkFeaturesControl;
-import com.atlassian.jira.functest.framework.backdoor.DashboardControl;
-import com.atlassian.jira.functest.framework.backdoor.FieldConfigurationControl;
-import com.atlassian.jira.functest.framework.backdoor.GeneralConfigurationControl;
-import com.atlassian.jira.functest.framework.backdoor.I18nControl;
-import com.atlassian.jira.functest.framework.backdoor.IndexingControl;
-import com.atlassian.jira.functest.framework.backdoor.IssueLinkingControl;
-import com.atlassian.jira.functest.framework.backdoor.IssueTypeScreenSchemesControl;
-import com.atlassian.jira.functest.framework.backdoor.IssuesControl;
-import com.atlassian.jira.functest.framework.backdoor.MailServersControl;
-import com.atlassian.jira.functest.framework.backdoor.PermissionSchemesControl;
-import com.atlassian.jira.functest.framework.backdoor.PermissionsControl;
-import com.atlassian.jira.functest.framework.backdoor.PluginsControl;
-import com.atlassian.jira.functest.framework.backdoor.ProjectControl;
-import com.atlassian.jira.functest.framework.backdoor.SearchRequestControl;
-import com.atlassian.jira.functest.framework.backdoor.ServicesControl;
-import com.atlassian.jira.functest.framework.backdoor.SubtaskControl;
-import com.atlassian.jira.functest.framework.backdoor.TestRunnerControl;
-import com.atlassian.jira.functest.framework.backdoor.WebSudoControl;
-import com.atlassian.jira.functest.framework.backdoor.WorkflowSchemesControl;
-import com.atlassian.jira.functest.framework.backdoor.WorkflowsControl;
 import com.atlassian.jira.webtests.util.JIRAEnvironmentData;
 import com.atlassian.jira.webtests.ztests.bundledplugins2.rest.client.SearchClient;
 

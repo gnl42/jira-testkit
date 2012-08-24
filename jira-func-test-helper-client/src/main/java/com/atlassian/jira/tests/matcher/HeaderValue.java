@@ -3,7 +3,7 @@ package com.atlassian.jira.tests.matcher;
 import com.meterware.httpunit.WebResponse;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * Matcher that checks that the response contains a specific HTTP header with the given value.
