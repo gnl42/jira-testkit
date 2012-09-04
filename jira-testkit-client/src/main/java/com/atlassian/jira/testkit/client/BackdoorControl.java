@@ -23,14 +23,14 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     private static final String BACKDOOR = "Backdoor Shenanigans";
     public final int restPathRootLength;
 
-    private String rootPath;
+    protected String rootPath;
     private FuncTestLoggerImpl logger;
 
     public BackdoorControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
         this.rootPath = environmentData.getBaseUrl().toExternalForm();
-        this.restPathRootLength = (environmentData.getContext() + "/rest/testkit-test/1.0").length();
+        this.restPathRootLength = createResource().getURI().getPath().length();
         this.logger = new FuncTestLoggerImpl(2);
     }
 
