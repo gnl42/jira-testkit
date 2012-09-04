@@ -5,7 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <rest key="testkit-rest-service-resources" path="/testkit" version="1.0">
+    <rest key="testkit-rest-service-resources" path="/testkit-test" version="1.0">
         <description>Provides the REST resource for the backdoor plugin.</description>
     </rest>
 
