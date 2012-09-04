@@ -1,0 +1,95 @@
+package com.atlassian.jira.testkit.plugin;
+
+import com.atlassian.configurable.ObjectConfigurationException;
+import com.atlassian.jira.service.JiraServiceContainer;
+import com.atlassian.jira.service.ServiceManager;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Use this backdoor to manipulate Services as part of setup for tests.
+ * <p/>
+ * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.ServicesControl}.
+ *
+ * @since v5.0
+ */
+@Path ("services")
+@AnonymousAllowed
+@Consumes ({ MediaType.APPLICATION_JSON })
+@Produces ({ MediaType.APPLICATION_JSON })
+public class ServicesBackdoor
+{
+    private final ServiceManager serviceManager;
+
+    public ServicesBackdoor(ServiceManager serviceManager)
+    {
+        this.serviceManager = serviceManager;
+    }
+
+    @GET
+    public Response getServices() throws Exception
+    {
+        final List<ServiceBean> services = Lists.newArrayList();
+        for (JiraServiceContainer serviceContainer : serviceManager.getServices())
+        {
+            services.add(new ServiceBean(serviceContainer));
+        }
+        return Response.ok(services).build();
+    }
+
+    @GET
+    @Path ("/{id}")
+    public Response getService(@PathParam ("id") Long id) throws Exception
+    {
+        final JiraServiceContainer container = serviceManager.getServiceWithId(id);
+        return container == null ? Response.status(Response.Status.NOT_FOUND).build() : Response.ok(new ServiceBean(container)).build();
+    }
+
+    public static class ServiceBean
+    {
+        public Long id;
+        public String name;
+        public String serviceClass;
+        public boolean usable;
+        public Map<String, String> params;
+
+        public ServiceBean()
+        {
+        }
+
+        public ServiceBean(JiraServiceContainer serviceContainer)
+        {
+            id = serviceContainer.getId();
+            name = serviceContainer.getName();
+            serviceClass = serviceContainer.getServiceClass();
+            usable = serviceContainer.isUsable();
+            try
+            {
+                if (usable && serviceContainer.getProperties() != null)
+                {
+                    params = Maps.newHashMap();
+                    for (Object o : serviceContainer.getProperties().getKeys())
+                    {
+                        String key = (String) o;
+                        params.put(key, serviceContainer.getProperty(key));
+                    }
+                }
+            }
+            catch (ObjectConfigurationException e)
+            {
+                // ignore
+            }
+        }
+    }
+}

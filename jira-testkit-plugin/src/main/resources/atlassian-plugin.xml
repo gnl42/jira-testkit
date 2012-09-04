@@ -1,0 +1,34 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+    </plugin-info>
+
+    <rest key="testkit-rest-service-resources" path="/testkit" version="1.0">
+        <description>Provides the REST resource for the backdoor plugin.</description>
+    </rest>
+
+    <servlet name="TimeZone Servlet" key="timezone-servlet" class="com.atlassian.jira.testkit.plugin.sal.TimeZoneServlet">
+        <description>A servlet that uses the sal TimeZoneManager</description>
+        <url-pattern>/timezone-servlet</url-pattern>
+    </servlet>
+
+    <component-import key="lifeCycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager"/>
+
+    <component interface="com.atlassian.jira.testkit.plugin.PlaintextEncoderLoaderInterface" key="plaintextEncoderLoader"
+               name="Plaintext Encoder Loader" class="com.atlassian.jira.testkit.plugin.PlaintextEncoderLoader"
+               public="true" system="true"/>
+
+    <component interface="com.atlassian.jira.testkit.plugin.InitialiseSystemProperties" key="initSystemProperties"
+               name="Init System Properties" class="com.atlassian.jira.testkit.plugin.InitialiseSystemPropertiesImpl"
+               public="true" system="true"/>
+
+    <component interface="com.atlassian.jira.testkit.plugin.Log4JHackery" key="log4jHackery"
+               name="Log4J modifications for func testing" class="com.atlassian.jira.testkit.plugin.Log4JHackeryImpl"/>
+
+    <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
+    <component interface="com.atlassian.jira.testkit.plugin.EventWatcherImpl" key="eventWatcher"
+               name="atlassian-event listing" class="com.atlassian.jira.testkit.plugin.EventWatcherImpl"/>
+
+</atlassian-plugin>
