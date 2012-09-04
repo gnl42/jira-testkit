@@ -206,4 +206,5 @@
 		<jira.amps.version>${jira.version}</jira.amps.version>
 		<jira.data.version>${jira.version}</jira.data.version>
 	</properties>
+
 </project>
