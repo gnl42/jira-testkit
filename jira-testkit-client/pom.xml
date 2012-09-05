@@ -7,6 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jira-testkit-client</artifactId>
   <name>Atlassian JIRA - Plugins - TestKit - Client</name>
+  <packaging>jar</packaging>
 
   <profiles>
       <profile>

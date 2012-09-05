@@ -8,7 +8,7 @@
     <artifactId>jira-testkit-plugin</artifactId>
     <name>Atlassian JIRA - Plugins - TestKit - Plugin</name>
     <description>[to be done]</description>
-    <packaging>bundle</packaging>
+    <packaging>atlassian-plugin</packaging>
     <build>
         <plugins>
             <plugin>
