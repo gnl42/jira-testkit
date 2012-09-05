@@ -48,7 +48,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     /**
      * The user to log in as.
      */
-    private String loginAs;
+    private String loginAs = "admin";
 
     private String loginPassword = loginAs;
 
