@@ -2,6 +2,7 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.dump.FuncTestTimer;
 import com.atlassian.jira.testkit.client.dump.TestInformationKit;
+import com.atlassian.jira.testkit.client.util.TimeBombLicence;
 import com.atlassian.jira.testkit.client.xmlbackup.XmlBackupCopier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -66,6 +67,14 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         }
     }
 
+	/**
+	 * Restores the instance with the default XML file. A commercial license is used.
+	 */
+	public void restoreBlankInstance()
+	{
+		restoreDataFromResource("blankprojects.xml", TimeBombLicence.LICENCE_FOR_TESTING);
+	}
+
     /**
      * Restores the instance with the default XML file. A commercial license is used.
      */
@@ -74,9 +83,22 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         restoreDataFromResource("blankprojects.xml", license);
     }
 
+	/**
+	 * Restores the instance with the specified XML file. A time bomb license is used.
+	 * @param xmlFileName the name of the file to import
+	 * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
+	 * about the working directory the test process is running in. Use {@link #restoreDataFromResource(String, String)}
+	 * where possible and provide path to a classpath resource instead to stay independent from the environment
+	 */
+	@Deprecated
+	public void restoreData(String xmlFileName)
+	{
+	 	restoreData(xmlFileName, TimeBombLicence.LICENCE_FOR_TESTING);
+	}
     /**
      * Restores the instance with the specified XML file. A commercial license is used.
      * @param xmlFileName the name of the file to import
+	 * @param license JIRA licence key
      * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
      * about the working directory the test process is running in. Use {@link #restoreDataFromResource(String, String)}
      * where possible and provide path to a classpath resource instead to stay independent from the environment
@@ -107,6 +129,14 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         post(createResource().path("dataImport"), importBean, String.class);
         timer.end();
     }
+
+	/**
+	 * @param resourcePath path to the class path resource containing the file to restore
+	 */
+	public void restoreDataFromResource(String resourcePath)
+	{
+		restoreDataFromResource(resourcePath, TimeBombLicence.LICENCE_FOR_TESTING);
+	}
 
     /**
      * <p/>
