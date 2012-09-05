@@ -6,6 +6,7 @@ import com.atlassian.jira.testkit.client.log.FuncTestLogger;
 import com.atlassian.jira.testkit.client.log.FuncTestLoggerImpl;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import org.apache.commons.lang.StringUtils;
 
 import javax.ws.rs.core.MediaType;
 
@@ -21,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 public abstract class BackdoorControl<T extends BackdoorControl<T>> extends RestApiClient<T> implements FuncTestLogger
 {
     private static final String BACKDOOR = "Backdoor Shenanigans";
-    public final int restPathRootLength;
 
     protected String rootPath;
     private FuncTestLoggerImpl logger;
@@ -30,7 +30,6 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     {
         super(environmentData);
         this.rootPath = environmentData.getBaseUrl().toExternalForm();
-        this.restPathRootLength = createResource().getURI().getPath().length();
         this.logger = new FuncTestLoggerImpl(2);
     }
 
@@ -130,7 +129,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
 
     private void logTime(WebResource webResource, String type, long howLong)
     {
-        String relativePath = webResource.getURI().getPath().substring(restPathRootLength);
+        String relativePath = StringUtils.removeStart(webResource.getURI().getPath(), createResource().getURI().getPath().toString());
         log(String.format("Backdoor %4s in %5dms  %s", type, howLong, relativePath));
     }
 }
