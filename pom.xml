@@ -13,9 +13,9 @@
 	<name>Atlassian JIRA - TestKit - Parent</name>
 
 	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-func-test-helper.git</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-func-test-helper.git</developerConnection>
-		<url>http://bitbucket.org/atlassian/jira-func-test-helper</url>
+		<connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</developerConnection>
+		<url>http://bitbucket.org/atlassian/jira-testkit</url>
 	</scm>
 
 	<modules>
