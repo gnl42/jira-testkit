@@ -25,7 +25,6 @@ public class Backdoor
     private final SearchRequestControl searchRequests;
     private final UserProfileControl userProfile;
     private final ServicesControl services;
-    private final TestRunnerControl testRunner;
     private final FieldConfigurationControl fieldConfigurationControl;
     private final IssueTypeControl issueTypeControl;
     private final SubtaskControl subtaskCotnrol;
@@ -62,7 +61,6 @@ public class Backdoor
         this.userProfile = new UserProfileControl(environmentData);
         this.dataImport = new DataImportControl(environmentData);
         this.services = new ServicesControl(environmentData);
-        this.testRunner = new TestRunnerControl(environmentData);
         this.fieldConfigurationControl = new FieldConfigurationControl(environmentData);
         this.issueTypeControl = new IssueTypeControl(environmentData);
         this.subtaskCotnrol = new SubtaskControl(environmentData);
@@ -169,11 +167,6 @@ public class Backdoor
     public DataImportControl dataImport()
     {
         return dataImport;
-    }
-
-    public TestRunnerControl testRunner()
-    {
-        return testRunner;
     }
 
     public FieldConfigurationControl fieldConfiguration()
