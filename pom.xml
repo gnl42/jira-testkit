@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>5.2-m05-SNAPSHOT</version>
+	<version>5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Atlassian JIRA - TestKit - Parent</name>
 
@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<jira.version>5.2-m04</jira.version>
+		<jira.version>5.0.2</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>
