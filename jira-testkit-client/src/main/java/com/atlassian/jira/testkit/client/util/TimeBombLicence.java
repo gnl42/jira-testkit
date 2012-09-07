@@ -1,9 +1,9 @@
 package com.atlassian.jira.testkit.client.util;
 
 /**
- * TODO: Document this class / interface here
  *
- * @since v5.1
+ *
+ * @since v5.0
  */
 public class TimeBombLicence {
 

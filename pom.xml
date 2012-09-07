@@ -192,8 +192,8 @@
 			<dependency>
 				<groupId>javax.ws.rs</groupId>
 				<artifactId>jsr311-api</artifactId>
-				<scope>provided</scope>
 				<version>${jsr311.version}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.atlassian.plugins.rest</groupId>

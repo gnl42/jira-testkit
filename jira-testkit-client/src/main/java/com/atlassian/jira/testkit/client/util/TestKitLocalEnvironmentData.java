@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.Properties;
 
 
-public class BackdoorTestEnvironmentData extends AbstractEnvironmentData
+public class TestKitLocalEnvironmentData extends AbstractEnvironmentData
 {
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
@@ -39,17 +39,17 @@ public class BackdoorTestEnvironmentData extends AbstractEnvironmentData
     private File xmlDataLocation;
     private final String edition;
    
-    public BackdoorTestEnvironmentData()
+    public TestKitLocalEnvironmentData()
     {
         this(loadProperties(TEST_SERVER_PROPERTIES, DEFAULT_PROPERTIES_FILENAME), null);
     }
 
-    public BackdoorTestEnvironmentData(String xmlDataLocation)
+    public TestKitLocalEnvironmentData(String xmlDataLocation)
     {
         this(loadProperties(TEST_SERVER_PROPERTIES, DEFAULT_PROPERTIES_FILENAME), xmlDataLocation);
     }
 
-    public BackdoorTestEnvironmentData(Properties properties, @Nullable String xmlDataLocation)
+    public TestKitLocalEnvironmentData(Properties properties, @Nullable String xmlDataLocation)
     {
         super(properties);
         final String protocol = getEnvironmentProperty(JIRA_PROTOCOL, DEFAULT_PROTOCOL);
@@ -102,7 +102,7 @@ public class BackdoorTestEnvironmentData extends AbstractEnvironmentData
         {
             propertiesFileName = System.getProperty(key, def);
 
-            InputStream propStream = ClassLoaderUtils.getResourceAsStream(propertiesFileName, BackdoorTestEnvironmentData.class);
+            InputStream propStream = ClassLoaderUtils.getResourceAsStream(propertiesFileName, TestKitLocalEnvironmentData.class);
             if (propStream == null)
             {
                 // The resource was not found on the classpath. Try opening as a file
