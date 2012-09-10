@@ -1,4 +1,4 @@
-package com.atlassian.jira.testkit.plugin;
+package com.atlassian.jira.testkit.plugin.workflows;
 
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
@@ -24,7 +24,7 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 @AnonymousAllowed
 @Produces ({MediaType.APPLICATION_JSON})
 @Consumes ({MediaType.APPLICATION_JSON})
-@Path ("workflows")
+@Path ("workflow")
 public class WorkflowResourceBackdoor
 {
     private final WorkflowManager workflowManager;

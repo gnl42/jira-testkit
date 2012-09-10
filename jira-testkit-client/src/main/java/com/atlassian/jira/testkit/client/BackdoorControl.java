@@ -91,6 +91,14 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         return result;
     }
 
+    protected <T> T put(WebResource webResource, Object bean, Class<T> returnClass)
+    {
+        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
+        T result = webResource.type(MediaType.APPLICATION_JSON_TYPE).put(returnClass, bean);
+        logTime(webResource, "PUT", timer.end());
+        return result;
+    }
+
     protected void post(WebResource webResource, Object bean)
     {
         final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
@@ -129,7 +137,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
 
     private void logTime(WebResource webResource, String type, long howLong)
     {
-        String relativePath = StringUtils.removeStart(webResource.getURI().getPath(), createResource().getURI().getPath().toString());
+        String relativePath = StringUtils.removeStart(webResource.getURI().getPath(), createResource().getURI().getPath());
         log(String.format("Backdoor %4s in %5dms  %s", type, howLong, relativePath));
     }
 }

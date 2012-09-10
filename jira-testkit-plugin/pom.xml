@@ -67,6 +67,11 @@
 			<version>${fp.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	</dependencies>
 	<properties>
 		<atlassian.plugin.key>com.atlassian.jira.jira-testkit-plugin</atlassian.plugin.key>

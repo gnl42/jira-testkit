@@ -21,10 +21,12 @@
 	<modules>
 		<module>jira-testkit-plugin</module>
 		<module>jira-testkit-client</module>
+        <module>jira-testkit-common</module>
 	</modules>
 
 	<properties>
-		<jira.version>5.2-m04</jira.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jira.version>5.2-ignite4</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>

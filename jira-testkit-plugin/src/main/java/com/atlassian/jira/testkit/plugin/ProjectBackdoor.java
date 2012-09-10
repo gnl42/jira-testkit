@@ -11,23 +11,27 @@ import com.atlassian.jira.project.AssigneeTypes;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectAssigneeTypes;
 import com.atlassian.jira.scheme.Scheme;
+import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to manipulate Projects as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.ProjectControl}.
+ * This class should only be called by the testkit-client..
  *
  * @since v5.0
  */
 @Path ("project")
+@AnonymousAllowed
 public class ProjectBackdoor
 {
     private final ProjectService projectService;
@@ -58,7 +62,6 @@ public class ProjectBackdoor
      * @return an OK response
      */
     @GET
-    @AnonymousAllowed
     @Path("add")
     public Response addProject(@QueryParam ("name") String name,
                                @QueryParam ("key") String key,
@@ -80,29 +83,44 @@ public class ProjectBackdoor
         return Response.ok(project.getId().toString()).build();
     }
 
+    @DELETE
+    @Path("{projectKey}")
+    public Response delete(@PathParam("projectKey") String key)
+    {
+        final User adminUser = getUserWithAdminPermission();
+        final ProjectService.DeleteProjectValidationResult deleteProjectValidationResult = projectService.validateDeleteProject(adminUser, key);
+        if (!deleteProjectValidationResult.isValid())
+        {
+            return Response.serverError().cacheControl(CacheControl.never()).build();
+        }
+        projectService.deleteProject(adminUser, deleteProjectValidationResult);
+        return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
     @GET
-    @AnonymousAllowed
     @Path("permissionScheme/set")
     public Response setPermissionScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") long schemeId)
     {
-        User admin = userUtil.getUser("admin");
+
+        User admin = getUserWithAdminPermission();
         Scheme scheme = permissionSchemeManager.getSchemeObject(schemeId);
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         permissionSchemeManager.removeSchemesFromProject(project);
         permissionSchemeManager.addSchemeToProject(project, scheme);
 
-        return Response.ok(null).build();
+        return Response.ok().build();
     }
 
+    private User getUserWithAdminPermission() {return userUtil.getUser("admin");}
+
     @GET
-    @AnonymousAllowed
     @Path("defaultIssueType/set")
     public Response setDefaultIssueType(@QueryParam ("project") long projectId,
             @QueryParam ("issueTypeId") String issueTypeId)
     {
-        User admin = userUtil.getUser("admin");
+        User admin = getUserWithAdminPermission();
 
         Project project = projectService.getProjectById(admin, projectId).getProject();
         final FieldConfigScheme issueTypeScheme = issueTypeSchemeManager.getConfigScheme(project);
@@ -112,12 +130,11 @@ public class ProjectBackdoor
     }
 
     @GET
-    @AnonymousAllowed
     @Path("issueTypeScreenScheme/set")
     public Response setIssueTypeScreenScheme(@QueryParam ("project") long projectId,
             @QueryParam ("issueTypeScreenScheme") long issueTypeScreenSchemeId)
     {
-        User admin = userUtil.getUser("admin");
+        User admin = getUserWithAdminPermission();
 
         Project project = projectService.getProjectById(admin, projectId).getProject();
         IssueTypeScreenScheme issueTypeScreenScheme = issueTypeScreenSchemeManager.getIssueTypeScreenScheme(issueTypeScreenSchemeId);
@@ -128,24 +145,23 @@ public class ProjectBackdoor
     }
     
     @GET
-    @AnonymousAllowed
     @Path("projectLead/set")
     public Response setAutomaticAssignee(@QueryParam ("project") long projectId,
             @QueryParam ("username") final String username)
     {
-        User admin = userUtil.getUser("admin");
+        User admin = getUserWithAdminPermission();
         User newProjectLead = userUtil.getUser(username);
 
         Project project = projectService.getProjectById(admin, projectId).getProject();
         ProjectService.UpdateProjectValidationResult result = projectService.validateUpdateProject(admin,
                 project.getName(), project.getKey(), project.getDescription(),
                 newProjectLead.getName(), project.getUrl(), project.getAssigneeType(), project.getAvatar().getId());
-        
+
         if (!result.isValid())
         {
             return Response.serverError().build();
         }
-        
+
         projectService.updateProject(result);
         
         return Response.ok(null).build();
@@ -153,12 +169,11 @@ public class ProjectBackdoor
     
     
     @GET
-    @AnonymousAllowed
     @Path("defaultAssignee/set")
     public Response setAutomaticAssignee(@QueryParam ("project") long projectId,
             @QueryParam ("setToProjectLead") final boolean setToProjectLead)
     {
-        User admin = userUtil.getUser("admin");
+        User admin = getUserWithAdminPermission();
 
         long assignee = ProjectAssigneeTypes.PROJECT_LEAD;
         if (!setToProjectLead)

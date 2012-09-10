@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.sun.jersey.api.client.WebResource;
 
 /**
@@ -25,12 +26,18 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      * @param key  the project key.
      * @param lead the username of the project lead.
      */
-    public void addProject(String name, String key, String lead)
+    public long addProject(String name, String key, String lead)
     {
-        get(createResource().path("project/add")
+        final String s = get(createResource().path("project/add")
                 .queryParam("name", name)
                 .queryParam("key", key)
-                .queryParam("lead", lead));
+                .queryParam("lead", lead), String.class);
+        return Long.parseLong(s);
+    }
+
+    public void deleteProject(String key)
+    {
+        delete(createResource().path("project").path(key));
     }
 
     /**
@@ -99,5 +106,25 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
                 .queryParam("setToProjectLead", "" + setToProjectLead);
 
         get(resource);
+    }
+
+    public WorkflowSchemeData getWorkflowScheme(String projectKey)
+    {
+        return get(createWorkflowSchemeResource(projectKey), WorkflowSchemeData.class);
+    }
+
+    public WorkflowSchemeData setWorkflowScheme(String projectKey, long id)
+    {
+        return post(createWorkflowSchemeResource(projectKey), id, WorkflowSchemeData.class);
+    }
+
+    public void setDefaultWorkflowScheme(String projectKey)
+    {
+        delete(createWorkflowSchemeResource(projectKey));
+    }
+
+    private WebResource createWorkflowSchemeResource(String projectKey)
+    {
+        return createResource().path("project").path(projectKey).path("workflowscheme");
     }
 }

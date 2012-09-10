@@ -26,6 +26,6 @@ public class WorkflowsControl extends BackdoorControl<WorkflowsControl>
 
     private WebResource createWorkflowResource()
     {
-        return createResource().path("workflows");
+        return createResource().path("workflow");
     }
 }

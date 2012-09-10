@@ -1,6 +1,7 @@
 package com.atlassian.jira.testkit.client;
 
 
+import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
 
 /**
@@ -42,6 +43,7 @@ public class Backdoor
     private final AdvancedSettingsControl advancedSettingsControl;
     private final SearchClient searchClient;
     private final CustomFieldsControl customFieldsControl;
+    private final ProjectRoleClient projectRoleClient;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -76,6 +78,7 @@ public class Backdoor
         this.searchClient = new SearchClient(environmentData);
         this.customFieldsControl = new CustomFieldsControl(environmentData);
         this.screensControl = new ScreensControl(environmentData);
+        this.projectRoleClient = new ProjectRoleClient(environmentData);
     }
 
     public ScreensControl screens()
@@ -274,5 +277,10 @@ public class Backdoor
     public SearchClient search()
     {
         return searchClient;
+    }
+
+    public ProjectRoleClient projectRole()
+    {
+        return projectRoleClient;
     }
 }
