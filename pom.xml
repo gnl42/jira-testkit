@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>5.2-m07</version>
+	<version>5.2-m08-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Atlassian JIRA - TestKit - Parent</name>
 
