@@ -72,7 +72,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
 	 */
 	public void restoreBlankInstance()
 	{
-		restoreDataFromResource("blankprojects.xml", TimeBombLicence.LICENCE_FOR_TESTING);
+		restoreDataFromResource("testkit-blankprojects.xml", TimeBombLicence.LICENCE_FOR_TESTING);
 	}
 
     /**
@@ -80,7 +80,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
      */
     public void restoreBlankInstance(String license)
     {
-        restoreDataFromResource("blankprojects.xml", license);
+        restoreDataFromResource("testkit-blankprojects.xml", license);
     }
 
 	/**
