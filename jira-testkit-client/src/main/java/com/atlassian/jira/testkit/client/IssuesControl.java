@@ -26,7 +26,7 @@ import static com.atlassian.jira.rest.api.issue.ResourceRef.withName;
  */
 public class IssuesControl extends BackdoorControl<IssuesControl>
 {
-    // Ids of projects pre-imported from blankprojects.xml; should be present in most tests.
+    // Ids of projects pre-imported from testkit-blankprojects.xml; should be present in most tests.
     public static final long HSP_PROJECT_ID = 10000;
     public static final long MKY_PROJECT_ID = 10001;
 
