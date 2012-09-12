@@ -29,6 +29,7 @@ public class Project
     public List<Version> versions;
     public List<IssueType> issueTypes;
     public String url;
+    public String email;
     public AssigneeType assigneeType;
     public Map<String, String> roles;
     public Map<String, String> avatarUrls;
@@ -36,6 +37,12 @@ public class Project
     public Project url(String url)
     {
         this.url = url;
+        return this;
+    }
+
+    public Project email(String email)
+    {
+        this.email = email;
         return this;
     }
 
