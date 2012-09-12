@@ -6,7 +6,7 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Projects.
  *
- * See ProjectBackdoor for the code this plugs into at the back-end.
+ * See {@link com.atlassian.jira.testkit.plugin.ProjectBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

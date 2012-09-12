@@ -15,7 +15,7 @@ import static com.atlassian.jira.component.ComponentAccessor.getUserUtil;
 /**
  * Use this backdoor to manipulate Dark Features as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.DarkFeaturesControl}.
+ * This class should only be called by the {@link com.atlassian.jira.testkit.client.DarkFeaturesControl}.
  *
  * @since v5.0
  */

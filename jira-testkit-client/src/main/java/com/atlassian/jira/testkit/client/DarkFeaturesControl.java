@@ -3,6 +3,8 @@ package com.atlassian.jira.testkit.client;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Dark Features.
  *
+ * See {@link com.atlassian.jira.testkit.plugin.DarkFeaturesBackdoor} in jira-testkit-plugin for backend.
+ *
  * @since v5.0
  */
 public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl>

@@ -21,7 +21,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 /**
  * Abstract base class for REST API clients.
  *
- * @since v4.3
+ * @since v5.0
  */
 public abstract class RestApiClient<T extends RestApiClient<T>>
 {

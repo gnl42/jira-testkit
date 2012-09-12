@@ -3,7 +3,7 @@ package com.atlassian.jira.testkit.client;
 /**
 * REST bean for config-info resource
 *
-* @since 5.1
+* @since 5.0
 */
 public class ConfigInfo
 {

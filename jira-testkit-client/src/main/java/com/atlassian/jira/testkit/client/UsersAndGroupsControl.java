@@ -6,7 +6,7 @@ import com.sun.jersey.api.client.WebResource;
  * Use this class from func/selenium/page-object tests that need to manipulate Users and
  * Groups.
  *
- * See com.atlassian.jira.dev.backdoor.UsersAndGroupsBackdoor in jira-func-test-plugin for backend.
+ * {@link com.atlassian.jira.testkit.plugin.UsersAndGroupsBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

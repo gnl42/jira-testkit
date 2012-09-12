@@ -5,7 +5,9 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Simple control for Web Sudo.
  *
- * @since v5.0.1
+ * See {@link com.atlassian.jira.testkit.plugin.WebSudoBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class WebSudoControl extends BackdoorControl<WebSudoControl>
 {

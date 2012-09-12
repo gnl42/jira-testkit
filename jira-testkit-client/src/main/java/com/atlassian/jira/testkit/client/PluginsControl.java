@@ -2,6 +2,13 @@ package com.atlassian.jira.testkit.client;
 
 import com.sun.jersey.api.client.WebResource;
 
+/**
+ * 
+ * See {@link com.atlassian.jira.testkit.plugin.PluginBackdoor} in jira-testkit-plugin for backend.
+ * 
+ *  @since 5.0
+ */
+
 public class PluginsControl extends BackdoorControl<PluginsControl>
 {
     public PluginsControl(JIRAEnvironmentData environmentData)

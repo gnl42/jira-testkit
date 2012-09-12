@@ -3,7 +3,9 @@ package com.atlassian.jira.testkit.client;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Advanced Configuration.
  *
- * @since v5.0.3
+ * See {@link com.atlassian.jira.testkit.plugin.ApplicationPropertiesBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class AdvancedSettingsControl extends BackdoorControl<AdvancedSettingsControl>
 {

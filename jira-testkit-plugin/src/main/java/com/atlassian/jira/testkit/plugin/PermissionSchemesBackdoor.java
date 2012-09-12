@@ -19,7 +19,7 @@ import java.util.List;
  * Use this backdoor to manipulate Permission Schemes as part of setup for tests.
  *
  * This class should only be called by the
- * {@link com.atlassian.jira.functest.framework.backdoor.PermissionSchemesControl}.
+ * {@link com.atlassian.jira.testkit.client.PermissionSchemesControl}.
  *
  * @since v5.0
  */

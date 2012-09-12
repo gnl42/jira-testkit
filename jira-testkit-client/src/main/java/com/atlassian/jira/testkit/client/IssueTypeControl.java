@@ -10,7 +10,9 @@ import static java.lang.String.valueOf;
 /**
  * Some helper methods for IssueTypes.
  *
- * @since v5.0.1
+ * See {@link com.atlassian.jira.testkit.plugin.IssueTypeBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
 {

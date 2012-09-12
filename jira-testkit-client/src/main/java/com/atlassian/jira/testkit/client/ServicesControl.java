@@ -8,7 +8,8 @@ import java.util.Map;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate or query Services.
  * <p/>
- * See ServicesBackdoor for the code this plugs into at the back-end.
+ *
+ * See {@link com.atlassian.jira.testkit.plugin.ServiceBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

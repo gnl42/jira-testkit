@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
  * Use this backdoor to manipulate Users and Groups as part of setup for tests
  * NOT specfically testing the Admin UI.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.UsersAndGroupsControl}.
+ * This class should only be called by the {@link com.atlassian.jira.testkit.client.UsersAndGroupsControl}.
  *
  * @since v5.0
  */

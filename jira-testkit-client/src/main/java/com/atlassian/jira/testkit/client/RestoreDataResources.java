@@ -6,7 +6,7 @@ import java.net.URL;
 /**
  * Gets classpath resources for restoring data.
  *
- * @since 5.1
+ * @since 5.0
  */
 public final class RestoreDataResources
 {

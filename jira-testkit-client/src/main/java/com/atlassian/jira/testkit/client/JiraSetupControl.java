@@ -2,7 +2,9 @@ package com.atlassian.jira.testkit.client;
 
 /**
  *
- * @since v5.2
+ * See {@link com.atlassian.jira.testkit.plugin.JiraSetupResource} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class JiraSetupControl  extends BackdoorControl<DashboardControl>
 {

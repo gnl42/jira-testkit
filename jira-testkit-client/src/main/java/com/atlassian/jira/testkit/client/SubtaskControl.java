@@ -5,7 +5,9 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Allows you to enable/disable sub-tasks.
  *
- * @since v5.0.1
+ * See {@link com.atlassian.jira.testkit.plugin.SubtaskBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class SubtaskControl extends BackdoorControl<SubtaskControl>
 {

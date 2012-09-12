@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
  * Use this backdoor to manipulate Issue Type Screen Schemes as part of setup for tests.
  *
  * This class should only be called by the
- * {@link com.atlassian.jira.functest.framework.backdoor.IssueTypeScreenSchemesControl}.
+ * {@link com.atlassian.jira.testkit.client.IssueTypeScreenSchemesControl}.
  *
  * @since v5.0
  */

@@ -4,7 +4,7 @@ package com.atlassian.jira.testkit.client;
  * Use this class from func/selenium/page-object tests that need to manipulate Permissions, including global permissions
  * and permission schemes.
  *
- * See PermissionsBackdoor for the code this plugs into at the back-end.
+ * See {@link com.atlassian.jira.testkit.plugin.PermissionsBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

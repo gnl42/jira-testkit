@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Use this class from func/selenium/page-object tests that need to import data. Which is all of them.
  *
- * See DataImportBackdoor for the code this plugs into at the back-end.
+ * See {@link com.atlassian.jira.testkit.plugin.DataImportBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

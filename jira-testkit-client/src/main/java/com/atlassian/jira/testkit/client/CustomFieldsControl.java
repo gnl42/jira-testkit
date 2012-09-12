@@ -3,7 +3,9 @@ package com.atlassian.jira.testkit.client;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Custom fields.
  *
- * @since v5.1
+ * See {@link com.atlassian.jira.testkit.plugin.CustomFieldsBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  * @author esusatyo
  */
 public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>

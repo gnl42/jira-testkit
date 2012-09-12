@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Use this backdoor to manipulate Mail Servers as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.MailServersControl}.
+ * This class should only be called by the {@link com.atlassian.jira.testkit.client.MailServersControl}.
  *
  * @since v5.0
  */

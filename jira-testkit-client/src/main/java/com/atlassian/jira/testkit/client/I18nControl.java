@@ -1,7 +1,7 @@
 package com.atlassian.jira.testkit.client;
 
 /**
- * TODO: Document this class / interface here
+ * See {@link com.atlassian.jira.testkit.plugin.I18nBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

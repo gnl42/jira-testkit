@@ -8,7 +8,9 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import java.util.List;
 
 /**
- * @since v5.0.3
+ * See {@link com.atlassian.jira.testkit.plugin.DashboardBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class DashboardControl extends BackdoorControl<DashboardControl>
 {

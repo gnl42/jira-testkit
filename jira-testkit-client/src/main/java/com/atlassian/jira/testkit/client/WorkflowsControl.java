@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Hooks into the WorkflowResource within the func-test plugin.
  *
+ * See {@link com.atlassian.jira.testkit.plugin.WorkflowResourceBackdoor} in jira-testkit-plugin for backend.
+ *
  * @since v5.1
  */
 public class WorkflowsControl extends BackdoorControl<WorkflowsControl>

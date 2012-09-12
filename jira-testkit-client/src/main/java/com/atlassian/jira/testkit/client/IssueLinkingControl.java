@@ -5,7 +5,9 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Allows you to enable/disable issue links.
  *
- * @since v5.0.4
+ * See {@link com.atlassian.jira.testkit.plugin.IssueLinkingBackdoor} in jira-testkit-plugin for backend.
+ *
+ * @since v5.0
  */
 public class IssueLinkingControl extends BackdoorControl<IssueLinkingControl>
 {
