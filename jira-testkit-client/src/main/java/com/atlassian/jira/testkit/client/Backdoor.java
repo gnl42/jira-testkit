@@ -264,9 +264,19 @@ public class Backdoor
         dataImport().restoreDataFromResource(resourcePath, license);
     }
 
+    public void restoreDataFromResource(String resourcePath)
+    {
+        dataImport().restoreDataFromResource(resourcePath);
+    }
+
     public void restoreBlankInstance(String license)
     {
         dataImport().restoreBlankInstance(license);
+    }
+
+    public void restoreBlankInstance()
+    {
+        dataImport().restoreBlankInstance();
     }
 
     public IssueLinkingControl issueLinking()
