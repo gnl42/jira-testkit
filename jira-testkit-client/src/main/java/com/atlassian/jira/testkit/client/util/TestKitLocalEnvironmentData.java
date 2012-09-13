@@ -18,8 +18,8 @@ public class TestKitLocalEnvironmentData extends AbstractEnvironmentData
 {
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
-    private static final String DEFAULT_PORT = "8080";
-    private static final String DEFAULT_CONTEXT = "";
+    private static final String DEFAULT_PORT = "2990";
+    private static final String DEFAULT_CONTEXT = "jira";
     private static final String DEFAULT_EDITION = "standard";
     private static final String DEFAULT_XML_DATA_LOCATION = "./src/test/xml";
     private static final String DEFAULT_PROPERTIES_FILENAME = "localtest.properties";

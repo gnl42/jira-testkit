@@ -3,15 +3,19 @@ package com.atlassian.jira.testkit.client.xmlbackup;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
@@ -117,60 +121,119 @@ public class XmlBackupCopier
             }
         }
 
-        final String ls = System.getProperty("line.separator");
+		try {
+			return performSubstitutions(new FileReader(sourcePath), destinationPath, substitutions);
+		} catch (FileNotFoundException e) {
+			log.trace("Error reading from '{}'", sourcePath);
+			throw new RuntimeException("Could not read resource " + sourcePath, e);
+		}
+	}
 
-        Map<Pattern, String> tokensPlusBaseUrlSubs = Maps.newHashMap(substitutions);
-        tokensPlusBaseUrlSubs.putAll(baseUrlSubstitutions);
+	/**
+	 * Copies the input resource to the JIRA import directory, substituting string tokens. Apart from the given
+	 * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOST_8080} and {@value
+	 * #LOCALHOST_8090} with the value of {@link #baseUrl}.
+	 * <p/>
+	 * The string tokens that will be replaced are dictated by the contents of the substitutions parameter.
+	 *
+	 * @param sourcePath the class path of the source file
+	 * @param destinationPath the absolute path of the destination file (will be created if it doesn't exist)
+	 * @param substitutions the substitutions that will be performed
+	 * @return true if at least one substitution was made
+	 */
+	public boolean copyXmlBackupFromClassPathTo(String sourcePath, String destinationPath, Map<Pattern, String> substitutions)
+	{
+		final File destinationFile = new File(destinationPath);
+		if (!destinationFile.getParentFile().exists() && !destinationFile.getParentFile().mkdirs())
+		{
+			throw new RuntimeException("Tried to create parent folders of " + destinationPath + " which did not exist, but failed");
+		}
 
-        boolean wasReplaced = false;
-        BufferedReader reader = null;
-        BufferedWriter writer = null;
-        try
-        {
-            reader = new BufferedReader(new FileReader(sourcePath));
-            writer = new BufferedWriter(new FileWriter(destinationFile));
-            log.trace("Begin copying '{} to '{}'", sourcePath, destinationPath);
+		if (sourcePath.endsWith(".zip"))
+		{
+			try
+			{
+				log.trace("File '{}' is a ZIP file, copying without performing substiturions", sourcePath);
+				FileUtils.copyFile(new File(sourcePath), destinationFile);
+				return false;
+			}
+			catch (IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
 
-            // copy line by line, substituting strings
-            int lineNumber = 1;
-            for (String line = reader.readLine(); line != null; line = reader.readLine())
-            {
-                for (Map.Entry<Pattern, String> subst : tokensPlusBaseUrlSubs.entrySet())
-                {
-                    Matcher m = subst.getKey().matcher(line);
-                    if (m.find())
-                    {
-                        wasReplaced = true;
-                        line = m.replaceAll(subst.getValue());
-                        log.trace("{}:{} replaced '{}' with '{}'", new Object[] { sourcePath,lineNumber, subst.getKey(), subst.getValue() });
-                    }
-                }
+		try {
+			return performSubstitutions(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(sourcePath)), destinationPath, substitutions);
+		} catch (NullPointerException e) {
+			log.trace("Error reading from '{}'", sourcePath);
+			throw new RuntimeException("Could not read resource " + sourcePath, e);
+		}
+	}
 
-                writer.write(line);
-                writer.write(ls);
-                lineNumber++;
-            }
 
-            log.trace("Finished copying '{} to '{}'", sourcePath, destinationPath);
-            return wasReplaced;
-        }
-        catch (IOException e)
-        {
-            log.trace("Error copying '{} to '{}'", sourcePath, destinationPath);
-            throw new RuntimeException("Could not copy file " + sourcePath + " to the import directory in jira home " + destinationPath, e);
-        }
-        finally
-        {
-            if (reader != null)
-            {
-                try { reader.close(); } catch (Throwable t) { /* log */ }
-            }
-            if (writer != null)
-            {
-                try { writer.close(); } catch (Throwable t) { /* log */ }
-            }
-        }
-    }
+	/**
+	 * Copies the input file to the JIRA import directory, substituting string tokens. Apart from the given
+	 * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOST_8080} and {@value
+	 * #LOCALHOST_8090} with the value of {@link #baseUrl}.
+	 * <p/>
+	 * The string tokens that will be replaced are dictated by the contents of the substitutions parameter.
+	 *
+	 * @param sourceFile the absolute path of the source file
+	 * @param destinationPath the absolute path of the destination file (will be created if it doesn't exist)
+	 * @param substitutions the substitutions that will be performed
+	 * @return true if at least one substitution was made
+	 */
+	public boolean performSubstitutions(Reader sourceFile, String destinationPath, Map<Pattern, String> substitutions) {
+		final File destinationFile = new File(destinationPath);
+		final String ls = System.getProperty("line.separator");
+
+		Map<Pattern, String> tokensPlusBaseUrlSubs = Maps.newHashMap(substitutions);
+		tokensPlusBaseUrlSubs.putAll(baseUrlSubstitutions);
+
+		boolean wasReplaced = false;
+		BufferedReader reader = null;
+		BufferedWriter writer = null;
+		try
+		{
+			reader = new BufferedReader(sourceFile);
+			writer = new BufferedWriter(new FileWriter(destinationFile));
+			log.trace("Copying resource to '{}'", destinationPath);
+
+			// copy line by line, substituting strings
+			int lineNumber = 1;
+			for (String line = reader.readLine(); line != null; line = reader.readLine())
+			{
+				for (Map.Entry<Pattern, String> subst : tokensPlusBaseUrlSubs.entrySet())
+				{
+					Matcher m = subst.getKey().matcher(line);
+					if (m.find())
+					{
+						wasReplaced = true;
+						line = m.replaceAll(subst.getValue());
+						log.trace("Line {} replaced '{}' with '{}'", new Object[] { lineNumber, subst.getKey(), subst.getValue() });
+					}
+				}
+
+				writer.write(line);
+				writer.write(ls);
+				lineNumber++;
+			}
+
+			log.trace("Finished copying to '{}'", destinationPath);
+			return wasReplaced;
+		}
+		catch (IOException e)
+		{
+			log.trace("Error copying to '{}'", destinationPath);
+			throw new RuntimeException("Could not copy resource to the import directory in jira home " + destinationPath, e);
+		}
+		finally
+		{
+			IOUtils.closeQuietly(reader);
+			IOUtils.closeQuietly(writer);
+		}
+	}
 
     /**
      * The substitutions to make in the file in order to set the base URL correctly.
