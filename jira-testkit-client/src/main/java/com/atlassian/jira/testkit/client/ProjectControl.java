@@ -100,4 +100,10 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
 
         get(resource);
     }
+
+	public boolean deleteProject(String key)
+	{
+		return get(createResource().path("project/delete").queryParam("key", key), Boolean.class);
+	}
+
 }

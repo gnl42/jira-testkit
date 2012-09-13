@@ -16,4 +16,12 @@ public class TimeBombLicence {
 			+ "WzeKbyIjaAJE7aDYpa2tTSO+mvbCrBKo/ryate4Up9KfylnhjumhGEl0SCXzBjB1B9Q/QYhQulrH\n"
 			+ "/fcue6svl1di8BwFFnZKAGTE3mGIalGksliJxTZVqTmvLF6fXxksjhzpkwaqP5s3fMDBMYhRDAtA\n"
 			+ "hUAhcR3uL05YCxbclq7h1dNa+Nc+j4CFBrdN005oVlMN9yBlWeM4TlnrOhqX02j3";
+
+	public static final String V2_PERSONAL =
+			"AAAA9g0ODAoPeNpdj0FPwkAUhO/7KzbxZlLSXeUAyR7ENkC0pQmtGm7P+oobl9fm7bbKvxcpXjjOT\n"
+			+ "ObLzE3WksyApZpJpeZqNldTWSSl1LHSIkFfs+2CbcmU6IN0tkbyKJuWZef6vSX5gQO6tkP2Iu8P7\n"
+			+ "8ibpvInZbR4ZIS/bgIBjVZKR7GO9FSkA7j+nJgGnEcxovzkdgJ1sAOawD2KDCwFJKAa05/O8vHMK\n"
+			+ "e5WYsN7IOtHxENw4L0FElvkAXmdmMVyVkZv1ct99LTbraJFrF7F8zj9lFb0Re03/TtX7ItbHjvM4\n"
+			+ "YCmTLflOl+Kouf6Ezxen/kF249r6zAsAhQJhO0v/VRNzPW3ALTxSDFu+TNEUAIUaszNN4+Rnl7wf\n"
+			+ "yfhYFrLALKZZQ4=X02co";
 }
