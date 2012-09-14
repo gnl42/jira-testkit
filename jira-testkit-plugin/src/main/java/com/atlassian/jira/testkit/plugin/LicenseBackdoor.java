@@ -1,6 +1,7 @@
 package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.bc.license.JiraLicenseUpdaterService;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.Consumes;
@@ -24,10 +25,12 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 public class LicenseBackdoor
 {
 	private final JiraLicenseUpdaterService licenseService;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
 
-	public LicenseBackdoor()
+	public LicenseBackdoor(JiraAuthenticationContext jiraAuthenticationContext)
 	{
-		this.licenseService = getComponentInstanceOfType(JiraLicenseUpdaterService.class);
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.licenseService = getComponentInstanceOfType(JiraLicenseUpdaterService.class);
 	}
 
 	@POST
@@ -35,8 +38,9 @@ public class LicenseBackdoor
 	@AnonymousAllowed
 	public Response license(String license)
 	{
+
 		try {
-			licenseService.setLicense(licenseService.validate(null, license));
+			licenseService.setLicense(licenseService.validate(jiraAuthenticationContext.getI18nHelper(), license));
 			return Response.ok(true).cacheControl(never()).build();
 		} catch (Exception e) {
 			return Response.ok(false).cacheControl(never()).build();
