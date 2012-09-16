@@ -192,7 +192,7 @@ public class WorkflowSchemesBackdoor
                 return fourOhfour();
             }
 
-            if (!workflowSchemeManager.deleteWorkflowScheme(workflowSchemeObj))
+            if (!workflowSchemeManager.deleteWorkflowScheme(draftForParent))
             {
                 return fourOhfour();
             }
