@@ -20,7 +20,9 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -156,12 +158,12 @@ public class ProjectBackdoor
         ProjectService.UpdateProjectValidationResult result = projectService.validateUpdateProject(admin,
                 project.getName(), project.getKey(), project.getDescription(),
                 newProjectLead.getName(), project.getUrl(), project.getAssigneeType(), project.getAvatar().getId());
-
+        
         if (!result.isValid())
         {
             return Response.serverError().build();
         }
-
+        
         projectService.updateProject(result);
         
         return Response.ok(null).build();
@@ -195,4 +197,22 @@ public class ProjectBackdoor
         
         return Response.ok(null).build();
     }
+
+	@GET
+	@AnonymousAllowed
+	@Path("delete")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response deleteProject(@QueryParam ("key") String key)
+	{
+		User admin = userUtil.getUser("admin");
+		Project project = projectService.getProjectByKey(admin, key).getProject();
+		if (project != null) {
+			ErrorCollection errorCollection = new EmptyErrorCollection();
+			ProjectService.DeleteProjectValidationResult result = new ProjectService.DeleteProjectValidationResult(errorCollection, project);
+			ProjectService.DeleteProjectResult projectResult = projectService.deleteProject(admin, result);
+			return Response.ok(projectResult.isValid()).build();
+		}
+		return Response.ok(false).build();
+	}
+
 }

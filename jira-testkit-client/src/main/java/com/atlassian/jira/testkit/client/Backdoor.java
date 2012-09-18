@@ -32,6 +32,7 @@ public class Backdoor
     private final IssueLinkingControl issueLinkingControl;
     private final IssueTypeScreenSchemesControl issueTypeScreenSchemes;
     private final ScreensControl screensControl;
+    private final ProjectRoleClient projectRoleClient;
     private final WebSudoControl webSudoControl;
     private final DashboardControl dashboardControl;
     private final BarrierControl barrierControl;
@@ -43,7 +44,9 @@ public class Backdoor
     private final AdvancedSettingsControl advancedSettingsControl;
     private final SearchClient searchClient;
     private final CustomFieldsControl customFieldsControl;
-    private final ProjectRoleClient projectRoleClient;
+	private final AttachmentsControl attachmentsControl;
+	private final TimeTrackingControl timeTrackingControl;
+	private final LicenseControl licenseControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -79,6 +82,9 @@ public class Backdoor
         this.customFieldsControl = new CustomFieldsControl(environmentData);
         this.screensControl = new ScreensControl(environmentData);
         this.projectRoleClient = new ProjectRoleClient(environmentData);
+		this.attachmentsControl = new AttachmentsControl(environmentData);
+		this.timeTrackingControl = new TimeTrackingControl(environmentData);
+		this.licenseControl = new LicenseControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -254,9 +260,19 @@ public class Backdoor
         dataImport().restoreDataFromResource(resourcePath, license);
     }
 
+    public void restoreDataFromResource(String resourcePath)
+    {
+        dataImport().restoreDataFromResource(resourcePath);
+    }
+
     public void restoreBlankInstance(String license)
     {
         dataImport().restoreBlankInstance(license);
+    }
+
+    public void restoreBlankInstance()
+    {
+        dataImport().restoreBlankInstance();
     }
 
     public IssueLinkingControl issueLinking()
@@ -282,5 +298,17 @@ public class Backdoor
     public ProjectRoleClient projectRole()
     {
         return projectRoleClient;
+    }
+
+	public AttachmentsControl attachments() {
+		return attachmentsControl;
+	}
+
+	public TimeTrackingControl timeTracking() {
+		return timeTrackingControl;
+	}
+
+	public LicenseControl license() {
+		return licenseControl;
     }
 }

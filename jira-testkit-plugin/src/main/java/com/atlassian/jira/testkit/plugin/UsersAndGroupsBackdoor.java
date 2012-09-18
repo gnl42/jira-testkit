@@ -23,7 +23,9 @@ import org.apache.log4j.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -284,5 +286,20 @@ public class UsersAndGroupsBackdoor
 
         return Response.ok(stringCount).build();
     }
-    
+
+	@GET
+	@AnonymousAllowed
+	@Path("group/includes")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response groupIncludes(@QueryParam ("groupName") String groupName, @QueryParam("userName") String userName) {
+		return Response.ok(userUtil.getGroupNamesForUser(userName).contains(groupName)).build();
+	}
+
+	@GET
+	@AnonymousAllowed
+	@Path("user/exists")
+	@Produces ({MediaType.APPLICATION_JSON})
+	public Response userExists(@QueryParam("userName") String userName) {
+		return Response.ok(userUtil.userExists(userName)).build();
+	}
 }

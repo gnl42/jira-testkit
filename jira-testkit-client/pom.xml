@@ -79,7 +79,7 @@
 		</resources>
 	</build>
 	<dependencies>
-        <dependency>
+		<dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-testkit-common</artifactId>
             <version>${project.version}</version>
