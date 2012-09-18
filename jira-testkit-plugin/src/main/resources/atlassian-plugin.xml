@@ -16,10 +16,6 @@
 
     <component-import key="lifeCycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager"/>
 
-    <component interface="com.atlassian.jira.testkit.plugin.PlaintextEncoderLoaderInterface" key="plaintextEncoderLoader"
-               name="Plaintext Encoder Loader" class="com.atlassian.jira.testkit.plugin.PlaintextEncoderLoader"
-               public="true" system="true"/>
-
     <component interface="com.atlassian.jira.testkit.plugin.InitialiseSystemProperties" key="initSystemProperties"
                name="Init System Properties" class="com.atlassian.jira.testkit.plugin.InitialiseSystemPropertiesImpl"
                public="true" system="true"/>
