@@ -106,7 +106,7 @@ public class WorkflowSchemesBackdoor
         }
         else
         {
-            return Response.ok(workflowSchemeObj).cacheControl(never()).build();
+            return Response.ok(dataFactory.toData(workflowSchemeObj)).cacheControl(never()).build();
         }
     }
 
