@@ -20,9 +20,6 @@
                name="Init System Properties" class="com.atlassian.jira.testkit.plugin.InitialiseSystemPropertiesImpl"
                public="true" system="true"/>
 
-    <component interface="com.atlassian.jira.testkit.plugin.Log4JHackery" key="log4jHackery"
-               name="Log4J modifications for func testing" class="com.atlassian.jira.testkit.plugin.Log4JHackeryImpl"/>
-
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
     <component interface="com.atlassian.jira.testkit.plugin.EventWatcherImpl" key="eventWatcher"
                name="atlassian-event listing" class="com.atlassian.jira.testkit.plugin.EventWatcherImpl"/>
