@@ -30,7 +30,6 @@ public class Backdoor
     private final IssueTypeControl issueTypeControl;
     private final SubtaskControl subtaskCotnrol;
     private final IssueLinkingControl issueLinkingControl;
-    private final IssueTypeScreenSchemesControl issueTypeScreenSchemes;
     private final ScreensControl screensControl;
     private final ProjectRoleClient projectRoleClient;
     private final WebSudoControl webSudoControl;
@@ -60,7 +59,6 @@ public class Backdoor
         this.systemProperties = new SystemPropertiesControl(environmentData);
         this.project = new ProjectControl(environmentData);
         this.permissionSchemes = new PermissionSchemesControl(environmentData);
-        this.issueTypeScreenSchemes = new IssueTypeScreenSchemesControl(environmentData);
         this.mailServers = new MailServersControl(environmentData);
         this.searchRequests = new SearchRequestControl(environmentData);
         this.userProfile = new UserProfileControl(environmentData);
@@ -140,11 +138,6 @@ public class Backdoor
     public PermissionSchemesControl permissionSchemes()
     {
         return permissionSchemes;
-    }
-
-    public IssueTypeScreenSchemesControl issueTypeScreenSchemes()
-    {
-        return issueTypeScreenSchemes;
     }
 
     public ScreensControl screensControl()

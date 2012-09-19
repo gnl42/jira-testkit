@@ -3,18 +3,15 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.embedded.impl.ImmutableGroup;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
 import com.atlassian.crowd.exception.embedded.InvalidGroupException;
-import com.atlassian.crowd.search.EntityDescriptor;
-import com.atlassian.crowd.search.builder.QueryBuilder;
-import com.atlassian.crowd.search.query.entity.EntityQuery;
 import com.atlassian.jira.bc.security.login.LoginService;
 import com.atlassian.jira.event.user.UserEventType;
 import com.atlassian.jira.exception.AddException;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.exception.RemoveException;
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
@@ -44,12 +41,14 @@ public class UsersAndGroupsBackdoor
     private final CrowdService crowdService;
     private final LoginService loginService;
     private final UserUtil userUtil;
+    private final GroupManager groupManager;
 
-    public UsersAndGroupsBackdoor(UserUtil userUtil, CrowdService crowdService, LoginService loginService)
+    public UsersAndGroupsBackdoor(UserUtil userUtil, CrowdService crowdService, LoginService loginService, GroupManager groupManager)
     {
         this.crowdService = crowdService;
         this.userUtil = userUtil;
         this.loginService = loginService;
+        this.groupManager = groupManager;
     }
 
     @GET
@@ -176,11 +175,11 @@ public class UsersAndGroupsBackdoor
     @GET
     @AnonymousAllowed
     @Path("group/add")
-    public Response addGroup(@QueryParam ("groupName") String groupName) {
+    public Response addGroup(@QueryParam ("groupName") final String groupName)
+    {
         try
         {
-            Group group = new ImmutableGroup(groupName);
-            crowdService.addGroup(group);
+            crowdService.addGroup(new GroupTemplate(groupName));
         }
         catch (InvalidGroupException e)
         {
@@ -271,17 +270,7 @@ public class UsersAndGroupsBackdoor
     @Path("group/count")
     public Response numberOfGroups()
     {
-        final EntityQuery<String> membershipQuery =
-                QueryBuilder.queryFor(String.class, EntityDescriptor.group()).returningAtMost(EntityQuery.ALL_RESULTS);
-
-        Iterable<String> groups = crowdService.search(membershipQuery);
-
-        int count = 0;
-        
-        for (String group : groups) {
-            ++count;
-        }
-
+        int count = groupManager.getAllGroups().size();
         String stringCount = Long.toString(count);
 
         return Response.ok(stringCount).build();
@@ -302,4 +291,23 @@ public class UsersAndGroupsBackdoor
 	public Response userExists(@QueryParam("userName") String userName) {
 		return Response.ok(userUtil.userExists(userName)).build();
 	}
+
+    private static class GroupTemplate implements Group
+    {
+        private final String groupName;
+
+        public GroupTemplate(String groupName) {this.groupName = groupName;}
+
+        @Override
+        public String getName()
+        {
+            return groupName;
+        }
+
+        @Override
+        public int compareTo(Group o)
+        {
+            return groupName.compareTo(o.getName());
+        }
+    }
 }
