@@ -1,6 +1,6 @@
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.fields.FieldManager;
@@ -34,7 +34,7 @@ public class TimeTrackingBackdoor
 
 	public TimeTrackingBackdoor(ApplicationProperties applicationProperties, FieldManager fieldManager, JiraAuthenticationContext authenticationContext) {
 		this.applicationProperties = applicationProperties;
-		this.jiraDurationUtils = ComponentManager.getComponentInstanceOfType(JiraDurationUtils.class);
+		this.jiraDurationUtils = ComponentAccessor.getComponentOfType(JiraDurationUtils.class);
 		this.fieldManager = fieldManager;
 		this.authenticationContext = authenticationContext;
 	}
