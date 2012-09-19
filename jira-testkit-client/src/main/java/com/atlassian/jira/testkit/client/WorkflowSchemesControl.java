@@ -84,6 +84,23 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
         return get(createWorkflowSchemeResource(id), WorkflowSchemeData.class);
     }
 
+    public WorkflowSchemeData getWorkflowSchemeForParent(long id)
+    {
+        return get(createDraftWorkflowSchemeResource(id), WorkflowSchemeData.class);
+    }
+
+    public WorkflowSchemeData getWorkflowSchemeForParentNullIfNotFound(final long id)
+    {
+        return nullIfNotFound(new Function<Void, WorkflowSchemeData>()
+        {
+            @Override
+            public WorkflowSchemeData get(Void aVoid)
+            {
+                return getWorkflowSchemeForParent(id);
+            }
+        });
+    }
+
     public WorkflowSchemeData createDraft(WorkflowSchemeData scheme)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource(scheme.getId());

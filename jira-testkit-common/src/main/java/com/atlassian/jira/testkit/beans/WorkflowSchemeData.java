@@ -37,6 +37,12 @@ public class WorkflowSchemeData
     @JsonProperty
     private boolean draft;
 
+    @JsonProperty
+    private String lastModified;
+
+    @JsonProperty
+    private String lastModifiedUser;
+
     public WorkflowSchemeData()
     {
     }
@@ -133,6 +139,28 @@ public class WorkflowSchemeData
     public WorkflowSchemeData setDraft(boolean draft)
     {
         this.draft = draft;
+        return this;
+    }
+
+    public String getLastModified()
+    {
+        return lastModified;
+    }
+
+    public WorkflowSchemeData setLastModified(String lastModified)
+    {
+        this.lastModified = lastModified;
+        return this;
+    }
+
+    public String getLastModifiedUser()
+    {
+        return lastModifiedUser;
+    }
+
+    public WorkflowSchemeData setLastModifiedUser(String lastModifiedUser)
+    {
+        this.lastModifiedUser = lastModifiedUser;
         return this;
     }
 }
