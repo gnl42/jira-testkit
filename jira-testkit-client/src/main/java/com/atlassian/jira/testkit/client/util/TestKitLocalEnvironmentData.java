@@ -21,7 +21,7 @@ public class TestKitLocalEnvironmentData extends AbstractEnvironmentData
     private static final String DEFAULT_PORT = "8080";
     private static final String DEFAULT_CONTEXT = "";
     private static final String DEFAULT_EDITION = "standard";
-    private static final String DEFAULT_XML_DATA_LOCATION = "./src/test/xml";
+    private static final String DEFAULT_XML_DATA_LOCATION = "./xml";
     private static final String DEFAULT_PROPERTIES_FILENAME = "localtest.properties";
     private static final String JIRA_PROTOCOL = "jira.protocol";
     private static final String JIRA_HOST = "jira.host";
@@ -71,7 +71,11 @@ public class TestKitLocalEnvironmentData extends AbstractEnvironmentData
 
         if (!this.xmlDataLocation.exists())
         {
-			throw new RuntimeException(String.format("Cannot find xml data location: '%s'", unresolvedFileLocation));
+            this.xmlDataLocation = new File(this.xmlDataLocation.getParent() + "/subprojects/func_tests/xml");
+            if (!this.xmlDataLocation.exists())
+            {
+                throw new RuntimeException(String.format("Cannot find xml data location: '%s' or '%s'", unresolvedFileLocation, this.xmlDataLocation.getAbsolutePath()));
+            }
         }
 
         String baseUrl = protocol + "://" + host + ":" + port + contextPath;
