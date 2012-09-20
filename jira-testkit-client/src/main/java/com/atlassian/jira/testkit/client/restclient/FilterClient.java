@@ -6,10 +6,14 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import org.apache.commons.lang.StringUtils;
 
 import javax.ws.rs.core.MediaType;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+
+import static com.atlassian.jira.rest.api.util.StringList.fromList;
 
 /**
  * Client for the Filter resource.
@@ -35,9 +39,14 @@ public class FilterClient extends RestApiClient<FilterClient>
      * @return a Filter
      * @throws com.sun.jersey.api.client.UniformInterfaceException if there is a problem getting the filter
      */
-    public Filter get(String filterId) throws UniformInterfaceException
+    public Filter get(String filterId, Filter.Expand... expand) throws UniformInterfaceException
     {
-        return filterWithId(filterId).get(Filter.class);
+        return filterWithId(filterId, expand).get(Filter.class);
+    }
+
+    public List<Filter> getFavouriteFilters(Filter.Expand... expand)
+    {
+        return addExpands(createResource().path("filter").path("favourite"), expand).get(Filter.FILTER_TYPE);
     }
 
     /**
@@ -68,9 +77,14 @@ public class FilterClient extends RestApiClient<FilterClient>
         return createResource().path("filter");
     }
 
-    public List<Filter> getFavouriteFilters()
+    private WebResource addExpands(WebResource resource, Filter.Expand... expand)
     {
-        return createResource().path("filter").path("favourite").get(Filter.FILTER_TYPE);
+        EnumSet<Filter.Expand> expands = setOf(Filter.Expand.class, expand);
+        if (expands.isEmpty())
+        {
+            return resource;
+        }
+        return resource.queryParam("expand", percentEncode(StringUtils.join(expands, ",")));
     }
 
     /**
@@ -79,9 +93,9 @@ public class FilterClient extends RestApiClient<FilterClient>
      * @param filterId a String containing a filter ID
      * @return a WebResource
      */
-    protected WebResource filterWithId(String filterId)
+    protected WebResource filterWithId(String filterId, Filter.Expand... expand)
     {
-        return createResource().path("filter").path(filterId);
+        return addExpands(createResource().path("filter").path(filterId), expand);
     }
 
     /**
@@ -91,11 +105,11 @@ public class FilterClient extends RestApiClient<FilterClient>
      * @param filter a Filter object
      * @return a Response
      */
-    public Response<Filter> postFilterResponse(final Filter filter)
+    public Response<Filter> postFilterResponse(final Filter filter, final Filter.Expand... expand)
     {
         return toResponse(new Method() { public ClientResponse call()
             {
-                return filterResourceForPost().post(ClientResponse.class, filter);
+                return filterResourceForPost(expand).post(ClientResponse.class, filter);
             }
         }, Filter.class);
     }
@@ -107,11 +121,11 @@ public class FilterClient extends RestApiClient<FilterClient>
      * @param filter a Filter object
      * @return a Response
      */
-    public Response<Filter> putFilterResponse(final Filter filter)
+    public Response<Filter> putFilterResponse(final Filter filter, final Filter.Expand... expand)
     {
         return toResponse(new Method() { public ClientResponse call()
             {
-                return filterResourceForPut(filter.id).put(ClientResponse.class, filter);
+                return filterResourceForPut(filter.id, expand).put(ClientResponse.class, filter);
             }
         }, Filter.class);
     }
@@ -121,9 +135,9 @@ public class FilterClient extends RestApiClient<FilterClient>
      *
      * @return a WebResource.Builder
      */
-    private WebResource.Builder filterResourceForPut(String filterId)
+    private WebResource.Builder filterResourceForPut(String filterId, Filter.Expand... expand)
     {
-        return filterResource().path(filterId).type(MediaType.APPLICATION_JSON_TYPE);
+        return addExpands(filterResource().path(filterId), expand).type(MediaType.APPLICATION_JSON_TYPE);
     }
 
 
@@ -132,9 +146,9 @@ public class FilterClient extends RestApiClient<FilterClient>
      *
      * @return a WebResource.Builder
      */
-    private WebResource.Builder filterResourceForPost()
+    private WebResource.Builder filterResourceForPost(Filter.Expand... expand)
     {
-        return filterResource().type(MediaType.APPLICATION_JSON_TYPE);
+        return addExpands(filterResource(), expand).type(MediaType.APPLICATION_JSON_TYPE);
     }
 
     public Map<String,String> getDefaultShareScope()

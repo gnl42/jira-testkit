@@ -25,6 +25,11 @@ public class Filter
     public List<FilterPermission> sharePermissions;
     public Expando<FilterSubscription> subscriptions;
 
+    public static enum Expand
+    {
+        subscriptions
+    }
+
     public static class FilterPermission
     {
         public Long id;
