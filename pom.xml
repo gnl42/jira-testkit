@@ -10,7 +10,7 @@
 	<artifactId>jira-testkit-plugin-parent</artifactId>
 	<version>5.2-m10-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Atlassian JIRA - TestKit - Parent</name>
+	<name>JIRA TestKit</name>
 
 	<scm>
 		<connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
