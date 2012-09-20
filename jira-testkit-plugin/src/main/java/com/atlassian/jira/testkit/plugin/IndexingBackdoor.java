@@ -1,3 +1,5 @@
+package com.atlassian.jira.testkit.plugin;
+
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.IndexTaskContext;
 import com.atlassian.jira.issue.index.IndexException;
