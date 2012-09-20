@@ -6,9 +6,12 @@
 		<version>5.0-m13-SNAPSHOT</version>
 	</parent>
 	<artifactId>jira-testkit-plugin</artifactId>
-	<name>Atlassian JIRA - Plugins - TestKit - Plugin</name>
-	<description>[to be done]</description>
-	<packaging>atlassian-plugin</packaging>
+    <packaging>atlassian-plugin</packaging>
+
+    <name>JIRA TestKit</name>
+	<description>The TestKit plugin makes it easy to set up your JIRA test cases. Do not use in production.</description>
+    <url>https://bitbucket.org/atlassian/jira-testkit/</url>
+
 	<build>
 		<plugins>
 			<plugin>
