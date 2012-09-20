@@ -23,6 +23,7 @@ public class Filter
     public String searchUrl;
     public boolean favourite;
     public List<FilterPermission> sharePermissions;
+    public Expando<FilterSubscription> subscriptions;
 
     public static class FilterPermission
     {
@@ -65,6 +66,13 @@ public class Filter
             this.group = group;
             return this;
         }
+    }
+
+    public static class FilterSubscription
+    {
+        public Long id;
+        public User user;
+        public Group group;
     }
 
 }
