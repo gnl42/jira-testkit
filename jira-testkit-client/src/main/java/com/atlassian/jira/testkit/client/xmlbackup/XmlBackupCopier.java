@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.client.xmlbackup;
 
+import com.atlassian.jira.testkit.client.RestoreDataResources;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
@@ -164,7 +165,7 @@ public class XmlBackupCopier
 		}
 
 		try {
-			return performSubstitutions(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(sourcePath)), destinationPath, substitutions);
+			return performSubstitutions(new InputStreamReader(RestoreDataResources.getResourceAsStream(sourcePath)), destinationPath, substitutions);
 		} catch (NullPointerException e) {
 			log.trace("Error reading from '{}'", sourcePath);
 			throw new RuntimeException("Could not read resource " + sourcePath, e);
