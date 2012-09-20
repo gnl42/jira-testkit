@@ -1,6 +1,8 @@
 package com.atlassian.jira.testkit.plugin.workflows;
 
 import com.atlassian.jira.config.IssueTypeManager;
+import com.atlassian.jira.datetime.DateTimeFormatter;
+import com.atlassian.jira.datetime.DateTimeStyle;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
@@ -15,6 +17,7 @@ import com.google.common.collect.Maps;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -24,11 +27,14 @@ class WorkflowSchemeDataFactory
 {
     private final IssueTypeManager issueTypeManager;
     private final WorkflowSchemeManager workflowSchemeManager;
+    private final DateTimeFormatter formatter;
 
-    WorkflowSchemeDataFactory(IssueTypeManager issueTypeManager, WorkflowSchemeManager workflowSchemeManager)
+    WorkflowSchemeDataFactory(IssueTypeManager issueTypeManager, WorkflowSchemeManager workflowSchemeManager,
+                              DateTimeFormatter formatter)
     {
         this.issueTypeManager = issueTypeManager;
         this.workflowSchemeManager = workflowSchemeManager;
+        this.formatter = formatter.withStyle(DateTimeStyle.RELATIVE).withLocale(Locale.ENGLISH);
     }
 
     WorkflowSchemeData toData(WorkflowScheme scheme)
@@ -49,10 +55,18 @@ class WorkflowSchemeDataFactory
             }
         }
 
-        return new WorkflowSchemeData().setId(scheme.getId())
+        final WorkflowSchemeData data = new WorkflowSchemeData().setId(scheme.getId())
                 .setName(scheme.getName()).setDescription(scheme.getDescription())
                 .setMappings(map).setDefaultWorkflow(defaultWorkflow).setDraft(scheme.isDraft())
                 .setActive(workflowSchemeManager.isActive(scheme));
+
+        if (scheme instanceof DraftWorkflowScheme)
+        {
+            DraftWorkflowScheme draftWorkflowScheme = (DraftWorkflowScheme) scheme;
+            data.setLastModified(formatter.format(draftWorkflowScheme.getLastModifiedDate()));
+            data.setLastModifiedUser(draftWorkflowScheme.getLastModifiedUser().getName());
+        }
+        return data;
     }
 
     WorkflowSchemeData toData(Scheme scheme)
