@@ -11,8 +11,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.util.Collections;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -74,7 +72,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
 	 */
 	public void restoreBlankInstance()
 	{
-		restoreDataFromResource("/xml/testkit-blankprojects.xml", TimeBombLicence.LICENCE_FOR_TESTING);
+		restoreDataFromResource("testkit-blankprojects.xml", TimeBombLicence.LICENCE_FOR_TESTING);
 	}
 
     /**
@@ -82,7 +80,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
      */
     public void restoreBlankInstance(String license)
     {
-        restoreDataFromResource("/xml/testkit-blankprojects.xml", license);
+        restoreDataFromResource("testkit-blankprojects.xml", license);
     }
 
 	/**
@@ -157,8 +155,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     {
         final FuncTestTimer timer = TestInformationKit.pullTimer("XML Restore");
         final String targetPath = getImportTargetPath(resourcePath);
-        boolean baseUrlReplaced = xmlBackupCopier.copyXmlBackupFromClassPathTo(resourcePath, targetPath,
-				Collections.<Pattern, String>emptyMap());
+        boolean baseUrlReplaced = xmlBackupCopier.copyXmlBackupTo(getImportSourcePath(resourcePath), targetPath);
         DataImportBean importBean = new DataImportBean();
         importBean.filePath = targetPath;
         importBean.licenseString = license;
