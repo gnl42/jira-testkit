@@ -9,11 +9,6 @@
         <description>Provides the REST resource for the backdoor plugin.</description>
     </rest>
 
-    <servlet name="TimeZone Servlet" key="timezone-servlet" class="com.atlassian.jira.testkit.plugin.sal.TimeZoneServlet">
-        <description>A servlet that uses the sal TimeZoneManager</description>
-        <url-pattern>/timezone-servlet</url-pattern>
-    </servlet>
-
     <component-import key="lifeCycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager"/>
 
     <component interface="com.atlassian.jira.testkit.plugin.InitialiseSystemProperties" key="initSystemProperties"
