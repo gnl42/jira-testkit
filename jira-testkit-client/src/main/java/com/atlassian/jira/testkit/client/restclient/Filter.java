@@ -1,14 +1,18 @@
 package com.atlassian.jira.testkit.client.restclient;
 
 import com.sun.jersey.api.client.GenericType;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
+
+import static org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 /**
  * Representation of a filter in the JIRA REST API.
  *
  * @since v4.3
  */
+@JsonSerialize(include = Inclusion.NON_NULL)
 public class Filter
 {
     public static final GenericType<List<Filter>> FILTER_TYPE = new GenericType<List<Filter>>(){};
