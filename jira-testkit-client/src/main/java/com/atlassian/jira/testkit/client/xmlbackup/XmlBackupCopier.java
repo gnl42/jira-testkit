@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
@@ -150,27 +151,40 @@ public class XmlBackupCopier
 			throw new RuntimeException("Tried to create parent folders of " + destinationPath + " which did not exist, but failed");
 		}
 
-		if (sourcePath.endsWith(".zip"))
-		{
-			try
-			{
-				log.trace("File '{}' is a ZIP file, copying without performing substiturions", sourcePath);
-				FileUtils.copyFile(new File(sourcePath), destinationFile);
-				return false;
-			}
-			catch (IOException e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
+        // this is a compatibility hack that is necessary to avoid overhauling lots of code in JIRA. this class
+        // essentially prepends "xml/" to the resource path if the resource if not found under the original path
+        InputStream inputStream = RestoreDataResources.getResourceAsStream(sourcePath);
 
-		try {
-			return performSubstitutions(new InputStreamReader(RestoreDataResources.getResourceAsStream(sourcePath)), destinationPath, substitutions);
-		} catch (NullPointerException e) {
-			log.trace("Error reading from '{}'", sourcePath);
-			throw new RuntimeException("Could not read resource " + sourcePath, e);
-		}
-	}
+        if (sourcePath.endsWith(".zip"))
+        {
+            try
+            {
+                log.trace("File '{}' is a ZIP file, copying without performing substiturions", sourcePath);
+                FileUtils.copyInputStreamToFile(inputStream, destinationFile);
+                return false;
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        try
+        {
+            try
+            {
+                return performSubstitutions(new InputStreamReader(inputStream), destinationPath, substitutions);
+            }
+            catch (NullPointerException e) {
+                log.trace("Error reading from '{}'", sourcePath);
+                throw new RuntimeException("Could not read resource " + sourcePath, e);
+            }
+        }
+        finally
+        {
+            IOUtils.closeQuietly(inputStream);
+        }
+    }
 
 
 	/**
