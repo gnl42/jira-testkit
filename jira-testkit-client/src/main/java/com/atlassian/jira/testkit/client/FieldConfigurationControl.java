@@ -15,21 +15,6 @@ public class FieldConfigurationControl extends BackdoorControl<FieldConfiguratio
         super(environmentData);
     }
 
-    /**
-     * Copies an existing field configuration. The new field configuration will have the name
-     * <code>"Copy of " + original name</code> unless specified.
-     *
-     * @param name the name of the existing field configuration
-     * @param copyName the name of the new field configuration
-     */
-    public void copyFieldConfiguration(String name, String copyName)
-    {
-        get(createResource().path("fieldConfiguration/copy")
-                .queryParam("name", name)
-                .queryParam("copyName", copyName)
-        );
-    }
-
     public void changeFieldVisibility(String configurationName, String fieldName, boolean hide)
     {
         post(createResource().path("fieldConfiguration/changeFieldVisibility")
@@ -42,13 +27,6 @@ public class FieldConfigurationControl extends BackdoorControl<FieldConfiguratio
                 .queryParam("fieldId", customFieldId).queryParam("projectName", projectName));
     }
 
-    public void setFieldRenderer(String fieldConfirationName, String fieldId, String renderer) {
-        get(createResource().path("fieldConfiguration/renderer")
-                .queryParam("fieldConfigurationName", fieldConfirationName)
-                .queryParam("fieldId", fieldId)
-                .queryParam("renderer", renderer));
-    }
-    
     /**
      * Hides field in given configuration
      * @param name the name of the existing field configuration
