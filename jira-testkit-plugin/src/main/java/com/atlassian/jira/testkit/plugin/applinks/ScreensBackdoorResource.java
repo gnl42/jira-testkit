@@ -1,15 +1,11 @@
 package com.atlassian.jira.testkit.plugin.applinks;
 
-import com.atlassian.jira.action.screen.AddFieldToScreenUtil;
-import com.atlassian.jira.action.screen.AddFieldToScreenUtilImpl;
-import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.OrderableField;
 import com.atlassian.jira.issue.fields.screen.FieldScreen;
 import com.atlassian.jira.issue.fields.screen.FieldScreenManager;
 import com.atlassian.jira.issue.fields.screen.FieldScreenTab;
-import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.Consumes;
@@ -30,63 +26,12 @@ import java.util.Set;
 public class ScreensBackdoorResource
 {
     private final FieldScreenManager fieldScreenManager;
-    private final AddFieldToScreenUtil addFieldToScreenUtil;
     private final FieldManager fieldManager;
-    private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public ScreensBackdoorResource(FieldScreenManager fieldScreenManager, AddFieldToScreenUtil addFieldToScreenUtil, FieldManager fieldManager, JiraAuthenticationContext jiraAuthenticationContext)
+    public ScreensBackdoorResource(FieldScreenManager fieldScreenManager, FieldManager fieldManager)
     {
         this.fieldScreenManager = fieldScreenManager;
-        this.addFieldToScreenUtil = addFieldToScreenUtil;
         this.fieldManager = fieldManager;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-    }
-
-    @GET
-    @Path ("addField")
-    public Response addFieldToScreen(@QueryParam ("screen") String screen, @QueryParam ("tab") String tabName, @QueryParam ("field") String field, @QueryParam ("position") String position)
-    {
-        final AddFieldToScreenUtil addFieldToScreenUtil = new AddFieldToScreenUtilImpl(jiraAuthenticationContext, fieldManager, fieldScreenManager);
-        final Set<OrderableField> navigableFields = fieldManager.getOrderableFields();
-        for (OrderableField navigableField : navigableFields)
-        {
-            if (navigableField.getName().equals(field))
-            {
-                final FieldScreen fieldScreen = getScreenByName(screen);
-                FieldScreenTab tab = null;
-
-                if (tabName != null)
-                {
-                    final List<FieldScreenTab> tabs = fieldScreen.getTabs();
-                    for (FieldScreenTab fieldScreenTab : tabs)
-                    {
-                        if (fieldScreenTab.getName().equals(tabName))
-                        {
-                            tab = fieldScreenTab;
-                        }
-                    }
-                }
-
-                if (tab == null)
-                {
-                    tab = fieldScreen.getTab(0);
-                }
-
-                addFieldToScreenUtil.setFieldScreenId(fieldScreen.getId());
-                addFieldToScreenUtil.setTabPosition(tab.getPosition());
-                addFieldToScreenUtil.setFieldId(new String[] { navigableField.getId() });
-                position = position == null ?  "" + (tab.getFieldScreenLayoutItems().size() + 1) : position;
-                addFieldToScreenUtil.setFieldPosition(position);
-                final ErrorCollection errorCollection = addFieldToScreenUtil.validate();
-                if (!errorCollection.hasAnyErrors())
-                {
-                    addFieldToScreenUtil.execute();
-                }
-                break;
-            }
-        }
-
-        return Response.ok().cacheControl(CacheControl.never()).build();
     }
 
     @GET
