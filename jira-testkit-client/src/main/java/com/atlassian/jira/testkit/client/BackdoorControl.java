@@ -18,16 +18,28 @@ import javax.ws.rs.core.MediaType;
  *
  * @since v5.0
  */
-public abstract class BackdoorControl<T extends BackdoorControl<T>> extends RestApiClient<T> implements FuncTestLogger
+public abstract class BackdoorControl<T extends BackdoorControl<T>> extends RestApiClient<T>
 {
     /**
      * The default REST path for the TestKit resources.
      */
     public static final String DEFAULT_REST_PATH = "testkit-test";
 
-    protected String rootPath;
-    private FuncTestLoggerImpl logger;
+    /**
+     * The JIRA base URL.
+     */
+    protected final String rootPath;
 
+    /**
+     * The FuncTestLogger to use for logging.
+     */
+    protected final FuncTestLogger logger;
+
+    /**
+     * Creates a new BackdoorControl.
+     *
+     * @param environmentData a JIRAEnvironmentData
+     */
     public BackdoorControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
@@ -77,22 +89,10 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         return DEFAULT_REST_PATH;
     }
 
-    @Override
-    public void log(Object logData)
-    {
-        logger.log(logData);
-    }
-
-    @Override
-    public void log(Throwable t)
-    {
-        logger.log(t);
-    }
-
     /**
      * Logs all Backdoor requests using the FuncTestLogger.
      *
-     * @see BackdoorControl#log(Object)
+     * @see FuncTestLogger#log(Object)
      */
     protected class BackdoorLoggingFilter extends ClientFilter
     {
@@ -109,7 +109,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         private void logRequest(ClientRequest request, long howLong)
         {
             String relativePath = StringUtils.removeStart(request.getURI().getPath(), createResource().getURI().getPath());
-            log(String.format("Backdoor %-6s in %5dms  %s", request.getMethod(), howLong, relativePath));
+            logger.log(String.format("Backdoor %-6s in %5dms  %s", request.getMethod(), howLong, relativePath));
         }
     }
 
