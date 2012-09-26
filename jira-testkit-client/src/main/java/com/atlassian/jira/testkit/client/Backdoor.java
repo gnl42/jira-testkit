@@ -34,7 +34,6 @@ public class Backdoor
     private final ProjectRoleClient projectRoleClient;
     private final WebSudoControl webSudoControl;
     private final DashboardControl dashboardControl;
-    private final IndexingControl indexingControl;
     private final PluginsControl plugins;
     private final GeneralConfigurationControl generalConfigurationControl;
     private final WorkflowsControl workflowsControl;
@@ -69,7 +68,6 @@ public class Backdoor
         this.webSudoControl = new WebSudoControl(environmentData);
         this.issueLinkingControl = new IssueLinkingControl(environmentData);
         this.dashboardControl = new DashboardControl(environmentData);
-        this.indexingControl = new IndexingControl(environmentData);
         this.generalConfigurationControl = new GeneralConfigurationControl(environmentData);
         this.workflowsControl = new WorkflowsControl(environmentData);
         this.workflowSchemesControl = new WorkflowSchemesControl(environmentData);
@@ -192,15 +190,6 @@ public class Backdoor
     public DashboardControl dashboard()
     {
         return dashboardControl;
-    }
-
-    /**
-     * @return an IndexingControl
-     * @since v5.2
-     */
-    public IndexingControl indexing()
-    {
-        return indexingControl;
     }
 
     public GeneralConfigurationControl generalConfiguration()
