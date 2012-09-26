@@ -18,17 +18,17 @@ public class IssueLinkingControl extends BackdoorControl<IssueLinkingControl>
     
     public boolean isEnabled()
     {
-        return get(createResource(), Boolean.class);
+        return createResource().get(Boolean.class);
     }
 
     public boolean enable()
     {
-        return post(createResource(), true, Boolean.class);
+        return createResource().post(Boolean.class, true);
     }
 
     public boolean disable()
     {
-        return post(createResource(), false, Boolean.class);
+        return createResource().post(Boolean.class, false);
     }
 
     @Override

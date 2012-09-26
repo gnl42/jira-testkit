@@ -31,7 +31,7 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
         request.type = type;
         request.searcherKey = searcherKey;
 
-        CustomFieldResponse response = post(createResource().path("customFields/create"), request, CustomFieldResponse.class);
+        CustomFieldResponse response = createResource().path("customFields/create").post(CustomFieldResponse.class, request);
         return response.id;
     }
 
@@ -42,7 +42,7 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
      */
     public void deleteCustomField(String customFieldId)
     {
-        delete(createResource().path("customFields").path("delete").path(customFieldId));
+        createResource().path("customFields").path("delete").path(customFieldId).delete();
     }
 
     public static class CustomFieldRequest

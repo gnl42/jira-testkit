@@ -8,6 +8,6 @@ public class LicenseControl extends BackdoorControl<LicenseControl> {
 	}
 
 	public boolean switchToPersonalLicense() {
-		return post(createResource().path("license").path("set"), TimeBombLicence.V2_PERSONAL, Boolean.class);
-	}
+        return createResource().path("license").path("set").post(Boolean.class, TimeBombLicence.V2_PERSONAL);
+    }
 }

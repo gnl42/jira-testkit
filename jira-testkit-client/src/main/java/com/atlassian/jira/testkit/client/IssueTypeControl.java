@@ -30,17 +30,17 @@ public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
         issueType.setIconUrl("/images/icons/genericissue.gif");
         issueType.setSubtask(false);
 
-        return post(createIssueTypeResource(), issueType, IssueType.class);
+        return createIssueTypeResource().post(IssueType.class, issueType);
     }
 
     public List<IssueType> getIssueTypes()
     {
-        return get(createIssueTypeResource(), LIST_GENERIC_TYPE);
+        return createIssueTypeResource().get(LIST_GENERIC_TYPE);
     }
 
     public void deleteIssueType(long id)
     {
-        delete(createIssueTypeResource().path(valueOf(id)));
+        createIssueTypeResource().path(valueOf(id)).delete();
     }
 
     private WebResource createIssueTypeResource()

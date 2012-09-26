@@ -128,7 +128,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         {
             importBean.baseUrl = environmentData.getBaseUrl().toString();
         }
-        post(createResource().path("dataImport"), importBean, String.class);
+        createResource().path("dataImport").post(String.class, importBean);
         timer.end();
     }
 
@@ -169,7 +169,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         {
             importBean.baseUrl = environmentData.getBaseUrl().toString();
         }
-        post(createResource().path("dataImport"), importBean, String.class);
+        createResource().path("dataImport").post(String.class, importBean);
         timer.end();
     }
 
@@ -192,12 +192,12 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
 
     public void turnOffDangerMode()
     {
-        post(createResource().path("systemproperty").path("jira.dangermode").queryParam("value", "false"));
+        createResource().path("systemproperty").path("jira.dangermode").queryParam("value", "false").post();
     }
 
     public void turnOnDangerMode()
     {
-        post(createResource().path("systemproperty").path("jira.dangermode").queryParam("value","true"));
+        createResource().path("systemproperty").path("jira.dangermode").queryParam("value","true").post();
     }
 
     private String getJiraHomePath()
@@ -205,7 +205,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         String jiraHomeDir = JIRA_HOME_DIR.get();
         if (jiraHomeDir == null)
         {
-            jiraHomeDir = get(createResource().path("dataImport/jiraHomePath"));
+            jiraHomeDir = createResource().path("dataImport/jiraHomePath").get(String.class);
             JIRA_HOME_DIR.set(jiraHomeDir);
         }
         return jiraHomeDir;

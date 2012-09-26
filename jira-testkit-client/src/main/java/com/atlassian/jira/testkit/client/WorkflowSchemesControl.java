@@ -23,19 +23,19 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
     public WorkflowSchemeData getWorkflowSchemeByProjectKey(String projectKey)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource();
-        return get(workflowSchemeResource.queryParam("projectKey", projectKey), WorkflowSchemeData.class);
+        return workflowSchemeResource.queryParam("projectKey", projectKey).get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData getWorkflowSchemeByProjectName(String projectName)
     {
         WebResource workflowSchemeResource = createWorkflowSchemeResource();
-        return get(workflowSchemeResource.queryParam("projectName", projectName), WorkflowSchemeData.class);
+        return workflowSchemeResource.queryParam("projectName", projectName).get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData getWorkflowSchemeByName(String schemeName)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource();
-        return get(workflowSchemeResource.queryParam("schemeName", schemeName), WorkflowSchemeData.class);
+        return workflowSchemeResource.queryParam("schemeName", schemeName).get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData getWorkflowSchemeByNameNullIfNotFound(final String schemeName)
@@ -65,28 +65,28 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
     public WorkflowSchemeData getWorkflowSchemeDraftByProjectName(String projectName)
     {
         WebResource workflowSchemeResource = createWorkflowSchemeResource();
-        return get(workflowSchemeResource.queryParam("projectName", projectName).queryParam("draft", "true"), WorkflowSchemeData.class);
+        return workflowSchemeResource.queryParam("projectName", projectName).queryParam("draft", "true").get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData getWorkflowSchemeDraftByProjectKey(String projectKey)
     {
         WebResource workflowSchemeResource = createWorkflowSchemeResource();
-        return get(workflowSchemeResource.queryParam("projectKey", projectKey).queryParam("draft", "true"), WorkflowSchemeData.class);
+        return workflowSchemeResource.queryParam("projectKey", projectKey).queryParam("draft", "true").get(WorkflowSchemeData.class);
     }
 
     public List<WorkflowSchemeData> getWorkflowSchemes()
     {
-        return get(createWorkflowSchemeResource(), WorkflowSchemeData.LIST);
+        return createWorkflowSchemeResource().get(WorkflowSchemeData.LIST);
     }
 
     public WorkflowSchemeData getWorkflowScheme(long id)
     {
-        return get(createWorkflowSchemeResource(id), WorkflowSchemeData.class);
+        return createWorkflowSchemeResource(id).get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData getWorkflowSchemeForParent(long id)
     {
-        return get(createDraftWorkflowSchemeResource(id), WorkflowSchemeData.class);
+        return createDraftWorkflowSchemeResource(id).get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData getWorkflowSchemeForParentNullIfNotFound(final long id)
@@ -104,37 +104,37 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
     public WorkflowSchemeData createDraft(WorkflowSchemeData scheme)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource(scheme.getId());
-        return put(workflowSchemeResource.path("draft"), scheme.getId(), WorkflowSchemeData.class);
+        return workflowSchemeResource.path("draft").put(WorkflowSchemeData.class, scheme.getId());
     }
 
     public WorkflowSchemeData createScheme(WorkflowSchemeData scheme)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource();
-        return put(workflowSchemeResource, scheme, WorkflowSchemeData.class);
+        return workflowSchemeResource.put(WorkflowSchemeData.class, scheme);
     }
 
     public void deleteScheme(long id)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource(id);
-        delete(workflowSchemeResource);
+        workflowSchemeResource.delete();
     }
 
     public WorkflowSchemeData createDraftScheme(long parentId)
     {
         final WebResource workflowSchemeResource = createDraftWorkflowSchemeResource(parentId);
-        return put(workflowSchemeResource, parentId, WorkflowSchemeData.class);
+        return workflowSchemeResource.put(WorkflowSchemeData.class, parentId);
     }
 
     public WorkflowSchemeData updateDraftScheme(long parentId, WorkflowSchemeData data)
     {
         final WebResource workflowSchemeResource = createDraftWorkflowSchemeResource(parentId);
-        return post(workflowSchemeResource, data, WorkflowSchemeData.class);
+        return workflowSchemeResource.post(WorkflowSchemeData.class, data);
     }
 
     public void discardDraftScheme(long parentId)
     {
         final WebResource workflowSchemeResource = createDraftWorkflowSchemeResource(parentId);
-        delete(workflowSchemeResource);
+        workflowSchemeResource.delete();
     }
 
     private WebResource createWorkflowSchemeResource(long id)

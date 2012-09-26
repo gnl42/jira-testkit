@@ -25,13 +25,13 @@ public class ApplicationPropertiesControl extends BackdoorControl<ApplicationPro
 
     public ApplicationPropertiesControl setText(String key, String value)
     {
-        post(createResource().path("applicationProperties/text/set"), new KeyValueHolder(key, value), String.class);
+        createResource().path("applicationProperties/text/set").post(String.class, new KeyValueHolder(key, value));
         return this;
     }
 
     public ApplicationPropertiesControl setString(String key, String value)
     {
-        post(createResource().path("applicationProperties/string/set"), new KeyValueHolder(key, value), String.class);
+        createResource().path("applicationProperties/string/set").post(String.class, new KeyValueHolder(key, value));
         return this;
     }
 
@@ -47,7 +47,7 @@ public class ApplicationPropertiesControl extends BackdoorControl<ApplicationPro
 
     public String getJiraHome()
     {
-        final ConfigInfo info = get(createResource().path("config-info"), ConfigInfo.class);
+        final ConfigInfo info = createResource().path("config-info").get(ConfigInfo.class);
         return info.jiraHomePath;
     }
 

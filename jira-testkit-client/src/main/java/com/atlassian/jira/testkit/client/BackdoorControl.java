@@ -7,7 +7,6 @@ import com.atlassian.jira.testkit.client.log.FuncTestLoggerImpl;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.ClientFilter;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +20,9 @@ import javax.ws.rs.core.MediaType;
  */
 public abstract class BackdoorControl<T extends BackdoorControl<T>> extends RestApiClient<T> implements FuncTestLogger
 {
+    /**
+     * The default REST path for the TestKit resources.
+     */
     public static final String DEFAULT_REST_PATH = "testkit-test";
 
     protected String rootPath;
@@ -34,63 +36,24 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     }
 
     /**
-     * Helper method for making easy GET calls. Feel free to add overloads to accept paths and parameter maps.
+     * Convenience method that simply calls {@code WebResource.get(String.class)} on the passed-in WebResource.
+     * <p/>
+     * <em>This method is often used for mutative operations</em> which should really be using a POST instead, but doing
+     * a GET is much more convenient since you can do it right from your browser when testing a backdoor and this is
+     * only testing code so it's OK.
      *
-     * @param webResource web resource
-     * @return response string
+     * @param webResource the WebResource to perform the GET on
      */
-    protected String get(final WebResource webResource)
+    protected final String get(final WebResource webResource)
     {
         return webResource.get(String.class);
     }
 
-    protected <T> T get(WebResource webResource, GenericType<T> returnType)
-    {
-        return webResource.get(returnType);
-    }
-
-    protected <T> T get(WebResource webResource, Class<T> returnClass)
-    {
-        return webResource.get(returnClass);
-    }
-
-    protected long getId(final WebResource webResource)
-    {
-        return Long.parseLong(get(webResource));
-    }
-
-    protected void post(WebResource webResource)
-    {
-        webResource.post();
-    }
-
-    protected <T> T post(WebResource webResource, Object bean, Class<T> returnClass)
-    {
-        return webResource.post(returnClass, bean);
-    }
-
-    protected <T> T put(WebResource webResource, Object bean, Class<T> returnClass)
-    {
-        return webResource.put(returnClass, bean);
-    }
-
-    protected void post(WebResource webResource, Object bean)
-    {
-        webResource.post(bean);
-    }
-
-    protected void delete(WebResource webResource)
-    {
-        webResource.delete();
-    }
-
     /**
-     * Creates the resource that corresponds to the root of the TestKit REST API. Note that the created
-     * {@code WebResource} has the following properties:
-     * <ul>
-     *     <li>it logs all GET/POST/etc requests made through it</li>
-     *     <li>it sets the <code>Content-Type: {@value MediaType#APPLICATION_JSON}</code> by default (override with {@link WebResource#type(javax.ws.rs.core.MediaType)})</li>
-     * </ul>
+     * Creates the resource that corresponds to the root of the TestKit REST API. Note that the created {@code
+     * WebResource} has the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it
+     * sets the <code>Content-Type: {@value MediaType#APPLICATION_JSON}</code> by default (override with {@link
+     * WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>
      *
      * @return a WebResource for the TestKit REST API root
      */

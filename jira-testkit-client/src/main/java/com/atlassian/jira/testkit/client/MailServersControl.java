@@ -65,7 +65,7 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         bean.prefix = prefix;
         bean.serverName = serverName;
         bean.port = String.valueOf(port);
-        post(createResource().path("mailServers/smtp"), bean, String.class);
+        createResource().path("mailServers/smtp").post(String.class, bean);
     }
 
     /**
@@ -111,7 +111,7 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         bean.port = String.valueOf(port);
         bean.username = username;
         bean.password = password;
-        post(createResource().path("mailServers/pop"), bean, String.class);
+        createResource().path("mailServers/pop").post(String.class, bean);
     }
 
     static class MailServersBean
