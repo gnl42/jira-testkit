@@ -64,7 +64,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     /**
      * Creates the resource that corresponds to the root of the TestKit REST API. Note that the created {@code
      * WebResource} has the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it
-     * sets the <code>Content-Type: {@value MediaType#APPLICATION_JSON}</code> by default (override with {@link
+     * sets the <code>Content-Type: application/json</code> by default (override with {@link
      * WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>
      *
      * @return a WebResource for the TestKit REST API root
