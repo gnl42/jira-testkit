@@ -11,17 +11,16 @@ import org.apache.commons.lang.StringUtils;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Parent class for Backdoor controllers making func-test REST requests to
- * set up test state without the UI overhead.
- *
- * See the Backdoor classes in com.atlassian.jira.pageobjects.config of the
- * jira-func-test-plugin module for more.
+ * Parent class for Backdoor controllers making func-test REST requests to set up test state without the UI overhead.
+ * <p/>
+ * See the Backdoor classes in com.atlassian.jira.pageobjects.config of the jira-func-test-plugin module for more.
  *
  * @since v5.0
  */
 public abstract class BackdoorControl<T extends BackdoorControl<T>> extends RestApiClient<T> implements FuncTestLogger
 {
     private static final String BACKDOOR = "Backdoor Shenanigans";
+    public static final String DEFAULT_REST_PATH = "testkit-test";
 
     protected String rootPath;
     private FuncTestLoggerImpl logger;
@@ -120,7 +119,18 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
      */
     protected WebResource createResource()
     {
-        return resourceRoot(rootPath).path("rest").path("testkit-test").path("1.0");
+        return resourceRoot(rootPath).path("rest").path(getRestModulePath()).path("1.0");
+    }
+
+    /**
+     * Returns the REST path used in this plugin's {@code atlassian-plugin.xml} (e.g. {@code &lt;rest path="..."&gt;}).
+     * The default value is "{@value #DEFAULT_REST_PATH}".
+     *
+     * @return the REST path used in this plugin's {@code atlassian-plugin.xml} (e.g. {@code &lt;rest path="..."&gt;}).
+     */
+    protected String getRestModulePath()
+    {
+        return DEFAULT_REST_PATH;
     }
 
     @Override
