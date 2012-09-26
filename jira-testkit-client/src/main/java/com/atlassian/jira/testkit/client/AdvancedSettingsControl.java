@@ -16,7 +16,7 @@ public class AdvancedSettingsControl extends BackdoorControl<AdvancedSettingsCon
 
     public void setTextFieldCharacterLengthLimit(long limit)
     {
-        post(createResource().path("applicationProperties/text/set"), new KeyValueHolder("jira.text.field.character.limit", String.valueOf(limit)), String.class);
+        createResource().path("applicationProperties/text/set").post(String.class, new KeyValueHolder("jira.text.field.character.limit", String.valueOf(limit)));
     }
 
     private static class KeyValueHolder

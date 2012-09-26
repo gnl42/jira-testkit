@@ -36,6 +36,6 @@ public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl>
     
     public boolean isGlobalEnabled(String feature)
     {
-        return Boolean.parseBoolean(get(createResource().path("darkFeatures").path("global").path("enabled").queryParam("feature", feature)));
+        return Boolean.parseBoolean(createResource().path("darkFeatures").path("global").path("enabled").queryParam("feature", feature).get(String.class));
     }
 }

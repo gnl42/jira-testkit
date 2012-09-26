@@ -17,14 +17,14 @@ public class FieldConfigurationControl extends BackdoorControl<FieldConfiguratio
 
     public void changeFieldVisibility(String configurationName, String fieldName, boolean hide)
     {
-        post(createResource().path("fieldConfiguration/changeFieldVisibility")
-                .queryParam("fieldConfigurationName", configurationName).queryParam("fieldName", fieldName).queryParam("hide", Boolean.toString(hide)));
+        createResource().path("fieldConfiguration/changeFieldVisibility")
+                .queryParam("fieldConfigurationName", configurationName).queryParam("fieldName", fieldName).queryParam("hide", Boolean.toString(hide)).post();
     }
 
     public void associateCustomFieldWithProject(String customFieldId, String projectName)
     {
-        post(createResource().path("fieldConfiguration/associateCustomFieldWithProject")
-                .queryParam("fieldId", customFieldId).queryParam("projectName", projectName));
+        createResource().path("fieldConfiguration/associateCustomFieldWithProject")
+                .queryParam("fieldId", customFieldId).queryParam("projectName", projectName).post();
     }
 
     /**

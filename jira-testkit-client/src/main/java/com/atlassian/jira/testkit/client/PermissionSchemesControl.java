@@ -21,8 +21,8 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      */
     public Long copyDefaultScheme(String schemeName)
     {
-        return getId(createResource().path("permissionSchemes/copyDefault")
-                .queryParam("schemeName", schemeName));
+        return Long.parseLong(createResource().path("permissionSchemes/copyDefault")
+                .queryParam("schemeName", schemeName).get(String.class));
     }
 
     public void addGroupPermission(Long schemeId, int permission, String groupName)

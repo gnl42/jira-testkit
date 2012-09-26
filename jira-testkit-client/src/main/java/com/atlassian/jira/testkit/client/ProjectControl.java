@@ -28,16 +28,16 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      */
     public long addProject(String name, String key, String lead)
     {
-        final String s = get(createResource().path("project/add")
+        final String s = createResource().path("project/add")
                 .queryParam("name", name)
                 .queryParam("key", key)
-                .queryParam("lead", lead), String.class);
+                .queryParam("lead", lead).get(String.class);
         return Long.parseLong(s);
     }
 
     public void deleteProject(String key)
     {
-        delete(createResource().path("project").path(key));
+        createResource().path("project").path(key).delete();
     }
 
     /**
@@ -110,17 +110,17 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
 
     public WorkflowSchemeData getWorkflowScheme(String projectKey)
     {
-        return get(createWorkflowSchemeResource(projectKey), WorkflowSchemeData.class);
+        return createWorkflowSchemeResource(projectKey).get(WorkflowSchemeData.class);
     }
 
     public WorkflowSchemeData setWorkflowScheme(String projectKey, long id)
     {
-        return post(createWorkflowSchemeResource(projectKey), id, WorkflowSchemeData.class);
+        return createWorkflowSchemeResource(projectKey).post(WorkflowSchemeData.class, id);
     }
 
     public void setDefaultWorkflowScheme(String projectKey)
     {
-        delete(createWorkflowSchemeResource(projectKey));
+        createWorkflowSchemeResource(projectKey).delete();
     }
 
     private WebResource createWorkflowSchemeResource(String projectKey)

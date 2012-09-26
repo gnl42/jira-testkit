@@ -55,12 +55,12 @@ public class SearchRequestControl extends BackdoorControl<SearchRequestControl>
             String jsonShareString)
     {
         SearchBean searchBean = new SearchBean(username, searchJql, searchName, searchDescription, jsonShareString);
-        return post(createResource().path("filter"), searchBean, String.class);
+        return createResource().path("filter").post(String.class, searchBean);
     }
 
     public List<SearchBean> getOwnedFilters(String username)
     {
-        return get(createResource().path("filter").path("my").queryParam("username", username), SEARCH_LIST_TYPE);
+        return createResource().path("filter").path("my").queryParam("username", username).get(SEARCH_LIST_TYPE);
     }
     
     @JsonAutoDetect

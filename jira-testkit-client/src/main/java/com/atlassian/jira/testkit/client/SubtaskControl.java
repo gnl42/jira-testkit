@@ -18,17 +18,17 @@ public class SubtaskControl extends BackdoorControl<SubtaskControl>
     
     public boolean isEnabled()
     {
-        return get(createSubtaskResource(), Boolean.class);
+        return createSubtaskResource().get(Boolean.class);
     }
 
     public boolean enable()
     {
-        return post(createSubtaskResource(), true, Boolean.class);
+        return createSubtaskResource().post(Boolean.class, true);
     }
 
     public boolean disable()
     {
-        return post(createSubtaskResource(), false, Boolean.class);
+        return createSubtaskResource().post(Boolean.class, false);
     }
 
     private WebResource createSubtaskResource()

@@ -54,7 +54,7 @@ public class GeneralConfigurationControl extends BackdoorControl<GeneralConfigur
 
     public GeneralConfigurationControl setJiraMode(JiraMode mode)
     {
-        post(createResource().path("applicationProperties/string/set"), new KeyValueHolder("jira.mode", mode.optionValue()));
+        createResource().path("applicationProperties/string/set").post(new KeyValueHolder("jira.mode", mode.optionValue()));
         return this;
     }
 

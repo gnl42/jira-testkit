@@ -22,12 +22,14 @@ public class ServicesControl extends BackdoorControl<ServicesControl>
 
     public List<ServiceBean> getServices()
     {
-        return get(createResource().path("services"), new GenericType<List<ServiceBean>>() {});
+        return createResource().path("services").get(new GenericType<List<ServiceBean>>()
+        {
+        });
     }
 
     public ServiceBean getService(long id)
     {
-        return get(createResource().path("services/" + id), ServiceBean.class);
+        return createResource().path("services/" + id).get(ServiceBean.class);
     }
 
     public static class ServiceBean

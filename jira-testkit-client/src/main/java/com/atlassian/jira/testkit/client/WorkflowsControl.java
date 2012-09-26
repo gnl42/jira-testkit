@@ -23,7 +23,7 @@ public class WorkflowsControl extends BackdoorControl<WorkflowsControl>
 
     public List<String> getWorkflows()
     {
-        return get(createWorkflowResource(), LIST_GENERIC_TYPE);
+        return createWorkflowResource().get(LIST_GENERIC_TYPE);
     }
 
     private WebResource createWorkflowResource()
