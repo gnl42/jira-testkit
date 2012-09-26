@@ -4,22 +4,23 @@ import com.atlassian.jira.testkit.client.dump.FuncTestTimer;
 import com.atlassian.jira.testkit.client.dump.TestInformationKit;
 import com.atlassian.jira.testkit.client.log.FuncTestLogger;
 import com.atlassian.jira.testkit.client.log.FuncTestLoggerImpl;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientRequest;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.ClientFilter;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ws.rs.core.MediaType;
 
 /**
  * Parent class for Backdoor controllers making func-test REST requests to set up test state without the UI overhead.
- * <p/>
- * See the Backdoor classes in com.atlassian.jira.pageobjects.config of the jira-func-test-plugin module for more.
  *
  * @since v5.0
  */
 public abstract class BackdoorControl<T extends BackdoorControl<T>> extends RestApiClient<T> implements FuncTestLogger
 {
-    private static final String BACKDOOR = "Backdoor Shenanigans";
     public static final String DEFAULT_REST_PATH = "testkit-test";
 
     protected String rootPath;
@@ -40,32 +41,17 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
      */
     protected String get(final WebResource webResource)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
-
-        String result = webResource.get(String.class);
-
-        logTime(webResource, "GET", timer.end());
-        return result;
+        return webResource.get(String.class);
     }
 
     protected <T> T get(WebResource webResource, GenericType<T> returnType)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
-
-        T result = webResource.type(MediaType.APPLICATION_JSON_TYPE).get(returnType);
-
-        logTime(webResource, "GET", timer.end());
-        return result;
+        return webResource.type(MediaType.APPLICATION_JSON_TYPE).get(returnType);
     }
 
     protected <T> T get(WebResource webResource, Class<T> returnClass)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
-
-        T result = webResource.type(MediaType.APPLICATION_JSON_TYPE).get(returnClass);
-
-        logTime(webResource, "GET", timer.end());
-        return result;
+        return webResource.type(MediaType.APPLICATION_JSON_TYPE).get(returnClass);
     }
 
     protected long getId(final WebResource webResource)
@@ -75,41 +61,27 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
 
     protected void post(WebResource webResource)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
-
         webResource.post();
-
-        logTime(webResource, "POST", timer.end());
     }
 
     protected <T> T post(WebResource webResource, Object bean, Class<T> returnClass)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
-        T result = webResource.type(MediaType.APPLICATION_JSON_TYPE).post(returnClass, bean);
-        logTime(webResource, "POST", timer.end());
-        return result;
+        return webResource.type(MediaType.APPLICATION_JSON_TYPE).post(returnClass, bean);
     }
 
     protected <T> T put(WebResource webResource, Object bean, Class<T> returnClass)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
-        T result = webResource.type(MediaType.APPLICATION_JSON_TYPE).put(returnClass, bean);
-        logTime(webResource, "PUT", timer.end());
-        return result;
+        return webResource.type(MediaType.APPLICATION_JSON_TYPE).put(returnClass, bean);
     }
 
     protected void post(WebResource webResource, Object bean)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
         webResource.type(MediaType.APPLICATION_JSON_TYPE).post(bean);
-        logTime(webResource, "POST", timer.end());
     }
 
     protected void delete(WebResource webResource)
     {
-        final FuncTestTimer timer = TestInformationKit.pullTimer(BACKDOOR);
         webResource.type(MediaType.APPLICATION_JSON_TYPE).delete();
-        logTime(webResource, "DELETE", timer.end());
     }
 
     /**
@@ -119,7 +91,10 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
      */
     protected WebResource createResource()
     {
-        return resourceRoot(rootPath).path("rest").path(getRestModulePath()).path("1.0");
+        WebResource resource = resourceRoot(rootPath).path("rest").path(getRestModulePath()).path("1.0");
+        resource.addFilter(new BackdoorLoggingFilter());
+
+        return resource;
     }
 
     /**
@@ -145,9 +120,27 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         logger.log(t);
     }
 
-    private void logTime(WebResource webResource, String type, long howLong)
+    /**
+     * Logs all Backdoor requests using the FuncTestLogger.
+     *
+     * @see BackdoorControl#log(Object)
+     */
+    protected class BackdoorLoggingFilter extends ClientFilter
     {
-        String relativePath = StringUtils.removeStart(webResource.getURI().getPath(), createResource().getURI().getPath());
-        log(String.format("Backdoor %4s in %5dms  %s", type, howLong, relativePath));
+        @Override
+        public ClientResponse handle(ClientRequest request) throws ClientHandlerException
+        {
+            FuncTestTimer timer = TestInformationKit.pullTimer("Backdoor Shenanigans");
+            ClientResponse response = getNext().handle(request);
+            logRequest(request, timer.end());
+
+            return response;
+        }
+
+        private void logRequest(ClientRequest request, long howLong)
+        {
+            String relativePath = StringUtils.removeStart(request.getURI().getPath(), createResource().getURI().getPath());
+            log(String.format("Backdoor %-6s in %5dms  %s", request.getMethod(), howLong, relativePath));
+        }
     }
 }
