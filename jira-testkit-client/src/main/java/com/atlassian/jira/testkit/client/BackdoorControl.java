@@ -46,12 +46,12 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
 
     protected <T> T get(WebResource webResource, GenericType<T> returnType)
     {
-        return webResource.type(MediaType.APPLICATION_JSON_TYPE).get(returnType);
+        return webResource.get(returnType);
     }
 
     protected <T> T get(WebResource webResource, Class<T> returnClass)
     {
-        return webResource.type(MediaType.APPLICATION_JSON_TYPE).get(returnClass);
+        return webResource.get(returnClass);
     }
 
     protected long getId(final WebResource webResource)
@@ -66,33 +66,39 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
 
     protected <T> T post(WebResource webResource, Object bean, Class<T> returnClass)
     {
-        return webResource.type(MediaType.APPLICATION_JSON_TYPE).post(returnClass, bean);
+        return webResource.post(returnClass, bean);
     }
 
     protected <T> T put(WebResource webResource, Object bean, Class<T> returnClass)
     {
-        return webResource.type(MediaType.APPLICATION_JSON_TYPE).put(returnClass, bean);
+        return webResource.put(returnClass, bean);
     }
 
     protected void post(WebResource webResource, Object bean)
     {
-        webResource.type(MediaType.APPLICATION_JSON_TYPE).post(bean);
+        webResource.post(bean);
     }
 
     protected void delete(WebResource webResource)
     {
-        webResource.type(MediaType.APPLICATION_JSON_TYPE).delete();
+        webResource.delete();
     }
 
     /**
-     * Creates the resource that corresponds to the root of the func-test REST API.
+     * Creates the resource that corresponds to the root of the TestKit REST API. Note that the created
+     * {@code WebResource} has the following properties:
+     * <ul>
+     *     <li>it logs all GET/POST/etc requests made through it</li>
+     *     <li>it sets the <code>Content-Type: {@value MediaType#APPLICATION_JSON}</code> by default (override with {@link WebResource#type(javax.ws.rs.core.MediaType)})</li>
+     * </ul>
      *
-     * @return a WebResource for the REST API root
+     * @return a WebResource for the TestKit REST API root
      */
     protected WebResource createResource()
     {
         WebResource resource = resourceRoot(rootPath).path("rest").path(getRestModulePath()).path("1.0");
         resource.addFilter(new BackdoorLoggingFilter());
+        resource.addFilter(new JsonMediaTypeFilter());
 
         return resource;
     }
@@ -141,6 +147,23 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         {
             String relativePath = StringUtils.removeStart(request.getURI().getPath(), createResource().getURI().getPath());
             log(String.format("Backdoor %-6s in %5dms  %s", request.getMethod(), howLong, relativePath));
+        }
+    }
+
+    /**
+     * Sets the {@code Content-Type} header to "{@value MediaType#APPLICATION_JSON}" if not already set.
+     */
+    protected static class JsonMediaTypeFilter extends ClientFilter
+    {
+        @Override
+        public ClientResponse handle(ClientRequest request) throws ClientHandlerException
+        {
+            if (request.getEntity() != null && !request.getHeaders().containsKey("Content-Type"))
+            {
+                request.getHeaders().putSingle("Content-Type", MediaType.APPLICATION_JSON);
+            }
+
+            return getNext().handle(request);
         }
     }
 }
