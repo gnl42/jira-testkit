@@ -26,7 +26,7 @@
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>5.2-ignite4</jira.version>
+		<jira.version>5.2.KA20</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>
@@ -145,7 +145,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.atlassian.jira</groupId>
-				<artifactId>jira-core</artifactId>
+				<artifactId>jira-api</artifactId>
 				<scope>provided</scope>
 				<version>${jira.version}</version>
 			</dependency>

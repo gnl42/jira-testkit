@@ -40,7 +40,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
-			<artifactId>jira-core</artifactId>
+			<artifactId>jira-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
