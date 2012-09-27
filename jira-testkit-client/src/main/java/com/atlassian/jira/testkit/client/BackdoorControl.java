@@ -62,20 +62,39 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     }
 
     /**
-     * Creates the resource that corresponds to the root of the TestKit REST API. Note that the created {@code
-     * WebResource} has the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it
-     * sets the <code>Content-Type: application/json</code> by default (override with {@link
+     * Creates the resource that corresponds to the root of a REST API. Note that the created {@code WebResource} has
+     * the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it sets the
+     * <code>Content-Type: application/json</code> by default (override with {@link
      * WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>
      *
-     * @return a WebResource for the TestKit REST API root
+     * @param restModulePath a String containing the REST path
+     * @return a WebResource for the the API root at the specified path
+     * @see #getRestModulePath()
      */
-    protected WebResource createResource()
+    protected final WebResource createResourceForPath(String restModulePath)
     {
-        WebResource resource = resourceRoot(rootPath).path("rest").path(getRestModulePath()).path("1.0");
+        WebResource resource = resourceRoot(rootPath).path("rest").path(restModulePath).path("1.0");
         resource.addFilter(new BackdoorLoggingFilter());
         resource.addFilter(new JsonMediaTypeFilter());
 
         return resource;
+    }
+
+    /**
+     * Creates the resource that corresponds to the root of the TestKit REST API, using the values returned by {@link
+     * #getRestModulePath()}. Note that the created {@code WebResource} has the following properties: <ul> <li>it logs
+     * all GET/POST/etc requests made through it</li> <li>it sets the <code>Content-Type: application/json</code> by
+     * default (override with {@link WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>.
+     *
+     * To create a WebResource for a different root, use {@link #createResource}
+     *
+     * @return a WebResource for the TestKit REST API root
+     * @see #createResource
+     * @see #getRestModulePath()
+     */
+    protected WebResource createResource()
+    {
+        return createResourceForPath(getRestModulePath());
     }
 
     /**
