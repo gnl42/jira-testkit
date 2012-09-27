@@ -44,12 +44,12 @@ public class WorkflowSchemesBackdoor
     private final WorkflowSchemeManager workflowSchemeManager;
     private final ProjectManager projectManager;
     private final JiraAuthenticationContext context;
-    private final WorkflowSchemeDataFactory dataFactory;
+    private final WorkflowSchemeDataFactoryImpl dataFactory;
 
     public WorkflowSchemesBackdoor(WorkflowSchemeManager workflowSchemeManager,
                                    ProjectManager projectManager,
                                    JiraAuthenticationContext context,
-                                   WorkflowSchemeDataFactory dataFactory)
+                                   WorkflowSchemeDataFactoryImpl dataFactory)
     {
         this.workflowSchemeManager = workflowSchemeManager;
         this.projectManager = projectManager;

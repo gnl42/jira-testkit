@@ -19,6 +19,9 @@
     <component interface="com.atlassian.jira.testkit.plugin.EventWatcherImpl" key="eventWatcher"
                name="atlassian-event listing" class="com.atlassian.jira.testkit.plugin.EventWatcherImpl"/>
 
-    <component key="workflowSchemeDataFactory" class="com.atlassian.jira.testkit.plugin.workflows.WorkflowSchemeDataFactory"/>
+    <component key="workflowSchemeDataFactory"
+               class="com.atlassian.jira.testkit.plugin.workflows.WorkflowSchemeDataFactoryImpl"
+               interface="com.atlassian.jira.testkit.plugin.workflows.WorkflowSchemeDataFactory"
+               public="true"/>
 
 </atlassian-plugin>

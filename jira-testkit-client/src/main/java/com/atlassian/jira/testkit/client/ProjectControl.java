@@ -113,16 +113,6 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
         return createWorkflowSchemeResource(projectKey).get(WorkflowSchemeData.class);
     }
 
-    public WorkflowSchemeData setWorkflowScheme(String projectKey, long id)
-    {
-        return createWorkflowSchemeResource(projectKey).post(WorkflowSchemeData.class, id);
-    }
-
-    public void setDefaultWorkflowScheme(String projectKey)
-    {
-        createWorkflowSchemeResource(projectKey).delete();
-    }
-
     private WebResource createWorkflowSchemeResource(String projectKey)
     {
         return createResource().path("project").path(projectKey).path("workflowscheme");
