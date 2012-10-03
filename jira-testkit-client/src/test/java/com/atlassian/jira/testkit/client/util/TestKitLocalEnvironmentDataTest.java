@@ -1,6 +1,8 @@
 package com.atlassian.jira.testkit.client.util;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +14,9 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class TestKitLocalEnvironmentDataTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void emptyPropertiesThrowsMalformedUrlException() throws IOException {
@@ -35,5 +40,18 @@ public class TestKitLocalEnvironmentDataTest {
         assertThat(localEnvironmentData.shouldCreateDummyTenant(), is(true));
         assertThat(localEnvironmentData.getXMLDataLocation(), is(new File("src/test/xml").getCanonicalFile()));
         assertThat(localEnvironmentData.getEdition(), is("10"));
+    }
+
+    @Test
+    public void xmlDataLocationOverrideIsAccepted() throws IOException {
+        TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData("src/test/resources");
+        assertThat(localEnvironmentData.getXMLDataLocation(), is(new File("src/test/resources").getCanonicalFile()));
+    }
+
+    @Test
+    public void invalidXmlDataLocationThrowsException() throws IOException {
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage("Cannot find xml data location: 'bad'");
+        new TestKitLocalEnvironmentData("bad");
     }
 }
