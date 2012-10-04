@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -65,7 +66,7 @@ public class ProjectBackdoor
      */
     @GET
     @Path("add")
-    public Response addProject(@QueryParam ("name") String name,
+    public String addProject(@QueryParam ("name") String name,
                                @QueryParam ("key") String key,
                                @QueryParam ("lead") String lead)
     {
@@ -82,26 +83,25 @@ public class ProjectBackdoor
                 errorCollection, permissionSchemeId, null, null);
         projectService.updateProjectSchemes(schemesResult, project);
 
-        return Response.ok(project.getId().toString()).build();
+        return String.valueOf(project.getId());
     }
 
     @DELETE
     @Path("{projectKey}")
-    public Response delete(@PathParam("projectKey") String key)
+    public void delete(@PathParam("projectKey") String key)
     {
         final User adminUser = getUserWithAdminPermission();
         final ProjectService.DeleteProjectValidationResult deleteProjectValidationResult = projectService.validateDeleteProject(adminUser, key);
         if (!deleteProjectValidationResult.isValid())
         {
-            return Response.serverError().cacheControl(CacheControl.never()).build();
+            throw new WebApplicationException();
         }
         projectService.deleteProject(adminUser, deleteProjectValidationResult);
-        return Response.ok().cacheControl(CacheControl.never()).build();
     }
 
     @GET
     @Path("permissionScheme/set")
-    public Response setPermissionScheme(@QueryParam ("project") long projectId,
+    public String setPermissionScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") long schemeId)
     {
 
@@ -112,14 +112,14 @@ public class ProjectBackdoor
         permissionSchemeManager.removeSchemesFromProject(project);
         permissionSchemeManager.addSchemeToProject(project, scheme);
 
-        return Response.ok().build();
+        return null;
     }
 
     private User getUserWithAdminPermission() {return userUtil.getUser("admin");}
 
     @GET
     @Path("defaultIssueType/set")
-    public Response setDefaultIssueType(@QueryParam ("project") long projectId,
+    public String setDefaultIssueType(@QueryParam ("project") long projectId,
             @QueryParam ("issueTypeId") String issueTypeId)
     {
         User admin = getUserWithAdminPermission();
@@ -128,12 +128,12 @@ public class ProjectBackdoor
         final FieldConfigScheme issueTypeScheme = issueTypeSchemeManager.getConfigScheme(project);
         issueTypeSchemeManager.setDefaultValue(issueTypeScheme.getOneAndOnlyConfig(), issueTypeId);
 
-        return Response.ok(null).build();
+        return null;
     }
 
     @GET
     @Path("issueTypeScreenScheme/set")
-    public Response setIssueTypeScreenScheme(@QueryParam ("project") long projectId,
+    public String setIssueTypeScreenScheme(@QueryParam ("project") long projectId,
             @QueryParam ("issueTypeScreenScheme") long issueTypeScreenSchemeId)
     {
         User admin = getUserWithAdminPermission();
@@ -143,12 +143,12 @@ public class ProjectBackdoor
 
         issueTypeScreenSchemeManager.addSchemeAssociation(project.getGenericValue(), issueTypeScreenScheme);
 
-        return Response.ok(null).build();
+        return null;
     }
     
     @GET
     @Path("projectLead/set")
-    public Response setAutomaticAssignee(@QueryParam ("project") long projectId,
+    public String setAutomaticAssignee(@QueryParam ("project") long projectId,
             @QueryParam ("username") final String username)
     {
         User admin = getUserWithAdminPermission();
@@ -161,12 +161,12 @@ public class ProjectBackdoor
         
         if (!result.isValid())
         {
-            return Response.serverError().build();
+            throw new WebApplicationException();
         }
         
         projectService.updateProject(result);
         
-        return Response.ok(null).build();
+        return null;
     }
     
     

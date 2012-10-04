@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/osgi"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+                                 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- configure a ResourceFilterFactory for this plugin's REST resources -->
+    <service interface="com.sun.jersey.spi.container.ResourceFilterFactory">
+        <service-properties>
+            <beans:entry key="plugin" value="com.atlassian.plugins.rest"/>
+        </service-properties>
+        <beans:bean class="com.atlassian.jira.testkit.jersey.TestKitResourceFilterFactory" autowire="constructor"/>
+    </service>
+
+</beans:beans>
