@@ -2,7 +2,6 @@ package com.atlassian.jira.testkit.plugin.workflows;
 
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
-import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
@@ -107,6 +106,22 @@ public class WorkflowSchemesBackdoor
         else
         {
             return Response.ok(dataFactory.toData(workflowSchemeObj)).cacheControl(never()).build();
+        }
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response updateWorkflowScheme(WorkflowSchemeData data, @PathParam("id") long id)
+    {
+        final AssignableWorkflowScheme workflowSchemeObj = workflowSchemeManager.getWorkflowSchemeObj(id);
+        if (workflowSchemeObj == null)
+        {
+            return fourOhfour();
+        }
+        else
+        {
+            AssignableWorkflowScheme scheme = workflowSchemeManager.updateWorkflowScheme(dataFactory.schemeFromData(data, workflowSchemeObj.builder()));
+            return Response.ok(dataFactory.toData(scheme)).cacheControl(never()).build();
         }
     }
 
@@ -222,9 +237,8 @@ public class WorkflowSchemesBackdoor
     @PUT
     public Response createWorkflowScheme(WorkflowSchemeData data)
     {
-        Scheme scheme = workflowSchemeManager.createSchemeAndEntities(dataFactory.schemeFromData(data));
-        final AssignableWorkflowScheme workflowSchemeObj = workflowSchemeManager.getWorkflowSchemeObj(scheme.getId());
-        return Response.ok(dataFactory.toData(workflowSchemeObj)).cacheControl(never()).build();
+        AssignableWorkflowScheme scheme = workflowSchemeManager.createScheme(dataFactory.schemeFromData(data, workflowSchemeManager.assignableBuilder()));
+        return Response.ok(dataFactory.toData(scheme)).cacheControl(never()).build();
     }
 
     private static Response fourOhfour()

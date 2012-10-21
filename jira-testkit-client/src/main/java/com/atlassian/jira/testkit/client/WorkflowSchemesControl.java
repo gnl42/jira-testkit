@@ -113,6 +113,12 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
         return workflowSchemeResource.put(WorkflowSchemeData.class, scheme);
     }
 
+    public WorkflowSchemeData updateScheme(WorkflowSchemeData scheme)
+    {
+        final WebResource workflowSchemeResource = createWorkflowSchemeResource(scheme.getId());
+        return workflowSchemeResource.put(WorkflowSchemeData.class, scheme);
+    }
+
     public void deleteScheme(long id)
     {
         final WebResource workflowSchemeResource = createWorkflowSchemeResource(id);

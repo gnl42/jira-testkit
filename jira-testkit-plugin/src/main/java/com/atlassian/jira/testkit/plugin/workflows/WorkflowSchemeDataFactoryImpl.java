@@ -7,16 +7,15 @@ import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
+import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import com.atlassian.jira.workflow.DraftWorkflowScheme;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowScheme;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -111,19 +110,19 @@ public class WorkflowSchemeDataFactoryImpl implements WorkflowSchemeDataFactory
         };
     }
 
-    Scheme schemeFromData(WorkflowSchemeData data)
+    AssignableWorkflowScheme schemeFromData(WorkflowSchemeData data, AssignableWorkflowScheme.Builder current)
     {
-        List<SchemeEntity> entity = Lists.newArrayList();
-        for (Map.Entry<String, String> value : data.getMappings().entrySet())
+        AssignableWorkflowScheme.Builder builder = current.setName(data.getName()).setDescription(data.getDescription());
+        builder.clearMappings();
+        if (data.getMappings() != null)
         {
-            entity.add(new SchemeEntity(value.getValue(), findIssueType(value.getKey())));
+            builder.setMappings(data.getMappings());
         }
         if (data.getDefaultWorkflow() != null)
         {
-            entity.add(new SchemeEntity(data.getDefaultWorkflow(), "0"));
+            builder.setDefaultWorkflow(data.getDefaultWorkflow());
         }
-
-        return new Scheme(null, null, data.getName(), data.getDescription(), entity);
+        return builder.build();
     }
 
     DraftWorkflowScheme draftFromData(WorkflowSchemeData data, DraftWorkflowScheme current)
