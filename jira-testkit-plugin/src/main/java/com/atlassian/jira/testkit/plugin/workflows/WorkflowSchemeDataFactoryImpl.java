@@ -113,21 +113,20 @@ public class WorkflowSchemeDataFactoryImpl implements WorkflowSchemeDataFactory
     AssignableWorkflowScheme schemeFromData(WorkflowSchemeData data, AssignableWorkflowScheme.Builder current)
     {
         AssignableWorkflowScheme.Builder builder = current.setName(data.getName()).setDescription(data.getDescription());
-        builder.clearMappings();
-        if (data.getMappings() != null)
-        {
-            builder.setMappings(data.getMappings());
-        }
-        if (data.getDefaultWorkflow() != null)
-        {
-            builder.setDefaultWorkflow(data.getDefaultWorkflow());
-        }
+        setMappings(data, current);
         return builder.build();
     }
 
     DraftWorkflowScheme draftFromData(WorkflowSchemeData data, DraftWorkflowScheme current)
     {
         DraftWorkflowScheme.Builder builder = current.builder().clearMappings();
+        setMappings(data, builder);
+        return builder.build();
+    }
+
+    private void setMappings(WorkflowSchemeData data, WorkflowScheme.Builder<?> builder)
+    {
+        builder.clearMappings();
         if (data.getDefaultWorkflow() != null)
         {
             builder.setDefaultWorkflow(data.getDefaultWorkflow());
@@ -137,7 +136,6 @@ public class WorkflowSchemeDataFactoryImpl implements WorkflowSchemeDataFactory
         {
             builder.setMapping(findIssueType(entry.getKey()), entry.getValue());
         }
-        return builder.build();
     }
 
     private String findIssueType(String type)
