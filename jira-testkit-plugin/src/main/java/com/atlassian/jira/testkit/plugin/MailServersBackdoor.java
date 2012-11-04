@@ -55,7 +55,8 @@ public class MailServersBackdoor
         // 3. Add the new server
         MailServer mailServer = new SMTPMailServerImpl(null, mailServerBean.name, mailServerBean.description,
                 mailServerBean.from, mailServerBean.prefix, false, MailProtocol.SMTP, mailServerBean.serverName,
-                mailServerBean.port, false, "", "", 10000L);
+                mailServerBean.port, mailServerBean.tls == null ? false : mailServerBean.tls,
+                mailServerBean.username, mailServerBean.password, 10000L);
         mailServerManager.create(mailServer);
 
         return Response.ok(null).build();
