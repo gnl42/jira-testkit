@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to manipulate ApplicationProperties as part of setup for tests.
@@ -33,28 +34,28 @@ public class ApplicationPropertiesBackdoor
     @GET
     @AnonymousAllowed
     @Path("option/set")
-    public String setOption(@QueryParam ("key") String key, @QueryParam ("value") boolean value)
+    public Response setOption(@QueryParam ("key") String key, @QueryParam ("value") boolean value)
     {
         applicationProperties.setOption(key, value);
-        return null;
+        return Response.ok(null).build();
     }
 
     @POST
     @AnonymousAllowed
     @Path("text/set")
-    public String setText(KeyValueHolder holder)
+    public Response setText(KeyValueHolder holder)
     {
         applicationProperties.setText(holder.key, holder.value);
-        return null;
+        return Response.ok(null).build();
     }
 
     @POST
     @AnonymousAllowed
     @Path("string/set")
-    public String setString(KeyValueHolder holder)
+    public Response setString(KeyValueHolder holder)
     {
         applicationProperties.setString(holder.key, holder.value);
-        return null;
+        return Response.ok(null).build();
     }
 
     private static class KeyValueHolder
