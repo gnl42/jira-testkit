@@ -1,6 +1,7 @@
 package com.atlassian.jira.testkit.client;
 
 
+import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
 
 /**
@@ -45,6 +46,7 @@ public class Backdoor
 	private final AttachmentsControl attachmentsControl;
 	private final TimeTrackingControl timeTrackingControl;
 	private final LicenseControl licenseControl;
+	private final ProjectRoleClient projectRoleClient;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -82,6 +84,7 @@ public class Backdoor
 		this.attachmentsControl = new AttachmentsControl(environmentData);
 		this.timeTrackingControl = new TimeTrackingControl(environmentData);
 		this.licenseControl = new LicenseControl(environmentData);
+        this.projectRoleClient = new ProjectRoleClient(environmentData);
     }
 
     public ScreensControl screens()
@@ -292,15 +295,23 @@ public class Backdoor
         return searchClient;
     }
 
-	public AttachmentsControl attachments() {
+	public AttachmentsControl attachments()
+    {
 		return attachmentsControl;
 	}
 
-	public TimeTrackingControl timeTracking() {
+	public TimeTrackingControl timeTracking()
+    {
 		return timeTrackingControl;
 	}
 
-	public LicenseControl license() {
+	public LicenseControl license()
+    {
 		return licenseControl;
 	}
+
+    public ProjectRoleClient projectRoles()
+    {
+        return projectRoleClient;
+    }
 }
