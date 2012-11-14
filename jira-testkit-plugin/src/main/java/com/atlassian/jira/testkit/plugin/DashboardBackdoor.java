@@ -4,6 +4,8 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.favourites.FavouritesService;
 import com.atlassian.jira.bc.portal.PortalPageService;
 import com.atlassian.jira.portal.PortalPage;
+import com.atlassian.jira.portal.PortletConfiguration;
+import com.atlassian.jira.portal.PortletConfigurationManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
@@ -19,6 +21,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.util.List;
+
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
 /**
@@ -32,14 +36,16 @@ public class DashboardBackdoor
 {
     private final PortalPageService portalPageService;
     private final FavouritesService favouritesService;
-    private final UserUtil userUtil;
+	private final PortletConfigurationManager portletConfigurationManager;
+	private final UserUtil userUtil;
 
-    public DashboardBackdoor(PortalPageService portalPageService, UserUtil userUtil, FavouritesService favouritesService)
+    public DashboardBackdoor(PortalPageService portalPageService, UserUtil userUtil, FavouritesService favouritesService, PortletConfigurationManager portletConfigurationManager)
     {
         this.portalPageService = portalPageService;
         this.userUtil = userUtil;
         this.favouritesService = favouritesService;
-    }
+		this.portletConfigurationManager = portletConfigurationManager;
+	}
 
     @GET
     @Path("my")
@@ -62,6 +68,17 @@ public class DashboardBackdoor
         return Response.ok().cacheControl(never())
                 .entity(asBeans(user, portalPageService.getOwnedPortalPages(user))).build();
     }
+
+	@GET
+	@Path("emptySystemDashboard")
+	public Response emptySystemDashboard() {
+		final PortalPage systemDashboard = portalPageService.getSystemDefaultPortalPage();
+		final List<PortletConfiguration> portlets = portletConfigurationManager.getByPortalPage(systemDashboard.getId());
+		for (PortletConfiguration pc : portlets) {
+			portletConfigurationManager.delete(pc);
+		}
+		return Response.ok().cacheControl(never()).build();
+	}
 
     private Iterable<PortalPageBean> asBeans(final User user, Iterable<? extends PortalPage> portalPages)
     {
