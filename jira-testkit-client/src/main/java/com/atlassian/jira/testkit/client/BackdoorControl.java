@@ -136,24 +136,41 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         webResource.type(MediaType.APPLICATION_JSON_TYPE).delete();
     }
 
-    /**
-     * Creates the resource that corresponds to the root of the TestKit REST API. Note that the created {@code
-     * WebResource} has the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it
-     * sets the <code>Content-Type: {@value MediaType#APPLICATION_JSON}</code> by default (override with {@link
-     * WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>
-     *
-     * @return a WebResource for the TestKit REST API root
-     */
-    protected WebResource createResource()
-    {
-        WebResource resource = resourceRoot(rootPath).path("rest").path(getRestModulePath()).path("1.0");
-        resource.addFilter(new BackdoorLoggingFilter());
-        resource.addFilter(new JsonMediaTypeFilter());
+	/**
+	 * Creates the resource that corresponds to the root of a REST API. Note that the created {@code WebResource} has
+	 * the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it sets the
+	 * <code>Content-Type: application/json</code> by default (override with {@link
+	 * WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>
+	 *
+	 * @param restModulePath a String containing the REST path
+	 * @return a WebResource for the the API root at the specified path
+	 * @see #getRestModulePath()
+	 */
+	protected final WebResource createResourceForPath(String restModulePath) {
+		WebResource resource = resourceRoot(rootPath).path("rest").path(restModulePath).path("1.0");
+		resource.addFilter(new BackdoorLoggingFilter());
+		resource.addFilter(new JsonMediaTypeFilter());
 
-        return resource;
-    }
+		return resource;
+	}
 
-    /**
+	/**
+	 * Creates the resource that corresponds to the root of the TestKit REST API, using the values returned by {@link
+	 * #getRestModulePath()}. Note that the created {@code WebResource} has the following properties: <ul> <li>it logs
+	 * all GET/POST/etc requests made through it</li> <li>it sets the <code>Content-Type: application/json</code> by
+	 * default (override with {@link WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>.
+	 * <p/>
+	 * To create a WebResource for a different root, use {@link #createResource}
+	 *
+	 * @return a WebResource for the TestKit REST API root
+	 * @see #createResource
+	 * @see #getRestModulePath()
+	 */
+	protected WebResource createResource() {
+		return createResourceForPath(getRestModulePath());
+	}
+
+	/**
      * Returns the REST path used in this plugin's {@code atlassian-plugin.xml} (e.g. {@code &lt;rest path="..."&gt;}).
      * The default value is "{@value #DEFAULT_REST_PATH}".
      *
