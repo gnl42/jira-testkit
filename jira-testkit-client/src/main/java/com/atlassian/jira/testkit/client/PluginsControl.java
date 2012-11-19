@@ -1,5 +1,7 @@
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.sun.jersey.api.client.WebResource;
 
 public class PluginsControl extends BackdoorControl<PluginsControl>
@@ -36,4 +38,18 @@ public class PluginsControl extends BackdoorControl<PluginsControl>
                 .queryParam("key", completeKey);
         get(resource);
     }
+
+	public void setPluginLicense(String pluginKey, String license) throws JSONException {
+		pluginKey += "-key";
+		final String pluginDescStr = createResourceForPath("plugins").path(pluginKey).get(String.class);
+		final JSONObject pluginDesc = new JSONObject(pluginDescStr);
+		final JSONObject licenseDetails = new JSONObject();
+		licenseDetails.put("rawLicense", license);
+		pluginDesc.put("licenseDetails", licenseDetails);
+
+		createResourceForPath("plugins").
+				path(pluginKey).
+				accept("application/vnd.atl.plugins.plugin+json").
+				type("application/vnd.atl.plugins.plugin+json").put(pluginDesc.toString());
+	}
 }
