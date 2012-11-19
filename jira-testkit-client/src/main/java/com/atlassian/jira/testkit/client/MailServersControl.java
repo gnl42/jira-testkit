@@ -58,6 +58,46 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
     public void addSmtpServer(String name, String description, String from, String prefix, String serverName,
             int port)
     {
+        addSmtpServer(name, description, from, prefix, serverName, port, false);
+    }
+
+    /**
+     * Adds an SMTP server with the specified parameters.
+     *
+     * Deletes any existing SMTP servers first.
+     *
+     * @param name The name of this server within JIRA.
+     * @param description The description for this server.
+     * @param from The default address this server will use to send emails from.
+     * @param prefix The prefix for all outgoing email subjects.
+     * @param serverName The SMTP host name of your mail server.
+     * @param port The SMTP port of your mail server.
+     * @param tls Should TLS be enabled?
+     */
+    public void addSmtpServer(String name, String description, String from, String prefix, String serverName,
+                              int port, boolean tls)
+    {
+        addSmtpServer(name, description, from, prefix, serverName, port, null, null, tls);
+    }
+
+    /**
+     * Adds an SMTP server with the specified parameters.
+     *
+     * Deletes any existing SMTP servers first.
+     *
+     * @param name The name of this server within JIRA.
+     * @param description The description for this server.
+     * @param from The default address this server will use to send emails from.
+     * @param prefix The prefix for all outgoing email subjects.
+     * @param serverName The SMTP host name of your mail server.
+     * @param port The SMTP port of your mail server.
+     * @param username The username for authentication.
+     * @param password The password for authentication.
+     * @param tls Should TLS be enabled?
+     */
+    public void addSmtpServer(String name, String description, String from, String prefix, String serverName,
+                              int port, String username, String password, boolean tls)
+    {
         MailServersBean bean = new MailServersBean();
         bean.name = name;
         bean.description = description;
@@ -65,6 +105,9 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         bean.prefix = prefix;
         bean.serverName = serverName;
         bean.port = String.valueOf(port);
+        bean.tls = tls;
+        bean.username = username;
+        bean.password = password;
         createResource().path("mailServers/smtp").post(String.class, bean);
     }
 
@@ -125,6 +168,7 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         public String password;
         public String from;
         public String prefix;
+        public boolean tls;
     }
 
 }

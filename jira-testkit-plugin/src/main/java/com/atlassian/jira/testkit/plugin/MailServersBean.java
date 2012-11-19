@@ -16,4 +16,5 @@ public class MailServersBean
     public String password;
     public String from;
     public String prefix;
+    public Boolean tls;
 }

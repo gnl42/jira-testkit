@@ -195,7 +195,25 @@ public class UsersAndGroupsBackdoor
         return Response.ok(null).build();
     }
 
-    @GET
+	@GET
+	@AnonymousAllowed
+	@Path("group/delete")
+	public Response deleteGroup(@QueryParam ("groupName") final String groupName)
+	{
+		try
+		{
+			crowdService.removeGroup(new GroupTemplate(groupName));
+		}
+		catch (OperationNotPermittedException e)
+		{
+			log.warn("OperationNotPermittedException adding group", e);
+			throw new RuntimeException(e);
+		}
+
+		return Response.ok(null).build();
+	}
+
+	@GET
     @AnonymousAllowed
     @Path("user/addMany")
     public Response addManyUsers(

@@ -26,6 +26,11 @@ public class DashboardControl extends BackdoorControl<DashboardControl>
         return createResource().path("dashboard").path("my").queryParam("username", username).get(DASHBOARD_LIST_GENERIC_TYPE);
     }
 
+	public DashboardControl emptySystemDashboard() {
+		createResource().path("dashboard").path("emptySystemDashboard").get(String.class);
+		return this;
+	}
+
     @JsonAutoDetect
     public static class Dashboard
     {

@@ -136,6 +136,12 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         get(createResource().path("group").path("add").queryParam("groupName", groupName));
     }
 
+	public UsersAndGroupsControl deleteGroup(String groupName)
+	{
+		get(createResource().path("group").path("delete").queryParam("groupName", groupName));
+		return this;
+	}
+
     public UsersAndGroupsControl resetLoginCount(String username)
     {
         get(createResource().path("user").path("resetLoginCount").queryParam("user", username));
