@@ -130,13 +130,13 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- PROVIDED -->
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>2.1</version>
-				<scope>provided</scope>
+				<scope>compile</scope>
 			</dependency>
+            <!-- PROVIDED -->
 			<dependency>
 				<groupId>com.atlassian.jira</groupId>
 				<artifactId>jira-api</artifactId>
