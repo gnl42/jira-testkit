@@ -21,6 +21,7 @@ import java.io.FileFilter;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -82,7 +83,15 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
                 @Override
                 public Integer apply(File file)
                 {
-                    return Integer.parseInt(pattern.matcher(file.getName()).group());
+                    final Matcher matcher = pattern.matcher(file.getName());
+                    if (matcher.matches())
+                    {
+                        return Integer.parseInt(matcher.group(1));
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("Unexpected blank XML resource file name: " + file.getName());
+                    }
                 }
             };
         }
