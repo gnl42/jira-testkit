@@ -13,6 +13,8 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
@@ -36,6 +38,8 @@ import static com.google.common.collect.Iterables.transform;
  */
 public class DataImportControl extends BackdoorControl<DataImportControl>
 {
+    private static final Logger log = LoggerFactory.getLogger(DataImportControl.class);
+
     public static final String FS = System.getProperty("file.separator");
     public static final String IMPORT = "import";
     public static final String TESTKIT_BLANKPROJECTS = "testkit-blankprojects-";
@@ -144,10 +148,11 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
      */
     public void restoreBlankInstance(String license)
     {
-        restoreDataFromResource(findMatchingResource(getImportConfig().buildNumber), license);
+        final String resource = findMatchingResource(getImportConfig().buildNumber);
+        log.info("Restoring blank resource {}", resource);
+        restoreDataFromResource(resource, license);
     }
 
-    // TODO create resources & test
     @VisibleForTesting
     protected String findMatchingResource(int buildNumber)
     {

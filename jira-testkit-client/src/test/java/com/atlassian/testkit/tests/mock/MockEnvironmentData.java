@@ -44,7 +44,7 @@ public class MockEnvironmentData implements JIRAEnvironmentData
         }
         catch (MalformedURLException e)
         {
-            throw new AssertionError("No, not really", e);
+            throw new RuntimeException("No, not really", e);
         }
     }
 
