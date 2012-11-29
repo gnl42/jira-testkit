@@ -8,7 +8,7 @@
 	<artifactId>jira-testkit-plugin</artifactId>
 	<packaging>atlassian-plugin</packaging>
 
-    <name>JIRA TestKit Plugin</name>
+    <name>JIRA TestKit - Plugin</name>
 	<description>The TestKit plugin makes it easy to set up your JIRA test cases. Do not use in production.</description>
     <url>https://bitbucket.org/atlassian/jira-testkit/</url>
 

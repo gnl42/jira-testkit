@@ -9,6 +9,7 @@ import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.task.TaskProgressSink;
 import com.atlassian.jira.user.util.UserUtil;
+import com.atlassian.jira.util.BuildUtilsInfo;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
@@ -34,13 +35,16 @@ import javax.ws.rs.core.Response;
 public class DataImportBackdoor
 {
     private final UserUtil userUtil;
-    private ApplicationProperties applicationProperties;
-    private DataImportService dataImportService;
-    private JiraHome jiraHome;
+    private final BuildUtilsInfo buildInfo;
+    private final ApplicationProperties applicationProperties;
+    private final JiraHome jiraHome;
+    private volatile DataImportService dataImportService;
 
-    public DataImportBackdoor(UserUtil userUtil, JiraHome jiraHome, ApplicationProperties applicationProperties)
+    public DataImportBackdoor(UserUtil userUtil, BuildUtilsInfo buildInfo, JiraHome jiraHome,
+                              ApplicationProperties applicationProperties)
     {
         this.userUtil = userUtil;
+        this.buildInfo = buildInfo;
         this.applicationProperties = applicationProperties;
         this.jiraHome = jiraHome;
     }
@@ -82,6 +86,15 @@ public class DataImportBackdoor
         return Response.ok(jiraHomePath).build();
     }
 
+    @GET
+    @Path("importConfig")
+    public Response getImportConfig()
+    {
+        final String jiraHomePath = jiraHome.getHomePath();
+        final int buildNumber = buildInfo.getApplicationBuildNumber();
+        return Response.ok(new ImportConfig(jiraHomePath, buildNumber)).build();
+    }
+
     public DataImportService getDataImportService()
     {
         if (dataImportService == null)
@@ -89,5 +102,17 @@ public class DataImportBackdoor
             dataImportService = ComponentAccessor.getComponent(DataImportService.class);
         }
         return dataImportService;
+    }
+
+    public static final class ImportConfig
+    {
+        public String jiraHome;
+        public int buildNumber;
+
+        public ImportConfig(String jiraHome, int buildNumber)
+        {
+            this.jiraHome = jiraHome;
+            this.buildNumber = buildNumber;
+        }
     }
 }
