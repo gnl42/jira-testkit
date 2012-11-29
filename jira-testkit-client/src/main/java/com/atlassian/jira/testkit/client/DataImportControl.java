@@ -4,6 +4,7 @@ import com.atlassian.jira.testkit.client.dump.FuncTestTimer;
 import com.atlassian.jira.testkit.client.dump.TestInformationKit;
 import com.atlassian.jira.testkit.client.util.TimeBombLicence;
 import com.atlassian.jira.testkit.client.xmlbackup.XmlBackupCopier;
+import com.atlassian.jira.testkit.util.ClasspathResources;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -42,8 +43,11 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
 
     public static final String FS = System.getProperty("file.separator");
     public static final String IMPORT = "import";
+
+    public static final String TESTKIT_XML_PACKAGE = "testkit/xmlresources";
     public static final String TESTKIT_BLANKPROJECTS = "testkit-blankprojects-";
-    public static final String TESTKIT_BLANKPROJECTS_XML = "xml/testkit-blankprojects-";
+    public static final String TESTKIT_BLANKPROJECTS_XML = TESTKIT_XML_PACKAGE + "/" + TESTKIT_BLANKPROJECTS;
+    public static final Pattern TESTKIT_BLANKPROJECTS_XML_PATTERN = Pattern.compile(".*" + TESTKIT_BLANKPROJECTS + "(\\d+)\\.xml");
 
     private static final Iterable<Integer> REST_NOT_SETUP_ERROR_CODES = ImmutableList.of(
             Response.Status.NOT_FOUND.getStatusCode(),
@@ -55,46 +59,32 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
      * Evil but necessary static field used for caching the import configuration.
      */
     private static final ThreadLocal<ImportConfig> JIRA_CONFIG = new ThreadLocal<ImportConfig>();
+
     private static final ThreadLocal<List<Integer>> SUPPORTED_BUILD_NUMBERS = new ThreadLocal<List<Integer>>()
     {
         @Override
         protected List<Integer> initialValue()
         {
-            final Iterable<File> files = ImmutableList.copyOf(xmlDir().listFiles((FileFilter) new PrefixFileFilter(TESTKIT_BLANKPROJECTS)));
-            return Ordering.natural().sortedCopy(transform(files, toSupportedBuildNumber()));
+            final Iterable<String> matchingResources = ClasspathResources.getResources(TESTKIT_XML_PACKAGE, TESTKIT_BLANKPROJECTS_XML_PATTERN);
+            return Ordering.natural().sortedCopy(transform(matchingResources, toSupportedBuildNumber()));
         }
 
-        private File xmlDir()
-        {
-            final URL xmlDirUrl = DataImportControl.class.getClassLoader().getResource("xml");
-            if (xmlDirUrl == null)
-            {
-                throw new IllegalStateException("Could not find the XML dir resource");
-            }
-            final File xmlDir = new File(xmlDirUrl.getFile());
-            if (!xmlDir.isDirectory())
-            {
-                throw new IllegalStateException("XML resource is not a dir");
-            }
-            return xmlDir;
-        }
 
-        private Function<File,Integer> toSupportedBuildNumber()
+        private Function<String,Integer> toSupportedBuildNumber()
         {
-            final Pattern pattern = Pattern.compile("testkit-blankprojects-(\\d+)\\.xml");
-            return new Function<File, Integer>()
+            return new Function<String, Integer>()
             {
                 @Override
-                public Integer apply(File file)
+                public Integer apply(String name)
                 {
-                    final Matcher matcher = pattern.matcher(file.getName());
+                    final Matcher matcher = TESTKIT_BLANKPROJECTS_XML_PATTERN.matcher(name);
                     if (matcher.matches())
                     {
                         return Integer.parseInt(matcher.group(1));
                     }
                     else
                     {
-                        throw new IllegalStateException("Unexpected blank XML resource file name: " + file.getName());
+                        throw new IllegalStateException("Unexpected blank XML resource name: " + name);
                     }
                 }
             };
