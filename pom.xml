@@ -16,7 +16,7 @@
 		<connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</developerConnection>
 		<url>http://bitbucket.org/atlassian/jira-testkit</url>
-	</scm>                                                          n
+	</scm>
 
 	<modules>
 		<module>jira-testkit-plugin</module>
