@@ -22,7 +22,7 @@ public class LogAccess
     /**
      * This can be called to cause an error log message to be placed in the JIRA log
      * <p/>
-     * invoked like this "/jira/rest/func-test/1.0/log/error?msg=hi"
+     * invoked like this "/jira/rest/testkit-test/1.0/log/error?msg=hi"
      *
      * @param msg the message to go into the application log
      * @return nothing meaningful but GET requires it
@@ -33,6 +33,23 @@ public class LogAccess
     public Response logMessage(@QueryParam ("msg") String msg)
     {
         log.error(msg);
+        return Response.ok(null).build();
+    }
+
+	/**
+     * This can be called to cause an info log message to be placed in the JIRA log
+     * <p/>
+	 * invoked like this "/jira/rest/testkit-test/1.0/log/info?msg=hi"
+     *
+     * @param msg the message to go into the application log
+     * @return nothing meaningful but GET requires it
+     */
+    @GET
+    @AnonymousAllowed
+    @Path ("info")
+    public Response logInfoMessage(@QueryParam ("msg") String msg)
+    {
+        log.info(msg);
         return Response.ok(null).build();
     }
 
