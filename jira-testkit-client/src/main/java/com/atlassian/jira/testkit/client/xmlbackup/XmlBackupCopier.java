@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.client.xmlbackup;
 
+import com.atlassian.jira.testkit.client.RestoreDataResources;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
@@ -149,12 +151,16 @@ public class XmlBackupCopier
 			throw new RuntimeException("Tried to create parent folders of " + destinationPath + " which did not exist, but failed");
 		}
 
+		// this is a compatibility hack that is necessary to avoid overhauling lots of code in JIRA. this class
+		// essentially prepends "xml/" to the resource path if the resource if not found under the original path
+		InputStream inputStream = RestoreDataResources.getResourceAsStream(sourcePath);
+
 		if (sourcePath.endsWith(".zip"))
 		{
 			try
 			{
 				log.trace("File '{}' is a ZIP file, copying without performing substiturions", sourcePath);
-				FileUtils.copyFile(new File(sourcePath), destinationFile);
+				FileUtils.copyInputStreamToFile(inputStream, destinationFile);
 				return false;
 			}
 			catch (IOException e)
@@ -163,11 +169,20 @@ public class XmlBackupCopier
 			}
 		}
 
-		try {
-			return performSubstitutions(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(sourcePath)), destinationPath, substitutions);
-		} catch (NullPointerException e) {
-			log.trace("Error reading from '{}'", sourcePath);
-			throw new RuntimeException("Could not read resource " + sourcePath, e);
+		try
+		{
+			try
+			{
+				return performSubstitutions(new InputStreamReader(inputStream), destinationPath, substitutions);
+			}
+			catch (NullPointerException e) {
+				log.trace("Error reading from '{}'", sourcePath);
+				throw new RuntimeException("Could not read resource " + sourcePath, e);
+			}
+		}
+		finally
+		{
+			IOUtils.closeQuietly(inputStream);
 		}
 	}
 
