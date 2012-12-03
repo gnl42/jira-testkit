@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 
+import java.lang.ref.SoftReference;
 import java.util.EnumSet;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -36,9 +37,24 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     public static final String REST_VERSION = "2";
 
     /**
-     * The JerseyClientFactory used to access the REST API.
+     * Lazily-instantiated Jersey client in thread local variable.
      */
-    private final JerseyClientFactory clientFactory;
+    private static ThreadLocal<Client> client = new ThreadLocal<Client>()
+    {
+        @Override
+        protected Client initialValue()
+        {
+            final DefaultClientConfig config = new DefaultClientConfig();
+            config.getClasses().add(JacksonJaxbJsonProvider.class);
+            final JerseyClientFactory clientFactory = new ApacheClientFactoryImpl(config);
+            Client client = clientFactory.create();
+            if (log.isDebugEnabled())
+            {
+                client.addFilter(new LoggingFilter());
+            }
+            return client;
+        }
+    };
 
     /**
      * The JIRA environment data
@@ -58,11 +74,6 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     private String version;
 
     /**
-     * Lazily-instantiated Jersey client.
-     */
-    private Client client = null;
-
-    /**
      * Constructs a new RestApiClient for a JIRA instance.
      *
      * @param environmentData The JIRA environment data
@@ -80,9 +91,6 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
      */
     protected RestApiClient(JIRAEnvironmentData environmentData, String version)
     {
-        DefaultClientConfig config = new DefaultClientConfig();
-        config.getClasses().add(JacksonJaxbJsonProvider.class);
-        this.clientFactory = new ApacheClientFactoryImpl(config);
         this.environmentData = environmentData;
         this.version = version;
     }
@@ -175,20 +183,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
      */
     private Client client()
     {
-        if (client == null)
-        {
-            client = clientFactory.create();
-            if (log.isDebugEnabled())
-            {
-                client.addFilter(new LoggingFilter());
-            }
-            if (StringUtils.isNotBlank(environmentData.getTenant()))
-            {
-                client.addFilter(new AtlassianTenantFilter(environmentData.getTenant()));
-            }
-        }
-
-        return client;
+        return client.get();
     }
 
     protected Response toResponse(Method method)
