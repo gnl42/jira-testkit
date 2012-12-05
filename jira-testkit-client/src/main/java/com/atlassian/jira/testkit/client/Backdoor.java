@@ -47,7 +47,8 @@ public class Backdoor
 	private final TimeTrackingControl timeTrackingControl;
 	private final LicenseControl licenseControl;
 	private final ProjectRoleClient projectRoleClient;
-
+	private final LogControl logControl;
+	
     public Backdoor(JIRAEnvironmentData environmentData)
     {
         this.plugins = new PluginsControl(environmentData);
@@ -85,6 +86,7 @@ public class Backdoor
 		this.timeTrackingControl = new TimeTrackingControl(environmentData);
 		this.licenseControl = new LicenseControl(environmentData);
         this.projectRoleClient = new ProjectRoleClient(environmentData);
+		this.logControl = new LogControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -314,4 +316,9 @@ public class Backdoor
     {
         return projectRoleClient;
     }
+
+	public LogControl logControl()
+    {
+		return logControl;
+	}
 }
