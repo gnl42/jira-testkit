@@ -52,4 +52,10 @@ public class IssueLinkingControl extends BackdoorControl<IssueLinkingControl>
                 .queryParam("style", style)
         );
     }
+
+	public void deleteIssueLinkType(String name)
+	{
+		get(createResource().path("delete")
+				.queryParam("name", name));
+	}
 }
