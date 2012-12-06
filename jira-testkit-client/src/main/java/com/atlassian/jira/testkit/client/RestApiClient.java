@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 
+import java.lang.ref.SoftReference;
 import java.util.EnumSet;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;

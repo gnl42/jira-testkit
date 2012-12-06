@@ -5,6 +5,7 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
 import com.atlassian.crowd.exception.embedded.InvalidGroupException;
+import com.atlassian.jira.bc.security.login.LoginInfo;
 import com.atlassian.jira.bc.security.login.LoginService;
 import com.atlassian.jira.event.user.UserEventType;
 import com.atlassian.jira.exception.AddException;
@@ -12,16 +13,20 @@ import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.testkit.beans.LoginInfoBean;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
+import com.google.common.primitives.Longs;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -29,7 +34,7 @@ import javax.ws.rs.core.Response;
  * Use this backdoor to manipulate Users and Groups as part of setup for tests
  * NOT specfically testing the Admin UI.
  *
- * This class should only be called by the {@link com.atlassian.jira.testkit.client.UsersAndGroupsControl}.
+ * This class should only be called by the com.atlassian.jira.testkit.client.UsersAndGroupsControl in jira-testkit-client.
  *
  * @since v5.0
  */
@@ -309,6 +314,28 @@ public class UsersAndGroupsBackdoor
 	public Response userExists(@QueryParam("userName") String userName) {
 		return Response.ok(userUtil.userExists(userName)).build();
 	}
+
+    @GET
+    @AnonymousAllowed
+    @Path("user/loginInfo")
+    @Produces ({MediaType.APPLICATION_JSON})
+    public Response loginInfo(@QueryParam("userName") String userName) {
+        LoginInfo info = loginService.getLoginInfo(userName);
+        if (info == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No user '" + userName + "' found").build();
+        }
+        final LoginInfoBean bean = new LoginInfoBean();
+        bean.setLoginCount(nullToZero(info.getLoginCount()));
+        bean.setCurrentFailedLoginCount(nullToZero(info.getCurrentFailedLoginCount()));
+        bean.setTotalFailedLoginCount(nullToZero(info.getTotalFailedLoginCount()));
+        return Response.ok(bean).build();
+    }
+
+    private static long nullToZero(Long theLong)
+    {
+        return theLong != null ? theLong : 0;
+    }
 
     private static class GroupTemplate implements Group
     {

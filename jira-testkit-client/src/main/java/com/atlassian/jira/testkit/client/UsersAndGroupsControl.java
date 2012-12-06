@@ -1,12 +1,13 @@
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.LoginInfoBean;
 import com.sun.jersey.api.client.WebResource;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Users and
  * Groups.
  *
- * {@link com.atlassian.jira.testkit.plugin.UsersAndGroupsBackdoor} in jira-testkit-plugin for backend.
+ * See com.atlassian.jira.testkit.plugin.UsersAndGroupsBackdoor in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
@@ -156,6 +157,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public long getNumberOfGroups()
     {
         return Long.parseLong(createResource().path("group").path("count").get(String.class));
+    }
+
+    public LoginInfoBean getLoginInfo(String username)
+    {
+        return createResource().path("user").path("loginInfo").queryParam("userName", username).get(LoginInfoBean.class);
     }
 
     @Override

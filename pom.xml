@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>5.2-m26-SNAPSHOT</version>
+	<version>6.0-m1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>JIRA TestKit</name>
 
@@ -22,6 +22,7 @@
 		<module>jira-testkit-plugin</module>
 		<module>jira-testkit-client</module>
         <module>jira-testkit-common</module>
+        <module>jira-testkit-testresources</module>
 	</modules>
 
 	<properties>

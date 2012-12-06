@@ -45,7 +45,7 @@ public class Backdoor
 	private final TimeTrackingControl timeTrackingControl;
 	private final LicenseControl licenseControl;
 	private final LogControl logControl;
-	
+
     public Backdoor(JIRAEnvironmentData environmentData)
     {
         this.plugins = new PluginsControl(environmentData);

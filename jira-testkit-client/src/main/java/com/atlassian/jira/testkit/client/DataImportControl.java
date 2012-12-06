@@ -4,17 +4,31 @@ import com.atlassian.jira.testkit.client.dump.FuncTestTimer;
 import com.atlassian.jira.testkit.client.dump.TestInformationKit;
 import com.atlassian.jira.testkit.client.util.TimeBombLicence;
 import com.atlassian.jira.testkit.client.xmlbackup.XmlBackupCopier;
+import com.atlassian.jira.testkit.util.ClasspathResources;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileFilter;
+import java.net.URL;
 import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
 
 /**
  * Use this class from func/selenium/page-object tests that need to import data. Which is all of them.
@@ -25,31 +39,68 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class DataImportControl extends BackdoorControl<DataImportControl>
 {
+    private static final Logger log = LoggerFactory.getLogger(DataImportControl.class);
+
     public static final String FS = System.getProperty("file.separator");
     public static final String IMPORT = "import";
+
+    public static final String TESTKIT_XML_PACKAGE = "testkit/xmlresources";
+    public static final String TESTKIT_BLANKPROJECTS = "testkit-blankprojects-";
+    public static final String TESTKIT_BLANKPROJECTS_XML = TESTKIT_XML_PACKAGE + "/" + TESTKIT_BLANKPROJECTS;
+    public static final Pattern TESTKIT_BLANKPROJECTS_XML_PATTERN = Pattern.compile(".*" + TESTKIT_BLANKPROJECTS + "(\\d+)\\.xml");
 
     private static final Iterable<Integer> REST_NOT_SETUP_ERROR_CODES = ImmutableList.of(
             Response.Status.NOT_FOUND.getStatusCode(),
             Response.Status.SERVICE_UNAVAILABLE.getStatusCode()
     );
 
+
+    /**
+     * Evil but necessary static field used for caching the import configuration.
+     */
+    private static final ThreadLocal<ImportConfig> JIRA_CONFIG = new ThreadLocal<ImportConfig>();
+
+    private static final ThreadLocal<List<Integer>> SUPPORTED_BUILD_NUMBERS = new ThreadLocal<List<Integer>>()
+    {
+        @Override
+        protected List<Integer> initialValue()
+        {
+            final Iterable<String> matchingResources = ClasspathResources.getResources(TESTKIT_XML_PACKAGE, TESTKIT_BLANKPROJECTS_XML_PATTERN);
+            return Ordering.natural().sortedCopy(transform(matchingResources, toSupportedBuildNumber()));
+        }
+
+
+        private Function<String,Integer> toSupportedBuildNumber()
+        {
+            return new Function<String, Integer>()
+            {
+                @Override
+                public Integer apply(String name)
+                {
+                    final Matcher matcher = TESTKIT_BLANKPROJECTS_XML_PATTERN.matcher(name);
+                    if (matcher.matches())
+                    {
+                        return Integer.parseInt(matcher.group(1));
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("Unexpected blank XML resource name: " + name);
+                    }
+                }
+            };
+        }
+    };
+
     private JIRAEnvironmentData environmentData;
     private XmlBackupCopier xmlBackupCopier;
-    /**
-     * Evil but necessary static field used for caching the JIRA_HOME during func test runs.
-     */
-    private static final ThreadLocal<String> JIRA_HOME_DIR = new ThreadLocal<String>();
+
+
 
     public DataImportControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
         this.environmentData = environmentData;
         this.xmlBackupCopier = new XmlBackupCopier(environmentData.getBaseUrl());
-    }
-
-    private boolean looksLikeNotSetup(UniformInterfaceException interfaceException)
-    {
-        return Iterables.contains(REST_NOT_SETUP_ERROR_CODES, interfaceException.getResponse().getStatus());
     }
 
     public boolean isSetUp()
@@ -69,38 +120,72 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         }
     }
 
-	/**
-	 * Restores the instance with the default XML file. A commercial license is used.
-	 */
-	public void restoreBlankInstance()
-	{
-		restoreBlankInstance(TimeBombLicence.LICENCE_FOR_TESTING);
-	}
+    private boolean looksLikeNotSetup(UniformInterfaceException interfaceException)
+    {
+        return Iterables.contains(REST_NOT_SETUP_ERROR_CODES, interfaceException.getResponse().getStatus());
+    }
+
+    /**
+     * Restores the instance with the default XML file. A commercial license is used.
+     */
+    public void restoreBlankInstance()
+    {
+        restoreBlankInstance(TimeBombLicence.LICENCE_FOR_TESTING);
+    }
 
     /**
      * Restores the instance with the default XML file. A commercial license is used.
      */
     public void restoreBlankInstance(String license)
     {
-        restoreDataFromResource("xml/testkit-blankprojects.xml", license);
+        final String resource = findMatchingResource(getImportConfig().buildNumber);
+        log.info("Restoring blank resource {}", resource);
+        restoreDataFromResource(resource, license);
     }
 
-	/**
-	 * Restores the instance with the specified XML file. A time bomb license is used.
-	 * @param xmlFileName the name of the file to import
-	 * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
-	 * about the working directory the test process is running in. Use {@link #restoreDataFromResource(String, String)}
-	 * where possible and provide path to a classpath resource instead to stay independent from the environment
-	 */
-	@Deprecated
-	public void restoreData(String xmlFileName)
-	{
-	 	restoreData(xmlFileName, TimeBombLicence.LICENCE_FOR_TESTING);
-	}
+    @VisibleForTesting
+    protected String findMatchingResource(int buildNumber)
+    {
+        final int index = Ordering.natural().binarySearch(SUPPORTED_BUILD_NUMBERS.get(), buildNumber);
+        if (index >= 0)
+        {
+            return blankResourceForBuildNumber(index);
+        }
+        else
+        {
+            if (index == -1)
+            {
+                throw new IllegalStateException("The build number " + buildNumber + " is not supported");
+            }
+            else
+            {
+                return blankResourceForBuildNumber(-index-2);
+            }
+        }
+    }
+
+    private String blankResourceForBuildNumber(int index)
+    {
+        return TESTKIT_BLANKPROJECTS_XML + SUPPORTED_BUILD_NUMBERS.get().get(index) + ".xml";
+    }
+
+
+    /**
+     * Restores the instance with the specified XML file. A time bomb license is used.
+     * @param xmlFileName the name of the file to import
+     * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
+     * about the working directory the test process is running in. Use {@link #restoreDataFromResource(String, String)}
+     * where possible and provide path to a classpath resource instead to stay independent from the environment
+     */
+    @Deprecated
+    public void restoreData(String xmlFileName)
+    {
+        restoreData(xmlFileName, TimeBombLicence.LICENCE_FOR_TESTING);
+    }
     /**
      * Restores the instance with the specified XML file. A commercial license is used.
      * @param xmlFileName the name of the file to import
-	 * @param license JIRA licence key
+     * @param license JIRA licence key
      * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
      * about the working directory the test process is running in. Use {@link #restoreDataFromResource(String, String)}
      * where possible and provide path to a classpath resource instead to stay independent from the environment
@@ -132,13 +217,13 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         timer.end();
     }
 
-	/**
-	 * @param resourcePath path to the class path resource containing the file to restore
-	 */
-	public void restoreDataFromResource(String resourcePath)
-	{
-		restoreDataFromResource(resourcePath, TimeBombLicence.LICENCE_FOR_TESTING);
-	}
+    /**
+     * @param resourcePath path to the class path resource containing the file to restore
+     */
+    public void restoreDataFromResource(String resourcePath)
+    {
+        restoreDataFromResource(resourcePath, TimeBombLicence.LICENCE_FOR_TESTING);
+    }
 
     /**
      * <p/>
@@ -158,7 +243,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         final FuncTestTimer timer = TestInformationKit.pullTimer("XML Restore");
         final String targetPath = getImportTargetPath(resourcePath);
         boolean baseUrlReplaced = xmlBackupCopier.copyXmlBackupFromClassPathTo(resourcePath, targetPath,
-				Collections.<Pattern, String>emptyMap());
+                Collections.<Pattern, String>emptyMap());
         DataImportBean importBean = new DataImportBean();
         importBean.filePath = targetPath;
         importBean.licenseString = license;
@@ -202,13 +287,18 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
 
     private String getJiraHomePath()
     {
-        String jiraHomeDir = JIRA_HOME_DIR.get();
-        if (jiraHomeDir == null)
+        return getImportConfig().jiraHome;
+    }
+
+    private ImportConfig getImportConfig()
+    {
+        ImportConfig config = JIRA_CONFIG.get();
+        if (config == null)
         {
-            jiraHomeDir = createResource().path("dataImport/jiraHomePath").get(String.class);
-            JIRA_HOME_DIR.set(jiraHomeDir);
+            config = createResource().path("dataImport/importConfig").get(ImportConfig.class);
+            JIRA_CONFIG.set(config);
         }
-        return jiraHomeDir;
+        return config;
     }
 
     static class DataImportBean
@@ -219,5 +309,12 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         public boolean useDefaultPaths;
         public boolean isSetup;
         public String baseUrl;
+    }
+
+    static class ImportConfig
+    {
+        public String jiraHome;
+        public int buildNumber;
+
     }
 }
