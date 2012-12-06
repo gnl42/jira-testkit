@@ -97,7 +97,7 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         return createResourceForPath(getRestModulePath());
     }
 
-    /**
+	/**
      * Returns the REST path used in this plugin's {@code atlassian-plugin.xml} (e.g. {@code &lt;rest path="..."&gt;}).
      * The default value is "{@value #DEFAULT_REST_PATH}".
      *

@@ -2,6 +2,7 @@ package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
@@ -64,4 +65,14 @@ public class IssueLinkingBackdoorResource
         issueLinkTypeManager.createIssueLinkType(name, outward, inward, style);
         return Response.ok(null).build();
     }
+
+	@GET
+	@AnonymousAllowed
+	@Path("delete")
+	public Response deleteLink(@QueryParam ("name") String name) {
+		for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
+			issueLinkTypeManager.removeIssueLinkType(issueLink.getId());
+		}
+		return Response.ok(null).build();
+	}
 }
