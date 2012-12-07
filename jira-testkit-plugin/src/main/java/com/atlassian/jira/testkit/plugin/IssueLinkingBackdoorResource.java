@@ -1,10 +1,15 @@
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.link.IssueLinkType;
+import com.atlassian.jira.issue.link.IssueLinkTypeDestroyer;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.collect.Iterables;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -29,12 +34,17 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 public class IssueLinkingBackdoorResource
 {
     private final IssueLinkTypeManager issueLinkTypeManager;
-    private final ApplicationProperties applicationProperties;
+	private final IssueLinkTypeDestroyer issueLinkTypeDestroyer;
+	private final UserUtil userUtil;
+	private final ApplicationProperties applicationProperties;
 
-    public IssueLinkingBackdoorResource(IssueLinkTypeManager issueLinkTypeManager, ApplicationProperties applicationProperties)
+    public IssueLinkingBackdoorResource(IssueLinkTypeManager issueLinkTypeManager, IssueLinkTypeDestroyer issueLinkTypeDestroyer,
+			UserUtil userUtil, ApplicationProperties applicationProperties)
     {
         this.issueLinkTypeManager = issueLinkTypeManager;
-        this.applicationProperties = applicationProperties;
+		this.issueLinkTypeDestroyer = issueLinkTypeDestroyer;
+		this.userUtil = userUtil;
+		this.applicationProperties = applicationProperties;
     }
     
     @GET
@@ -70,8 +80,13 @@ public class IssueLinkingBackdoorResource
 	@AnonymousAllowed
 	@Path("delete")
 	public Response deleteLink(@QueryParam ("name") String name) {
-		for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
-			issueLinkTypeManager.removeIssueLinkType(issueLink.getId());
+		final User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+		try {
+			for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
+				issueLinkTypeDestroyer.removeIssueLinkType(issueLink.getId(), null, sysadmin);
+			}
+		} catch (RemoveException e) {
+			throw new RuntimeException(e);
 		}
 		return Response.ok(null).build();
 	}
