@@ -155,6 +155,15 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         return resourceRoot(environmentData.getBaseUrl().toExternalForm()).path("rest").path("internal").path("1.0");
     }
 
+    /**
+     * Creates the resource that corresponds to the root of the gadget REST interface.
+     *
+     * @return a WebResource for the gadget REST interface root
+     */
+    protected WebResource createResourceGadget()
+    {
+        return resourceRoot(environmentData.getBaseUrl().toExternalForm()).path("rest").path("gadget").path("1.0");
+    }
 
     /**
      * Creates a WebResource for the given URL. The relevant authentication parameters are added to the resource, if
