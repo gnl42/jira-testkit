@@ -18,6 +18,7 @@ import java.util.Map;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withId;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withKey;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withName;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Issues.
@@ -136,7 +137,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         final Map<String, Map<String, List<Map<String, String>>>> update = MapBuilder.<String, Map<String, List<Map<String, String>>>>newBuilder().add("update", labels).toMap();
         final Response response = issueClient.update(issueKey, update);
 
-        assert(response.statusCode == 204);
+        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
         return this;
     }
 
@@ -147,10 +148,19 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
         final Response response = issueClient.updateResponse(issueKey, updateSummaryRequest);
 
-        assert(response.statusCode == 204);
+        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
         return this;
     }
 
+    public IssuesControl setIssueFields(String issueKey, IssueFields issueFields)
+    {
+        IssueUpdateRequest updateRequest = new IssueUpdateRequest().fields(issueFields);
+
+        final Response response = issueClient.updateResponse(issueKey, updateRequest);
+
+        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
+        return this;
+    }
 
     @Override
     public IssuesControl loginAs(String username)
