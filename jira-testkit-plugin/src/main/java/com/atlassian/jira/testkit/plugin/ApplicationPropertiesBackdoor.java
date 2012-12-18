@@ -49,6 +49,14 @@ public class ApplicationPropertiesBackdoor
         return Response.ok(null).build();
     }
 
+    @GET
+    @AnonymousAllowed
+    @Path("string/get")
+    public Response getString(@QueryParam ("key") String key)
+    {
+        return Response.ok(applicationProperties.getString(key)).build();
+    }
+
     @POST
     @AnonymousAllowed
     @Path("string/set")

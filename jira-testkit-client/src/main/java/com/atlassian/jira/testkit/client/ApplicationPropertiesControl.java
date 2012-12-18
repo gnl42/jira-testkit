@@ -35,6 +35,11 @@ public class ApplicationPropertiesControl extends BackdoorControl<ApplicationPro
         return this;
     }
 
+    public String getString(String key){
+        return get(createResource().path("applicationProperties/string/get")
+                .queryParam("key", key));
+    }
+
     public ApplicationPropertiesControl disableXsrfChecking()
     {
         return setOption("jira.xsrf.enabled", false);
