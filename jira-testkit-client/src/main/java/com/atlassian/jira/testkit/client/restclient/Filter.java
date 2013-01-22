@@ -27,11 +27,13 @@ public class Filter
     public String searchUrl;
     public boolean favourite;
     public List<FilterPermission> sharePermissions;
+    public List<User> sharedUsers;
     public Expando<FilterSubscription> subscriptions;
 
     public static enum Expand
     {
-        subscriptions
+        subscriptions,
+        sharedUsers
     }
 
     public static class FilterPermission
