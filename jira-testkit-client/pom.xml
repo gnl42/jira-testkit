@@ -94,6 +94,10 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.atlassian.plugins.rest</groupId>
 			<artifactId>atlassian-rest-common</artifactId>
 			<version>${rest.version}</version>
@@ -107,6 +111,11 @@
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-api</artifactId>
 			<version>${jira.version}</version>
+		</dependency>
+		<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit-dep</artifactId>
+		<version>${junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>

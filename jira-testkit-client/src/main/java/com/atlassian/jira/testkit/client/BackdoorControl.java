@@ -80,24 +80,23 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
         return resource;
     }
 
-    /**
-     * Creates the resource that corresponds to the root of the TestKit REST API, using the values returned by {@link
-     * #getRestModulePath()}. Note that the created {@code WebResource} has the following properties: <ul> <li>it logs
-     * all GET/POST/etc requests made through it</li> <li>it sets the <code>Content-Type: application/json</code> by
-     * default (override with {@link WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>.
-     *
-     * To create a WebResource for a different root, use {@link #createResource}
-     *
-     * @return a WebResource for the TestKit REST API root
-     * @see #createResource
-     * @see #getRestModulePath()
-     */
-    protected WebResource createResource()
-    {
-        return createResourceForPath(getRestModulePath());
-    }
+	/**
+	 * Creates the resource that corresponds to the root of the TestKit REST API, using the values returned by {@link
+	 * #getRestModulePath()}. Note that the created {@code WebResource} has the following properties: <ul> <li>it logs
+	 * all GET/POST/etc requests made through it</li> <li>it sets the <code>Content-Type: application/json</code> by
+	 * default (override with {@link WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>.
+	 * <p/>
+	 * To create a WebResource for a different root, use {@link #createResource}
+	 *
+	 * @return a WebResource for the TestKit REST API root
+	 * @see #createResource
+	 * @see #getRestModulePath()
+	 */
+	protected WebResource createResource() {
+		return createResourceForPath(getRestModulePath());
+	}
 
-    /**
+	/**
      * Returns the REST path used in this plugin's {@code atlassian-plugin.xml} (e.g. {@code &lt;rest path="..."&gt;}).
      * The default value is "{@value #DEFAULT_REST_PATH}".
      *

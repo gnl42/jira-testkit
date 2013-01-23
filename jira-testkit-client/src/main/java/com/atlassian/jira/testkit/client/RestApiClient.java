@@ -2,7 +2,6 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.jerseyclient.ApacheClientFactoryImpl;
 import com.atlassian.jira.testkit.client.jerseyclient.JerseyClientFactory;
-import com.atlassian.jira.testkit.client.restclient.AtlassianTenantFilter;
 import com.atlassian.jira.testkit.client.restclient.Errors;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.sun.jersey.api.client.Client;
