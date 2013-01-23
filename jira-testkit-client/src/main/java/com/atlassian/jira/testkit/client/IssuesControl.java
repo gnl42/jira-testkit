@@ -10,6 +10,7 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.rest.api.issue.IssueFields;
 import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
 import com.atlassian.jira.util.collect.MapBuilder;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 import java.util.Collections;
 import java.util.List;
@@ -151,6 +152,19 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return this;
     }
 
+    /**
+     * Deletes an issue. If the issue has subtasks you must set the parameter deleteSubtasks=true to delete the issue.
+     * You cannot delete an issue without its subtasks also being deleted.
+     * @param issueKey a key of the issue
+     * @param deleteSubtasks true to delete also subtasks. If this params is false, and issue has subtasks, then
+     *                          delete operation will fail.
+     * @return Response from the server (to check the status code)
+     * @throws UniformInterfaceException if there's a problem deleting the issue
+     */
+    public Response deleteIssue(String issueKey, boolean deleteSubtasks) throws UniformInterfaceException
+    {
+        return issueClient.delete(issueKey, Boolean.toString(deleteSubtasks));
+    }
 
     @Override
     public IssuesControl loginAs(String username)
@@ -165,7 +179,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         issueClient.loginAs(username, password);
         return super.loginAs(username, password);
     }
-    
+
     public Issue getIssue(String key)
     {
         return issueClient.get(key);
