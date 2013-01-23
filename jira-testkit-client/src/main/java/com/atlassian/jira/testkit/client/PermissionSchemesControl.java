@@ -1,8 +1,10 @@
 package com.atlassian.jira.testkit.client;
 
+import com.sun.jersey.api.client.WebResource;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Permission Schemes.
- *
+ * <p/>
  * See PermissionSchemesBackdoor for the code this plugs into at the back-end.
  *
  * @since v5.0
@@ -16,6 +18,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     /**
      * Makes a copy of the Default Permission Scheme and returns the id of the new scheme.
+     *
      * @param schemeName the name of the new scheme
      * @return {Long} the schemeId of the created scheme
      */
@@ -30,20 +33,25 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         addPermission(schemeId, permission, "group", groupName);
     }
 
+    public void addPermissionForEveryone(long schemeId, int permission)
+    {
+        addPermission(schemeId, permission, "group", null);
+    }
+
     public void removeGroupPermission(long schemeId, int permission, String groupName)
     {
         removePermission(schemeId, permission, "group", groupName);
     }
 
-    public void addProjectRolePermission(long schemeId, int permission, long projectRoleId) {
+    public void addProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    {
         addPermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
     }
 
-
-    public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId) {
+    public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    {
         removePermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
     }
-
 
     /**
      * Removes any matching permission scheme entities for the given permission and adds an entity for the passed group.
@@ -55,11 +63,15 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     private void addPermission(long schemeId, int permission, String type, String parameter)
     {
-        get(createResource().path("permissionSchemes/entity/add")
+        WebResource webResource = createResource().path("permissionSchemes/entity/add")
                 .queryParam("schemeId", "" + schemeId)
                 .queryParam("permission", "" + permission)
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
+                .queryParam("type", type);
+        if (parameter != null)
+        {
+            webResource.queryParam("parameter", parameter);
+        }
+        get(webResource);
     }
 
     private void removePermission(long schemeId, int permission, String type, String parameter)
