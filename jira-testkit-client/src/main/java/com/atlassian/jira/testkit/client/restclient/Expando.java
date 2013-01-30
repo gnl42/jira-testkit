@@ -1,5 +1,7 @@
 package com.atlassian.jira.testkit.client.restclient;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -10,5 +12,7 @@ import java.util.List;
 public class Expando<T>
 {
     public long size;
+    @JsonProperty("max-results")
+    public long max_results;
     public List<T> items;
 }
