@@ -37,7 +37,7 @@ public class UserProfileControl extends BackdoorControl<UserProfileControl>
     @SuppressWarnings ("UnusedDeclaration")
     public void setUserTimeZone(String username, String timeZone)
     {
-        createResource().path("userProfile/timeZone/set")
+        createResource().path("userProfile/timeZone")
                 .queryParam("username", username)
                 .queryParam("timeZone", timeZone)
                 .put();
