@@ -9,6 +9,7 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -44,6 +45,29 @@ public class UserProfileBackdoor
         try
         {
             preferences.setString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE, format);
+        }
+        catch (AtlassianCoreException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
+        userPreferencesManager.clearCache(username);
+
+        return Response.ok(null).build();
+    }
+
+    @PUT
+    @AnonymousAllowed
+    @Path("timeZone")
+    public Response setTimeZone(@QueryParam ("username") String username, @QueryParam ("timeZone") String timeZone)
+    {
+        User user = userUtil.getUser(username);
+        Preferences preferences = userPreferencesManager.getPreferences(user);
+
+        try
+        {
+            preferences.setString(PreferenceKeys.USER_TIMEZONE, timeZone);
         }
         catch (AtlassianCoreException e)
         {
