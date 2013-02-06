@@ -20,10 +20,26 @@ public class UserProfileControl extends BackdoorControl<UserProfileControl>
      * @param username the user to change the email format for
      * @param format either "html" or "text"
      */
+    @SuppressWarnings ("UnusedDeclaration")
     public void changeUserNotificationType(String username, String format)
     {
         get(createResource().path("userProfile/notificationType/set")
                 .queryParam("username", username)
                 .queryParam("format", format));
+    }
+
+    /**
+     * Changes the given user's time zone to one supplied.
+     *
+     * @param username the user to change the time zone for.
+     * @param timeZone the time zone to set.
+     */
+    @SuppressWarnings ("UnusedDeclaration")
+    public void setUserTimeZone(String username, String timeZone)
+    {
+        createResource().path("userProfile/timeZone/set")
+                .queryParam("username", username)
+                .queryParam("timeZone", timeZone)
+                .put();
     }
 }
