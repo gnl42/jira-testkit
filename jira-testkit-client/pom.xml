@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>com.atlassian.jira.tests</groupId>
 		<artifactId>jira-testkit-plugin-parent</artifactId>
-		<version>5.2-m33</version>
+		<version>5.2-m34-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jira-testkit-client</artifactId>
