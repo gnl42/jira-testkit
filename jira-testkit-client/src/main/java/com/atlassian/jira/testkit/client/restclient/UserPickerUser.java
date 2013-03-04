@@ -12,6 +12,7 @@ import java.net.URI;
 public class UserPickerUser
 {
     public String name;
+    public String key;
     public String html;
     public String displayName;
     public URI avatarUrl;
@@ -19,6 +20,12 @@ public class UserPickerUser
     public UserPickerUser name(final String name)
     {
         this.name = name;
+        return this;
+    }
+
+    public UserPickerUser key(final String key)
+    {
+        this.key = key;
         return this;
     }
 

@@ -17,6 +17,7 @@ public class UserJson
 {
     public String self;
     public String name;
+    public String key;
     public String displayName;
     public boolean active;
     public Map<String, String> avatarUrls;
@@ -37,6 +38,12 @@ public class UserJson
     public UserJson name(String name)
     {
         this.name = name;
+        return this;
+    }
+
+    public UserJson key(String key)
+    {
+        this.key = key;
         return this;
     }
 

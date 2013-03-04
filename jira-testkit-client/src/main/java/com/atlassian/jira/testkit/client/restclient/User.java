@@ -25,6 +25,7 @@ public class User
     public String expand;
     public String self;
     public String name;
+    public String key;
     public String displayName;
     public boolean active;
     public Map<String, String> avatarUrls;
@@ -59,6 +60,12 @@ public class User
     public User name(String name)
     {
         this.name = name;
+        return this;
+    }
+
+    public User key(String key)
+    {
+        this.key = key;
         return this;
     }
 

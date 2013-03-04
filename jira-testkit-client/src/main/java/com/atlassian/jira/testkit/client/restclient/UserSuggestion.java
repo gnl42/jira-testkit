@@ -11,8 +11,8 @@ import java.net.URI;
 @JsonSerialize (include = JsonSerialize.Inclusion.NON_NULL)
 public class UserSuggestion
 {
-
     public String name;
+    public String key;
     public String html;
     public String displayName;
     public URI avatarUrl;
@@ -20,6 +20,12 @@ public class UserSuggestion
     public UserSuggestion name(final String name)
     {
         this.name = name;
+        return this;
+    }
+
+    public UserSuggestion key(final String key)
+    {
+        this.key = key;
         return this;
     }
 

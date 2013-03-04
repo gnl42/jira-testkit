@@ -39,6 +39,18 @@ public class UserClient extends RestApiClient<UserClient>
         return userWithUsername(username, setOf(User.Expand.class, expand)).get(User.class);
     }
 
+    /**
+     * GETs the user with the given key.
+     *
+     * @param key a String containing the key
+     * @param expand a set of attributes to expand
+     * @return a User
+     */
+    public User getByKey(String key, User.Expand... expand)
+    {
+        return userWithKey(key, setOf(User.Expand.class, expand)).get(User.class);
+    }
+
     public List<User> searchAssignable(String query, String issueKey, String startAt, String maxResults)
     {
         WebResource resource = getSearchAssignableResource(query, issueKey, startAt, maxResults);
@@ -144,6 +156,17 @@ public class UserClient extends RestApiClient<UserClient>
     {
         return getResponse(userWithUsername(username, setOf(User.Expand.class)));
     }
+
+    /**
+     * GETs the user with the given key, returning a Response object.
+     *
+     * @param key a String containing the key
+     * @return a Response
+     */
+    public Response getUserResponseByKey(final String key)
+    {
+        return getResponse(userWithKey(key, setOf(User.Expand.class)));
+    }
     
     public Response getResponse(final WebResource resource)
     {
@@ -170,6 +193,24 @@ public class UserClient extends RestApiClient<UserClient>
         if (username != null)
         {
             result = result.queryParam("username", percentEncode(username));
+        }
+
+        return expanded(result, expands);
+    }
+
+    /**
+     * Returns a WebResource for the user with the given key.
+     *
+     * @param key a String containing the key
+     * @param expands an EnumSet indicating what attributes to expand
+     * @return a WebResource
+     */
+    private WebResource userWithKey(String key, EnumSet<User.Expand> expands)
+    {
+        WebResource result = createResource().path("user");
+        if (key != null)
+        {
+            result = result.queryParam("key", percentEncode(key));
         }
 
         return expanded(result, expands);
