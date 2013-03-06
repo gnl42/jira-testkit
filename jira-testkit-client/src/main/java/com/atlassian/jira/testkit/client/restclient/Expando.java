@@ -12,6 +12,10 @@ import java.util.List;
 public class Expando<T>
 {
     public long size;
+    @JsonProperty("start-index")
+    public int start_index;
+    @JsonProperty("end-index")
+    public int end_index;
     @JsonProperty("max-results")
     public long max_results;
     public List<T> items;
