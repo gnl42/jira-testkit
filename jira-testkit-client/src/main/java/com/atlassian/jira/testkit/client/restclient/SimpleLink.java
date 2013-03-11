@@ -18,6 +18,7 @@ public class SimpleLink
     public String label;
     public String title;
     public String href;
+    public Integer weight;
 
 
     public SimpleLink id(String id)
@@ -53,6 +54,12 @@ public class SimpleLink
     public SimpleLink href(String href)
     {
         this.href = href;
+        return this;
+    }
+
+    public SimpleLink weight(Integer weight)
+    {
+        this.weight = weight;
         return this;
     }
 

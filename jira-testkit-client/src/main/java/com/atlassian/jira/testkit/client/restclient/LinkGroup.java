@@ -8,6 +8,7 @@ public class LinkGroup
     private SimpleLink header;
     private List<SimpleLink> links;
     private List<LinkGroup> groups;
+    private Integer weight;
 
     public LinkGroup()
     {
@@ -52,5 +53,15 @@ public class LinkGroup
     public void setGroups(List<LinkGroup> groups)
     {
         this.groups = groups;
+    }
+
+    public Integer getWeight()
+    {
+        return weight;
+    }
+
+    public void setWeight(Integer weight)
+    {
+        this.weight = weight;
     }
 }
