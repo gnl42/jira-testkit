@@ -54,6 +54,19 @@ public class CommentClient extends RestApiClient<CommentClient>
         }, Comment.class);
     }
 
+    public Response<Comment> get(final String issueKey, final String commentID, final boolean returnRendered) throws UniformInterfaceException
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return commentWithID(issueKey, commentID).queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                                         .get(ClientResponse.class);
+            }
+        }, Comment.class);
+    }
+
     public Response<CommentsWithPaginationBean> getComments(final String issueKey)
     {
         return toResponse(new Method()
@@ -62,6 +75,20 @@ public class CommentClient extends RestApiClient<CommentClient>
             public ClientResponse call()
             {
                 return createResource().path("issue").path(issueKey).path("comment").get(ClientResponse.class);
+            }
+        }, CommentsWithPaginationBean.class);
+    }
+
+    public Response<CommentsWithPaginationBean> getComments(final String issueKey, final boolean returnRendered)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("issue").path(issueKey).path("comment")
+                                       .queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                       .get(ClientResponse.class);
             }
         }, CommentsWithPaginationBean.class);
     }
@@ -78,6 +105,20 @@ public class CommentClient extends RestApiClient<CommentClient>
         }, Comment.class);
     }
 
+    public Response<Comment> put(final String issueKey, final Comment comment, final boolean returnRendered)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("issue").path(issueKey).path("comment").path(comment.id)
+                                       .queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                       .type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, comment);
+            }
+        }, Comment.class);
+    }
+
     public Response<Comment> post(final String issueKey, final Comment comment)
     {
         return toResponse(new Method()
@@ -86,6 +127,20 @@ public class CommentClient extends RestApiClient<CommentClient>
             public ClientResponse call()
             {
                 return createResource().path("issue").path(issueKey).path("comment").type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, comment);
+            }
+        }, Comment.class);
+    }
+
+    public Response<Comment> post(final String issueKey, final Comment comment, final boolean returnRendered)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("issue").path(issueKey).path("comment")
+                                       .queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                       .type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, comment);
             }
         }, Comment.class);
     }
