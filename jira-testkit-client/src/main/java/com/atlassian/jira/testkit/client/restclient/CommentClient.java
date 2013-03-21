@@ -54,14 +54,14 @@ public class CommentClient extends RestApiClient<CommentClient>
         }, Comment.class);
     }
 
-    public Response<Comment> get(final String issueKey, final String commentID, final boolean returnRendered) throws UniformInterfaceException
+    public Response<Comment> get(final String issueKey, final String commentID, final String expand) throws UniformInterfaceException
     {
         return toResponse(new Method()
         {
             @Override
             public ClientResponse call()
             {
-                return commentWithID(issueKey, commentID).queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                return commentWithID(issueKey, commentID).queryParam("expand", expand)
                                                          .get(ClientResponse.class);
             }
         }, Comment.class);
@@ -79,7 +79,7 @@ public class CommentClient extends RestApiClient<CommentClient>
         }, CommentsWithPaginationBean.class);
     }
 
-    public Response<CommentsWithPaginationBean> getComments(final String issueKey, final boolean returnRendered)
+    public Response<CommentsWithPaginationBean> getComments(final String issueKey, final String expand)
     {
         return toResponse(new Method()
         {
@@ -87,7 +87,7 @@ public class CommentClient extends RestApiClient<CommentClient>
             public ClientResponse call()
             {
                 return createResource().path("issue").path(issueKey).path("comment")
-                                       .queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                       .queryParam("expand", expand)
                                        .get(ClientResponse.class);
             }
         }, CommentsWithPaginationBean.class);
@@ -105,7 +105,7 @@ public class CommentClient extends RestApiClient<CommentClient>
         }, Comment.class);
     }
 
-    public Response<Comment> put(final String issueKey, final Comment comment, final boolean returnRendered)
+    public Response<Comment> put(final String issueKey, final Comment comment, final String expand)
     {
         return toResponse(new Method()
         {
@@ -113,7 +113,7 @@ public class CommentClient extends RestApiClient<CommentClient>
             public ClientResponse call()
             {
                 return createResource().path("issue").path(issueKey).path("comment").path(comment.id)
-                                       .queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                       .queryParam("expand", expand)
                                        .type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, comment);
             }
         }, Comment.class);
@@ -131,7 +131,7 @@ public class CommentClient extends RestApiClient<CommentClient>
         }, Comment.class);
     }
 
-    public Response<Comment> post(final String issueKey, final Comment comment, final boolean returnRendered)
+    public Response<Comment> post(final String issueKey, final Comment comment, final String expand)
     {
         return toResponse(new Method()
         {
@@ -139,7 +139,7 @@ public class CommentClient extends RestApiClient<CommentClient>
             public ClientResponse call()
             {
                 return createResource().path("issue").path(issueKey).path("comment")
-                                       .queryParam("returnRendered", (returnRendered ? "true" : "false"))
+                                       .queryParam("expand", expand)
                                        .type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, comment);
             }
         }, Comment.class);
