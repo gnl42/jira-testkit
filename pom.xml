@@ -27,7 +27,7 @@
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>5.2.KA20</jira.version>
+		<jira.version>6.0-OD-09-3</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>
