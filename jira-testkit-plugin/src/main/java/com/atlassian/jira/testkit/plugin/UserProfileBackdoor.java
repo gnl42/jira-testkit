@@ -12,21 +12,27 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.core.AtlassianCoreException;
 import com.atlassian.core.user.preferences.Preferences;
 import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
 import com.atlassian.jira.user.preferences.UserPreferencesManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to manipulate User Profiles as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.testkit.client.UserProfileControl}.
+ * This class should only be called by the com.atlassian.jira.testkit.client.UserProfileControl.
  *
  * @since v5.0
  */
@@ -48,7 +54,7 @@ public class UserProfileBackdoor
     public Response addGlobalPermission(@QueryParam ("username") String username,
             @QueryParam ("format") String format)
     {
-        User user = userUtil.getUser(username);
+        ApplicationUser user = getUserByName(username);
         Preferences preferences = userPreferencesManager.getPreferences(user);
 
         try
@@ -61,7 +67,7 @@ public class UserProfileBackdoor
         }
 
         // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(username);
+        userPreferencesManager.clearCache(user);
 
         return Response.ok(null).build();
     }
@@ -71,7 +77,7 @@ public class UserProfileBackdoor
     @Path("timeZone")
     public Response setTimeZone(@QueryParam ("username") String username, @QueryParam ("timeZone") String timeZone)
     {
-        User user = userUtil.getUser(username);
+        ApplicationUser user = getUserByName(username);
         Preferences preferences = userPreferencesManager.getPreferences(user);
 
         try
@@ -84,8 +90,71 @@ public class UserProfileBackdoor
         }
 
         // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(username);
+        userPreferencesManager.clearCache(user);
 
         return Response.ok(null).build();
+    }
+
+    /**
+     * @since 6.0.19
+     */
+    @PUT
+    @Path ("preference/{name}")
+    @Consumes (MediaType.TEXT_PLAIN)
+    public void setUserPreference(@QueryParam ("username") String username, @PathParam ("name") String name, @QueryParam ("type") String type, String value)
+            throws AtlassianCoreException
+    {
+        ApplicationUser user = getUserByName(username);
+        if ("boolean".equalsIgnoreCase(type))
+        {
+            preferencesOf(user).setBoolean(name, Boolean.valueOf(value));
+            clearCache(user);
+            return;
+        }
+
+        if ("long".equalsIgnoreCase(type))
+        {
+            preferencesOf(user).setLong(name, Long.parseLong(value));
+            clearCache(user);
+            return;
+        }
+
+        preferencesOf(user).setString(name, value != null ? value : "");
+        clearCache(user);
+    }
+
+    /**
+     * @since 6.0.19
+     */
+    @DELETE
+    @Path ("preference/{name}")
+    @Consumes (MediaType.TEXT_PLAIN)
+    public void removeUserPreference(@QueryParam ("username") String username, @PathParam ("name") String name) throws AtlassianCoreException
+    {
+        ApplicationUser user = getUserByName(username);
+        preferencesOf(user).remove(name);
+        clearCache(user);
+    }
+
+    private void clearCache(ApplicationUser user)
+    {
+        // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
+        userPreferencesManager.clearCache(user);
+    }
+
+    private ApplicationUser getUserByName(String username)
+    {
+        ApplicationUser user = userUtil.getUserByName(username);
+        if (user == null)
+        {
+            throw new WebApplicationException(404);
+        }
+
+        return user;
+    }
+
+    private Preferences preferencesOf(ApplicationUser user)
+    {
+        return userPreferencesManager.getPreferences(user);
     }
 }

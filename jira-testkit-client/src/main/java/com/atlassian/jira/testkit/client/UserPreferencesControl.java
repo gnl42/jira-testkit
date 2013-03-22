@@ -1,20 +1,22 @@
 package com.atlassian.jira.testkit.client;
 
-import com.atlassian.jira.webtests.util.JIRAEnvironmentData;
+import com.sun.jersey.api.client.WebResource;
+
+import javax.ws.rs.core.MediaType;
 
 /**
  * Backdoor control for changing user preferences.
  *
- * @since v5.2.4
+ * @since 6.0.19
  */
-public class UserPreferencesControl
+@SuppressWarnings ("UnusedDeclaration")
+public class UserPreferencesControl extends BackdoorControl<UserPreferencesControl>
 {
-    private final UserProfileControl userProfileControl;
     private final String username;
 
-    public UserPreferencesControl(JIRAEnvironmentData environmentData, UserProfileControl userProfileControl, String username)
+    UserPreferencesControl(JIRAEnvironmentData environmentData, String username)
     {
-        this.userProfileControl = userProfileControl;
+        super(environmentData);
         this.username = username;
     }
 
@@ -24,10 +26,11 @@ public class UserPreferencesControl
      * @param name the preference name
      * @param value the preference value
      * @return this
+     * @since 6.0.19
      */
     public UserPreferencesControl set(String name, String value)
     {
-        return setObject(name, value);
+        return setPreference("string", name, value);
     }
 
     /**
@@ -36,10 +39,11 @@ public class UserPreferencesControl
      * @param name the preference name
      * @param value the preference value
      * @return this
+     * @since 6.0.19
      */
     public UserPreferencesControl set(String name, Boolean value)
     {
-        return setObject(name, value);
+        return setPreference("boolean", name, value);
     }
 
     /**
@@ -48,10 +52,11 @@ public class UserPreferencesControl
      * @param name the preference name
      * @param value the preference value
      * @return this
+     * @since 6.0.19
      */
     public UserPreferencesControl set(String name, Long value)
     {
-        return setObject(name, value);
+        return setPreference("long", name, value);
     }
 
     /**
@@ -59,16 +64,28 @@ public class UserPreferencesControl
      *
      * @param name the preference name
      * @return this
+     * @since 6.0.19
      */
     public UserPreferencesControl remove(String name)
     {
-        userProfileControl.createResource().path("preference").path(name).delete();
+        createResource().path("preference").path(name).delete();
         return this;
     }
 
-    private UserPreferencesControl setObject(String name, Object value)
+    @Override
+    protected WebResource createResource()
     {
-        userProfileControl.createResource().path("preference").path(name).put(value.toString());
+        return super.createResource().path("userProfile").path("preference");
+    }
+
+    private UserPreferencesControl setPreference(String type, String name, Object value)
+    {
+        createResource().path(name)
+                .queryParam("username", username)
+                .queryParam("type", type)
+                .type(MediaType.TEXT_PLAIN_TYPE)
+                .put(value.toString());
+
         return this;
     }
 }
