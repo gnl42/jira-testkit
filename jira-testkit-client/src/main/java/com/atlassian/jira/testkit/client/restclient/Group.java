@@ -9,7 +9,10 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.net.URI;
 
 import static org.apache.commons.lang.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode;
@@ -21,10 +24,17 @@ import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
  *
  * @since v4.3
  */
+@JsonIgnoreProperties (ignoreUnknown = true)
 public class Group
 {
     @JsonProperty
     private String name;
+
+    /**
+     * @since v6.0
+     */
+    @JsonProperty
+    private URI self;
 
     public Group()
     {
@@ -35,6 +45,13 @@ public class Group
         this.name = name;
     }
 
+    public Group(final String name, final URI self)
+    {
+        this.name = name;
+        this.self = self;
+    }
+
+
     public String name()
     {
         return this.name;
@@ -42,7 +59,15 @@ public class Group
 
     public Group name(String name)
     {
-        return new Group(name);
+        return new Group(name, self);
+    }
+
+    public URI self() {
+        return self;
+    }
+
+    public Group self(URI self) {
+        return new Group(name, self);
     }
 
     @Override
@@ -51,6 +76,7 @@ public class Group
         return reflectionHashCode(this);
     }
 
+    @SuppressWarnings ("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object obj)
     {
