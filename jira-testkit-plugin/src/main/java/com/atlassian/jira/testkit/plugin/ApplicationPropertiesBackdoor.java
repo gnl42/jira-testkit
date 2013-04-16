@@ -60,6 +60,14 @@ public class ApplicationPropertiesBackdoor
 
     @GET
     @AnonymousAllowed
+    @Path("option/get")
+    public Response getOption(@QueryParam ("key") String key)
+    {
+        return Response.ok(applicationProperties.getOption(key)).build();
+    }
+
+    @GET
+    @AnonymousAllowed
     @Path("string/get")
     public Response getString(@QueryParam ("key") String key)
     {
