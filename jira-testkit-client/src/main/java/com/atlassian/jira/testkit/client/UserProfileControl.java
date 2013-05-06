@@ -12,15 +12,19 @@ package com.atlassian.jira.testkit.client;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate User Profiles.
  *
- * See {@link com.atlassian.jira.testkit.plugin.UserProfileBackdoor} in jira-testkit-plugin for backend.
+ * See com.atlassian.jira.testkit.plugin.UserProfileBackdoor in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
+@SuppressWarnings ("UnusedDeclaration")
 public class UserProfileControl extends BackdoorControl<UserProfileControl>
 {
+    private final JIRAEnvironmentData environmentData;
+
     public UserProfileControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
+        this.environmentData = environmentData;
     }
 
     /**
@@ -50,5 +54,16 @@ public class UserProfileControl extends BackdoorControl<UserProfileControl>
                 .queryParam("username", username)
                 .queryParam("timeZone", timeZone)
                 .put();
+    }
+
+    /**
+     * Returns a new UserPreferencesControl for the user with {@code username}.
+     *
+     * @param username     a username
+     * @return a new UserPreferencesControl
+     */
+    public UserPreferencesControl preferences(String username)
+    {
+        return new UserPreferencesControl(environmentData, username);
     }
 }

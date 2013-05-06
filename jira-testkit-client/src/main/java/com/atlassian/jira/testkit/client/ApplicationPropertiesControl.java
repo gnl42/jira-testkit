@@ -44,6 +44,12 @@ public class ApplicationPropertiesControl extends BackdoorControl<ApplicationPro
         return this;
     }
 
+    public boolean getOption(String key)
+    {
+        return Boolean.valueOf(get(createResource().path("applicationProperties/option/get")
+                .queryParam("key", key)));
+    }
+
     public String getString(String key){
         return get(createResource().path("applicationProperties/string/get")
                 .queryParam("key", key));

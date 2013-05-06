@@ -24,6 +24,7 @@ public class Comment
     public String created;
     public String updated;
     public String body;
+    public String renderedBody;
     public UserJson author;
     public UserJson updateAuthor;
     public Visibility visibility;

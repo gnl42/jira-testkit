@@ -42,10 +42,13 @@ public class Version
     public Boolean released;
     public Boolean archived;
     public Boolean overdue;
+    public String userStartDate;
     public String userReleaseDate;
     public String project;
     public List<SimpleLink> operations;
 
+    @XmlJavaTypeAdapter (LocalDateAdapter.class)
+    public LocalDate startDate;
     @XmlJavaTypeAdapter (LocalDateAdapter.class)
     public LocalDate releaseDate;
 
@@ -97,6 +100,32 @@ public class Version
         return this;
     }
 
+    public Version startDate(LocalDate startDate)
+    {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public Version startDate(String startDate)
+    {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        try
+        {
+            return startDate(startDate, LocalDate.fromDateFields(format.parse(startDate)));
+        }
+        catch (ParseException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Version startDate(String startDate, LocalDate startDateObject)
+    {
+        this.startDate = startDateObject;
+        this.userStartDate = startDate;
+        return this;
+    }
+
     public Version releaseDate(LocalDate releaseDate)
     {
         this.releaseDate = releaseDate;
@@ -126,6 +155,12 @@ public class Version
     public Version project(String project)
     {
         this.project = project;
+        return this;
+    }
+
+    public Version userStartDate(String userStartDate)
+    {
+        this.userStartDate = userStartDate;
         return this;
     }
 
