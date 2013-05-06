@@ -54,12 +54,7 @@ public class XmlBackupCopier
     /**
      * Common base URL found in XML backups.
      */
-    private static final String LOCALHOST_8090 = "\"http://localhost:8080/jira\"";
-
-    /**
-     * Common base URL found in XML backups.
-     */
-    private static final String LOCALHOST_8080 = "\"http://localhost:8090/jira\"";
+    private static final String[] LOCALHOSTS = new String[] { "\"http://localhost:8080/jira\"", "\"http://localhost:8090/jira\"", "\"http://localhost:2990/jira\"" };
 
     /**
      * The base URL for the running JIRA instance.
@@ -84,7 +79,7 @@ public class XmlBackupCopier
 
     /**
      * Copies the input file to the JIRA import directory, substituting string tokens. This method will also try to
-     * replace any occurrence of {@value #LOCALHOST_8080} and {@value #LOCALHOST_8090} with the value of {@link
+     * replace any occurrence of {@value #LOCALHOSTS} with the value of {@link
      * #baseUrl}.
      * <p/>
      * The string tokens that will be replaced are dictated by the contents of the substitutions parameter.
@@ -100,8 +95,8 @@ public class XmlBackupCopier
 
     /**
      * Copies the input file to the JIRA import directory, substituting string tokens. Apart from the given
-     * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOST_8080} and {@value
-     * #LOCALHOST_8090} with the value of {@link #baseUrl}.
+     * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOSTS}
+	 * with the value of {@link #baseUrl}.
      * <p/>
      * The string tokens that will be replaced are dictated by the contents of the substitutions parameter.
      *
@@ -142,8 +137,8 @@ public class XmlBackupCopier
 
 	/**
 	 * Copies the input resource to the JIRA import directory, substituting string tokens. Apart from the given
-	 * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOST_8080} and {@value
-	 * #LOCALHOST_8090} with the value of {@link #baseUrl}.
+	 * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOSTS}
+	 * with the value of {@link #baseUrl}.
 	 * <p/>
 	 * The string tokens that will be replaced are dictated by the contents of the substitutions parameter.
 	 *
@@ -198,8 +193,8 @@ public class XmlBackupCopier
 
 	/**
 	 * Copies the input file to the JIRA import directory, substituting string tokens. Apart from the given
-	 * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOST_8080} and {@value
-	 * #LOCALHOST_8090} with the value of {@link #baseUrl}.
+	 * substitutions, this method will also try to replace any occurrence of {@value #LOCALHOSTS}
+	 * with the value of {@link #baseUrl}.
 	 * <p/>
 	 * The string tokens that will be replaced are dictated by the contents of the substitutions parameter.
 	 *
@@ -267,9 +262,11 @@ public class XmlBackupCopier
      */
     protected Map<Pattern, String> createBaseUrlSubstitution(String baseURL)
     {
-        return MapBuilder.<Pattern, String>newBuilder()
-                .add(compile(String.format("value=%s", LOCALHOST_8080), LITERAL), quoteReplacement(format("value=\"%s\"", baseURL)))
-                .add(compile(String.format("value=%s", LOCALHOST_8090), LITERAL), quoteReplacement(format("value=\"%s\"", baseURL)))
-                .toMap();
+		MapBuilder<Pattern, String> builder = MapBuilder.newBuilder();
+		for (String localhost : LOCALHOSTS) {
+			builder.add(compile(String.format("value=%s", localhost), LITERAL),
+					quoteReplacement(format("value=\"%s\"", baseURL)));
+		}
+		return builder.toMap();
     }
 }
