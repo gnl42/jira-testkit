@@ -52,6 +52,7 @@
 		<jackson.version>1.9.1</jackson.version>
 		<hallelujah.version>3.1-alpha-4</hallelujah.version>
 		<jdkLevel>1.6</jdkLevel>
+        <spring.version>2.5.6.SEC01</spring.version>
 	</properties>
 
 	<profiles>
