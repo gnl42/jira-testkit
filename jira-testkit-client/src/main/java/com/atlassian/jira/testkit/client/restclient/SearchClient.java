@@ -139,6 +139,11 @@ public class SearchClient extends RestApiClient<SearchClient>
             resource = resource.queryParam("maxResults", searchRequest.maxResults.toString());
         }
 
+        if (searchRequest.validateQuery != null)
+        {
+            resource = resource.queryParam("validateQuery", searchRequest.validateQuery.toString());
+        }
+
         if (searchRequest.fields != null)
         {
             resource = resource.queryParam("fields", fromList(searchRequest.fields).toQueryParam());

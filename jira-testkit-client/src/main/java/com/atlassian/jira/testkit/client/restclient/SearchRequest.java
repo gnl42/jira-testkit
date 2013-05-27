@@ -22,6 +22,7 @@ public class SearchRequest
     public String jql = "";
     public Integer startAt;
     public Integer maxResults;
+    public Boolean validateQuery;
     public List<String> fields;
     public List<String> expand;
 
@@ -44,6 +45,12 @@ public class SearchRequest
     public SearchRequest maxResults(Integer maxResults)
     {
         this.maxResults = maxResults;
+        return this;
+    }
+
+    public SearchRequest validateQuery(boolean validateQuery)
+    {
+        this.validateQuery = validateQuery;
         return this;
     }
 
