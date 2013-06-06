@@ -24,6 +24,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -121,6 +122,32 @@ public class UserProfileBackdoor
 
         preferencesOf(user).setString(name, value != null ? value : "");
         clearCache(user);
+    }
+
+    /**
+     * @since 6.0.28
+     */
+    @GET
+    @Path ("preference/{name}")
+    @Produces ({MediaType.APPLICATION_JSON})
+    public Response getUserPreference(@QueryParam("username") String username, @PathParam("name") String name, @QueryParam("type") String type)
+    {
+        ApplicationUser user = getUserByName(username);
+        Object value;
+        if ("boolean".equalsIgnoreCase(type))
+        {
+            value = preferencesOf(user).getBoolean(name);
+        }
+        else if ("long".equalsIgnoreCase(type))
+        {
+            value = preferencesOf(user).getLong(name);
+        }
+        else
+        {
+            value = preferencesOf(user).getString(name);
+        }
+
+        return Response.ok(value).build();
     }
 
     /**

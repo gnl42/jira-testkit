@@ -47,6 +47,51 @@ public class UserPreferencesControl extends BackdoorControl<UserPreferencesContr
     }
 
     /**
+     * Gets a user preference String value in JIRA
+     *
+     * @param name the preference name
+     * @return the String property value
+     * @since 6.0.28
+     */
+    public String getString(String name)
+    {
+        return createResource().path(name)
+                .queryParam("type", "string")
+                .queryParam("username", username)
+                .get(String.class);
+    }
+
+    /**
+     * Gets a user preference Long value in JIRA
+     *
+     * @param name the preference name
+     * @return the Long property value
+     * @since 6.0.28
+     */
+    public Long getLong(String name)
+    {
+        return createResource().path(name)
+                .queryParam("type", "long")
+                .queryParam("username", username)
+                .get(Long.class);
+    }
+
+    /**
+     * Gets a user preference Boolean value in JIRA
+     *
+     * @param name the preference name
+     * @return the Boolean property value
+     * @since 6.0.28
+     */
+    public Boolean getBoolean(String name)
+    {
+        return createResource().path(name)
+                .queryParam("type", "boolean")
+                .queryParam("username", username)
+                .get(Boolean.class);
+    }
+
+    /**
      * Sets a Long user preference.
      *
      * @param name the preference name
