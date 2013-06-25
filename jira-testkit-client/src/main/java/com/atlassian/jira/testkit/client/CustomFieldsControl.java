@@ -9,6 +9,12 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.CustomFieldRequest;
+import com.atlassian.jira.testkit.beans.CustomFieldResponse;
+import com.sun.jersey.api.client.GenericType;
+
+import java.util.List;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Custom fields.
  *
@@ -54,27 +60,12 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
         createResource().path("customFields").path("delete").path(customFieldId).delete();
     }
 
-    public static class CustomFieldRequest
+    /**
+     * List custom fields registered in the system
+     */
+    public List<CustomFieldResponse> getCustomFields()
     {
-        public String name;
-        public String description;
-        public String type;
-        public String searcherKey;
+        return createResource().path("customFields").path("get").get(new GenericType<List<CustomFieldResponse>>(){});
     }
 
-    public static class CustomFieldResponse
-    {
-        public CustomFieldResponse(String name, String id)
-        {
-            this.name = name;
-            this.id = id;
-        }
-
-        public CustomFieldResponse()
-        {
-        }
-
-        public String name;
-        public String id;
-    }
 }

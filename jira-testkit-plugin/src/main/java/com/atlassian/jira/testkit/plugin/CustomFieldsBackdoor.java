@@ -19,23 +19,28 @@ import com.atlassian.jira.issue.customfields.CustomFieldType;
 import com.atlassian.jira.issue.customfields.CustomFieldUtils;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.testkit.beans.CustomFieldRequest;
+import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.ofbiz.core.entity.GenericEntityException;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * A backdoor for manipulating custom fields.
@@ -92,12 +97,27 @@ public class CustomFieldsBackdoor
         try
         {
             CustomField result = customFieldManager.createCustomField(field.name, field.description, type, searcher, contexts, allTypes);
-            return Response.ok(new CustomFieldResponse(result.getName(), result.getId())).build();
+            return Response.ok(new CustomFieldResponse(result.getName(), result.getId(), result.getCustomFieldType().getKey())).build();
         }
         catch (GenericEntityException e)
         {
             throw new IllegalStateException("Something went really wrong", e);
         }
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("get")
+    public Response getCustomFields()
+    {
+        return Response.ok(Lists.newArrayList(Iterables.transform(customFieldManager.getCustomFieldObjects(), new Function<CustomField, Object>()
+        {
+            @Override
+            public CustomFieldResponse apply(final CustomField input)
+            {
+                return new CustomFieldResponse(input.getName(), input.getId(), input.getCustomFieldType().getKey());
+            }
+        }))).build();
     }
 
     @DELETE
@@ -119,36 +139,12 @@ public class CustomFieldsBackdoor
         try
         {
             customFieldManager.removeCustomField(customField);
-            return Response.ok(new CustomFieldResponse("", customFieldId)).build();
+            return Response.ok().build();
         }
         catch (RemoveException e)
         {
             throw new IllegalStateException("Something went wrong: ", e);
         }
 
-    }
-
-    public static class CustomFieldRequest
-    {
-        public String name;
-        public String description;
-        public String type;
-        public String searcherKey;
-    }
-
-    public static class CustomFieldResponse
-    {
-        public CustomFieldResponse(String name, String id)
-        {
-            this.name = name;
-            this.id = id;
-        }
-
-        public CustomFieldResponse()
-        {
-        }
-
-        public String name;
-        public String id;
     }
 }
