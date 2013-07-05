@@ -31,7 +31,6 @@ import org.ofbiz.core.entity.GenericEntityException;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,6 +40,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
 /**
  * A backdoor for manipulating custom fields.
@@ -79,7 +80,7 @@ public class CustomFieldsBackdoor
                 searcher = Iterables.find(searchers, new Predicate<CustomFieldSearcher>()
                 {
                     @Override
-                    public boolean apply(@Nullable CustomFieldSearcher customFieldSearcher)
+                    public boolean apply(CustomFieldSearcher customFieldSearcher)
                     {
                         return field.searcherKey.equals(customFieldSearcher.getDescriptor().getCompleteKey());
                     }
@@ -97,7 +98,7 @@ public class CustomFieldsBackdoor
         try
         {
             CustomField result = customFieldManager.createCustomField(field.name, field.description, type, searcher, contexts, allTypes);
-            return Response.ok(new CustomFieldResponse(result.getName(), result.getId(), result.getCustomFieldType().getKey())).build();
+            return Response.ok(asResponse(result)).cacheControl(never()).build();
         }
         catch (GenericEntityException e)
         {
@@ -115,9 +116,9 @@ public class CustomFieldsBackdoor
             @Override
             public CustomFieldResponse apply(final CustomField input)
             {
-                return new CustomFieldResponse(input.getName(), input.getId(), input.getCustomFieldType().getKey());
+                return asResponse(input);
             }
-        }))).build();
+        }))).cacheControl(never()).build();
     }
 
     @DELETE
@@ -146,5 +147,12 @@ public class CustomFieldsBackdoor
             throw new IllegalStateException("Something went wrong: ", e);
         }
 
+    }
+
+    private static CustomFieldResponse asResponse(final CustomField input)
+    {
+        final CustomFieldSearcher customFieldSearcher = input.getCustomFieldSearcher();
+        final String searcherKey = customFieldSearcher == null ? null : customFieldSearcher.getDescriptor().getCompleteKey();
+        return new CustomFieldResponse(input.getName(), input.getId(), input.getCustomFieldType().getKey(), input.getDescription(), searcherKey);
     }
 }

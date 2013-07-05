@@ -27,7 +27,7 @@
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>6.0-OD-09-3</jira.version>
+		<jira.version>6.0</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>
@@ -223,13 +223,21 @@
 				<version>${junit.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
-			<!-- COMPILE -->
-			<dependency>
-				<groupId>com.google.code.findbugs</groupId>
-				<artifactId>jsr305</artifactId>
-				<version>1.3.9</version>
-			</dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>1.3.9</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>10.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.1</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>

@@ -178,5 +178,5 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 </project>

@@ -1,6 +1,6 @@
 package com.atlassian.jira.testkit;
 
-import com.atlassian.jira.util.Named;
+import com.atlassian.jira.testkit.beans.Named;
 import com.google.common.base.Predicate;
 
 import javax.annotation.Nullable;
