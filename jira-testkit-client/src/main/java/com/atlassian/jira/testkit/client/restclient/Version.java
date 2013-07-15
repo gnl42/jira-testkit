@@ -14,6 +14,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalDate;
 
@@ -29,6 +30,7 @@ import java.util.List;
  * @since v4.3
  */
 @JsonSerialize (include = JsonSerialize.Inclusion.NON_NULL)
+@JsonIgnoreProperties (ignoreUnknown = true)
 public class Version
 {
     public static final GenericType<List<Version>> VERSIONS_TYPE = new GenericType<List<Version>>(){};
