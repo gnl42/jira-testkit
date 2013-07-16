@@ -30,7 +30,6 @@ import java.util.List;
  * @since v4.3
  */
 @JsonSerialize (include = JsonSerialize.Inclusion.NON_NULL)
-@JsonIgnoreProperties (ignoreUnknown = true)
 public class Version
 {
     public static final GenericType<List<Version>> VERSIONS_TYPE = new GenericType<List<Version>>(){};
@@ -48,6 +47,7 @@ public class Version
     public String userReleaseDate;
     public String project;
     public List<SimpleLink> operations;
+    public Long projectId;
 
     @XmlJavaTypeAdapter (LocalDateAdapter.class)
     public LocalDate startDate;
@@ -105,6 +105,12 @@ public class Version
     public Version startDate(LocalDate startDate)
     {
         this.startDate = startDate;
+        return this;
+    }
+
+    public Version projectId(Long projectId)
+    {
+        this.projectId = projectId;
         return this;
     }
 
