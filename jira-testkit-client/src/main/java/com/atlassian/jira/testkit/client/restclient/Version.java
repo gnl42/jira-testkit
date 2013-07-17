@@ -36,6 +36,7 @@ public class Version
     public String userReleaseDate;
     public String project;
     public List<SimpleLink> operations;
+    public Long projectId;
 
     @XmlJavaTypeAdapter (LocalDateAdapter.class)
     public LocalDate releaseDate;
