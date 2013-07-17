@@ -28,6 +28,7 @@ public class Project
 {
     public static final GenericType<List<Project>> PROJECTS_TYPE = new GenericType<List<Project>>(){};
 
+    public String expand;
     public String self;
     public String id;
     public String key;
@@ -58,6 +59,12 @@ public class Project
     public Project id(String id)
     {
         this.id = id;
+        return this;
+    }
+
+    public Project expand(String expand)
+    {
+        this.expand = expand;
         return this;
     }
 
