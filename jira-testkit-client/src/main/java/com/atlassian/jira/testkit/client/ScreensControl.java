@@ -9,6 +9,12 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.Screen;
+import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.WebResource;
+
+import java.util.List;
+
 public class ScreensControl extends BackdoorControl<ScreensControl>
 {
     public ScreensControl(JIRAEnvironmentData environmentData)
@@ -16,9 +22,22 @@ public class ScreensControl extends BackdoorControl<ScreensControl>
         super(environmentData);
     }
 
+    public List<Screen> getAllScreens()
+    {
+        return createResource()
+                .get(new GenericType<List<Screen>>(){});
+    }
+
+    public Screen getScreen(final String screenIdOrName)
+    {
+        return createResource()
+                .queryParam("screen", screenIdOrName)
+                .get(Screen.class);
+    }
+
     public ScreensControl addTabToScreen(final String screenName,final String name)
     {
-        get(createResource().path("screens").path("addTab")
+        get(createResource().path("addTab")
                 .queryParam("screen", "" + screenName)
                 .queryParam("name", name));
         return this;
@@ -26,7 +45,7 @@ public class ScreensControl extends BackdoorControl<ScreensControl>
 
     public ScreensControl deleteTabFromScreen(final String screenName,final String name)
     {
-        get(createResource().path("screens").path("deleteTab")
+        get(createResource().path("deleteTab")
                 .queryParam("screen", "" + screenName)
                 .queryParam("name", name));
         return this;
@@ -34,7 +53,7 @@ public class ScreensControl extends BackdoorControl<ScreensControl>
 
     public ScreensControl addFieldToScreen(final String screenName,final String fieldName)
     {
-        get(createResource().path("screens").path("addField")
+        get(createResource().path("addField")
                 .queryParam("screen", "" + screenName)
                 .queryParam("field", fieldName));
         return this;
@@ -42,10 +61,15 @@ public class ScreensControl extends BackdoorControl<ScreensControl>
 
     public ScreensControl removeFieldFromScreen(final String screenName,final String fieldName)
     {
-        get(createResource().path("screens").path("removeField")
+        get(createResource().path("removeField")
                 .queryParam("screen", "" + screenName)
                 .queryParam("field", fieldName));
         return this;
     }
 
+    @Override
+    protected WebResource createResource()
+    {
+        return super.createResource().path("screens");
+    }
 }
