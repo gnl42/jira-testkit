@@ -43,6 +43,7 @@ public class Project
     public AssigneeType assigneeType;
     public Map<String, String> roles;
     public Map<String, String> avatarUrls;
+	public ProjectCategory projectCategory;
 
     public Project url(String url)
     {
@@ -139,6 +140,12 @@ public class Project
         this.avatarUrls = avatarUrls;
         return this;
     }
+
+	public Project projectCategory(ProjectCategory projectCategory)
+	{
+		this.projectCategory = projectCategory;
+		return this;
+	}
 
     @Override
     public int hashCode()
