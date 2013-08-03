@@ -10,6 +10,7 @@
 package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.context.JiraContextNode;
@@ -17,20 +18,33 @@ import com.atlassian.jira.issue.context.manager.JiraContextTreeManager;
 import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
 import com.atlassian.jira.issue.customfields.CustomFieldUtils;
+import com.atlassian.jira.issue.customfields.config.item.SettableOptionsConfigItem;
+import com.atlassian.jira.issue.customfields.option.Option;
+import com.atlassian.jira.issue.customfields.option.Options;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.config.FieldConfig;
+import com.atlassian.jira.issue.fields.config.FieldConfigItem;
+import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.testkit.beans.CustomFieldConfig;
+import com.atlassian.jira.testkit.beans.CustomFieldOption;
 import com.atlassian.jira.testkit.beans.CustomFieldRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.ofbiz.core.entity.GenericEntityException;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,10 +52,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 
 /**
  * A backdoor for manipulating custom fields.
@@ -54,11 +71,13 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 public class CustomFieldsBackdoor
 {
     private final CustomFieldManager customFieldManager;
+    private final ConstantsManager manager;
     private final JiraContextTreeManager treeManager;
 
-    public CustomFieldsBackdoor(CustomFieldManager customFieldManager)
+    public CustomFieldsBackdoor(CustomFieldManager customFieldManager, ConstantsManager manager)
     {
         this.customFieldManager = customFieldManager;
+        this.manager = manager;
         this.treeManager = ComponentAccessor.getComponent(JiraContextTreeManager.class);
     }
 
@@ -98,7 +117,7 @@ public class CustomFieldsBackdoor
         try
         {
             CustomField result = customFieldManager.createCustomField(field.name, field.description, type, searcher, contexts, allTypes);
-            return Response.ok(asResponse(result)).cacheControl(never()).build();
+            return Response.ok(asResponse(result, false)).cacheControl(never()).build();
         }
         catch (GenericEntityException e)
         {
@@ -109,14 +128,14 @@ public class CustomFieldsBackdoor
     @GET
     @AnonymousAllowed
     @Path("get")
-    public Response getCustomFields()
+    public Response getCustomFields(@QueryParam("config") final boolean config)
     {
-        return Response.ok(Lists.newArrayList(Iterables.transform(customFieldManager.getCustomFieldObjects(), new Function<CustomField, Object>()
+        return Response.ok(Lists.newArrayList(transform(customFieldManager.getCustomFieldObjects(), new Function<CustomField, Object>()
         {
             @Override
             public CustomFieldResponse apply(final CustomField input)
             {
-                return asResponse(input);
+                return asResponse(input, config);
             }
         }))).cacheControl(never()).build();
     }
@@ -149,10 +168,98 @@ public class CustomFieldsBackdoor
 
     }
 
-    private static CustomFieldResponse asResponse(final CustomField input)
+    private CustomFieldResponse asResponse(final CustomField input, final boolean config)
     {
         final CustomFieldSearcher customFieldSearcher = input.getCustomFieldSearcher();
         final String searcherKey = customFieldSearcher == null ? null : customFieldSearcher.getDescriptor().getCompleteKey();
-        return new CustomFieldResponse(input.getName(), input.getId(), input.getCustomFieldType().getKey(), input.getDescription(), searcherKey);
+        final CustomFieldResponse response = new CustomFieldResponse(input.getName(), input.getId(), input.getCustomFieldType().getKey(), input.getDescription(), searcherKey);
+        if (config)
+        {
+            response.setConfig(getConfig(input));
+        }
+
+        return response;
+    }
+
+    private List<CustomFieldConfig> getConfig(final CustomField input)
+    {
+        List<CustomFieldConfig> config = Lists.newArrayList();
+
+        for (FieldConfigScheme fieldConfigScheme : input.getConfigurationSchemes())
+        {
+            final FieldConfig onlyConfig = fieldConfigScheme.getOneAndOnlyConfig();
+            if (onlyConfig != null)
+            {
+                CustomFieldConfig bean = new CustomFieldConfig();
+                bean.setProjects(asSet(getProjectNames(fieldConfigScheme.getAssociatedProjectObjects())));
+                bean.setIssueTypes(asSet(getIssueTypeNames(fieldConfigScheme.getConfigs().keySet())));
+
+                for (FieldConfigItem item : onlyConfig.getConfigItems())
+                {
+                    if (item.getType() instanceof SettableOptionsConfigItem)
+                    {
+                        bean.setOptions(asList(convertOptions((Options) item.getConfigurationObject(null))));
+                    }
+                }
+                config.add(bean);
+            }
+        }
+        return config;
+    }
+
+    private Iterable<CustomFieldOption> convertOptions(Iterable<Option> options)
+    {
+        return transform(options, new Function<Option, CustomFieldOption>()
+        {
+            @Override
+            public CustomFieldOption apply(@Nullable final Option input)
+            {
+                return convertOption(input);
+            }
+        });
+    }
+
+    private CustomFieldOption convertOption(Option option)
+    {
+        final CustomFieldOption customFieldOption = new CustomFieldOption();
+        customFieldOption.setId(option.getOptionId());
+        customFieldOption.setName(option.getValue());
+        customFieldOption.setChildren(asList(convertOptions(option.getChildOptions())));
+
+        return customFieldOption;
+    }
+
+    private <T> List<T> asList(Iterable<? extends T> iterable)
+    {
+        return Lists.newArrayList(iterable);
+    }
+
+    private <T> Set<T> asSet(Iterable<? extends T> iterable)
+    {
+        return Sets.newHashSet(iterable);
+    }
+
+    private Iterable<String> getProjectNames(Iterable<Project> projects)
+    {
+        return transform(filter(projects, Predicates.notNull()), new Function<Project, String>()
+        {
+            @Override
+            public String apply(final Project input)
+            {
+                return input.getName();
+            }
+        });
+    }
+
+    private Iterable<String> getIssueTypeNames(Iterable<String> ids)
+    {
+        return transform(filter(ids, Predicates.notNull()), new Function<String, String>()
+        {
+            @Override
+            public String apply(final String input)
+            {
+                return manager.getIssueTypeObject(input).getName();
+            }
+        });
     }
 }
