@@ -12,6 +12,7 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig;
 
 import java.util.EnumSet;
 
@@ -43,7 +44,11 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         protected Client initialValue()
         {
             final DefaultClientConfig config = new DefaultClientConfig();
-            config.getClasses().add(JacksonJaxbJsonProvider.class);
+
+            final JacksonJaxbJsonProvider jacksonProvider = new JacksonJaxbJsonProvider();
+            jacksonProvider.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            config.getSingletons().add(jacksonProvider);
+
             final JerseyClientFactory clientFactory = new ApacheClientFactoryImpl(config);
             Client client = clientFactory.create();
             if (log.isDebugEnabled())
