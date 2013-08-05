@@ -1,6 +1,5 @@
 package com.atlassian.jira.testkit.beans;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,7 +27,8 @@ public class CustomFieldResponse implements Named
     @JsonProperty
     public String searcher;
 
-    private List<CustomFieldConfig> config = Lists.newArrayList();
+    //Don't set this to an empty list by default or old clients wont be compatible with the GET call.
+    private List<CustomFieldConfig> config;
 
     public CustomFieldResponse(final String name, final String id, final String type, final String description, final String searcher)
     {

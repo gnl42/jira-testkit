@@ -6,8 +6,6 @@ import com.google.common.collect.Sets;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonSetter;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 import java.util.List;
 import java.util.Set;
@@ -30,9 +28,9 @@ public class CustomFieldConfig
         };
     }
 
-    private Set<String> projects;
-    private Set<String> issueTypes;
-    private List<CustomFieldOption> options;
+    private Set<String> projects = Sets.newHashSet();
+    private Set<String> issueTypes = Sets.newHashSet();
+    private List<CustomFieldOption> options = Lists.newArrayList();
 
     @JsonProperty
     public Set<String> getIssueTypes()
