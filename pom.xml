@@ -18,6 +18,14 @@
 		<url>http://bitbucket.org/atlassian/jira-testkit</url>
 	</scm>
 
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
 	<modules>
 		<module>jira-testkit-plugin</module>
 		<module>jira-testkit-client</module>
