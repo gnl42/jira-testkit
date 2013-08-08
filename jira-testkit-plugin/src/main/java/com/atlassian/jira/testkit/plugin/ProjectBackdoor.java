@@ -80,9 +80,9 @@ public class ProjectBackdoor
     {
         // Create the project
         ErrorCollection errorCollection = new EmptyErrorCollection();
-        ProjectService.CreateProjectValidationResult result = new ProjectService.CreateProjectValidationResult(
-                errorCollection, name, key, "This project is awesome", lead, null, AssigneeTypes.PROJECT_LEAD,
-                null);
+        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(
+                getUserWithAdminPermission(), name, key, "This project is awesome", lead, null,
+                AssigneeTypes.PROJECT_LEAD, null);
         Project project = projectService.createProject(result);
 
         // Add the schemes
