@@ -24,6 +24,7 @@ import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.apache.log4j.Logger;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -45,6 +46,7 @@ import javax.ws.rs.core.Response;
 @AnonymousAllowed
 public class ProjectBackdoor
 {
+    private final Logger log = Logger.getLogger(ProjectBackdoor.class);
     private final ProjectService projectService;
     private final PermissionSchemeManager permissionSchemeManager;
     private final UserUtil userUtil;
@@ -83,6 +85,12 @@ public class ProjectBackdoor
         ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(
                 getUserWithAdminPermission(), name, key, "This project is awesome", lead, null,
                 AssigneeTypes.PROJECT_LEAD, null);
+        if (!result.isValid())
+        {
+            log.error(String.format("Unable to create a project '%s': %s", name, result.getErrorCollection().toString()));
+            return Response.status(Response.Status.PRECONDITION_FAILED).build();
+        }
+
         Project project = projectService.createProject(result);
 
         // Add the schemes
