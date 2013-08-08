@@ -21,7 +21,6 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectAssigneeTypes;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
-import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -83,7 +82,7 @@ public class ProjectBackdoor
         ErrorCollection errorCollection = new EmptyErrorCollection();
         ProjectService.CreateProjectValidationResult result = new ProjectService.CreateProjectValidationResult(
                 errorCollection, name, key, "This project is awesome", lead, null, AssigneeTypes.PROJECT_LEAD,
-                null, ApplicationUsers.from(getUserWithAdminPermission()));
+                null);
         Project project = projectService.createProject(result);
 
         // Add the schemes

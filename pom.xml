@@ -27,8 +27,7 @@
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>6.1-20130808.171833</jira.version>
-        <jira.rest.version>6.1.0-m04</jira.rest.version>
+		<jira.version>6.0</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>
@@ -152,12 +151,6 @@
 				<scope>provided</scope>
 				<version>${jira.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>com.atlassian.jira</groupId>
-                <artifactId>jira-rest-api</artifactId>
-                <version>${jira.rest.version}</version>
-                <scope>provided</scope>
-            </dependency>
 			<dependency>
 				<groupId>com.atlassian.jira</groupId>
 				<artifactId>jira-func-tests</artifactId>
