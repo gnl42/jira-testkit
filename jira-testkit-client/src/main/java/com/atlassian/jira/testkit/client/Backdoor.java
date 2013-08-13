@@ -55,6 +55,7 @@ public class Backdoor
 	private final LicenseControl licenseControl;
 	private final LogControl logControl;
 	private final IndexingControl indexingControl;
+    private final ApplicationLinkControl applicationLinkControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -92,6 +93,7 @@ public class Backdoor
 		this.licenseControl = new LicenseControl(environmentData);
 		this.logControl = new LogControl(environmentData);
 		this.indexingControl = new IndexingControl(environmentData);
+        this.applicationLinkControl = new ApplicationLinkControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -313,4 +315,9 @@ public class Backdoor
 	{
 		return indexingControl;
 	}
+
+    public ApplicationLinkControl applicationLink()
+    {
+        return applicationLinkControl;
+    }
 }
