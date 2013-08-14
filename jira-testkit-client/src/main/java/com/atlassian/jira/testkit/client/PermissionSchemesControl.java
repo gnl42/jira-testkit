@@ -44,15 +44,25 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         removePermission(schemeId, permission, "group", groupName);
     }
 
-    public void addProjectRolePermission(long schemeId, int permission, long projectRoleId) {
+    public void addProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    {
         addPermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
     }
 
-
-    public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId) {
+    public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    {
         removePermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
     }
 
+    public void addUserPermission(long schemeId, int permission, String userName)
+    {
+        addPermission(schemeId, permission, "user", userName);
+    }
+
+    public void removeUserPermission(long schemeId, int permission, String userName)
+    {
+        removePermission(schemeId, permission, "user", userName);
+    }
 
     /**
      * Removes any matching permission scheme entities for the given permission and adds an entity for the passed group.
