@@ -12,12 +12,15 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
+import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -27,8 +30,7 @@ import java.util.List;
 /**
  * Use this backdoor to manipulate Permission Schemes as part of setup for tests.
  *
- * This class should only be called by the
- * {@link com.atlassian.jira.testkit.client.PermissionSchemesControl}.
+ * This class should only be called by the com.atlassian.jira.testkit.client.PermissionSchemesControl.
  *
  * @since v5.0
  */
@@ -56,6 +58,21 @@ public class PermissionSchemesBackdoor
         schemeManager.updateScheme(copyScheme);
 
         return Response.ok(copyScheme.getId()).build();
+    }
+
+    @DELETE
+    @Path("{schemeId}")
+    public Response delete(@PathParam ("schemeId") Long schemeId)
+    {
+        try
+        {
+            schemeManager.deleteScheme(schemeId);
+        }
+        catch (GenericEntityException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return Response.ok().cacheControl(CacheControl.never()).build();
     }
 
     @GET

@@ -12,7 +12,7 @@ package com.atlassian.jira.testkit.client;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Permission Schemes.
  *
- * See {@link com.atlassian.jira.testkit.plugin.PermissionSchemesBackdoor} in jira-testkit-plugin for backend.
+ * See com.atlassian.jira.testkit.plugin.PermissionSchemesBackdoor in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
@@ -32,6 +32,11 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     {
         return Long.parseLong(createResource().path("permissionSchemes/copyDefault")
                 .queryParam("schemeName", schemeName).get(String.class));
+    }
+
+    public void deleteScheme(long schemeId)
+    {
+        createResource().path("permissionSchemes").path(String.valueOf(schemeId)).delete();
     }
 
     public void addGroupPermission(Long schemeId, int permission, String groupName)
