@@ -9,7 +9,9 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.GET;
@@ -28,10 +30,21 @@ public class PluginsBackdoor
 {
 
     private final PluginController pluginController;
+    private final PluginAccessor pluginAccessor;
 
-    public PluginsBackdoor(PluginController pluginController)
+    public PluginsBackdoor(PluginController pluginController, PluginAccessor pluginAccessor)
     {
         this.pluginController = pluginController;
+        this.pluginAccessor = pluginAccessor;
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path ("state")
+    public Response getStatePlugin(@QueryParam ("key") String key)
+    {
+        PluginState state = pluginAccessor.getPlugin(key).getPluginState();
+        return Response.ok(state.name()).build();
     }
 
     @GET

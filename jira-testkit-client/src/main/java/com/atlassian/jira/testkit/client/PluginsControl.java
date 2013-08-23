@@ -27,6 +27,18 @@ public class PluginsControl extends BackdoorControl<PluginsControl>
         super(environmentData);
     }
 
+    /**
+     * Get the plugins state.
+     * @param pluginKey
+     * @return state.
+     */
+    public String getPluginState(final String pluginKey)
+    {
+        WebResource resource = createResource().path("plugins/state")
+                .queryParam("key", pluginKey);
+        return resource.get(String.class);
+    }
+
     public void disablePlugin(final String pluginKey)
     {
         WebResource resource = createResource().path("plugins/disable")
