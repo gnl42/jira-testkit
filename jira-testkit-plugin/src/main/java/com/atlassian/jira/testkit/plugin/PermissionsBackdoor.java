@@ -9,15 +9,25 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.jira.exception.CreateException;
-import com.atlassian.jira.exception.RemoveException;
-import com.atlassian.jira.security.GlobalPermissionManager;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.atlassian.jira.exception.CreateException;
+import com.atlassian.jira.exception.RemoveException;
+import com.atlassian.jira.security.GlobalPermissionManager;
+import com.atlassian.jira.security.JiraPermission;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.collect.Lists;
 
 /**
  * Use this backdoor to manipulate Permissions as part of setup for tests.
@@ -69,4 +79,22 @@ public class PermissionsBackdoor
 
         return Response.ok(null).build();
     }
+    
+    @GET
+    @AnonymousAllowed
+    @Produces ({MediaType.APPLICATION_JSON})
+    @Path("global/getgroups")
+    public Response getGlobalPermissionGroups(@QueryParam ("type") int permissionType) {
+    
+        Collection<String> groupNames = new ArrayList<String>();
+        //Use this method instead getGroupNames as it will not retrun "anyone" group which means null for group name. 
+        for (JiraPermission jiraPermission : globalPermissionManager.getPermissions(permissionType)) {
+            groupNames.add(jiraPermission.getGroup());
+        }
+        List<String> str = Lists.newArrayListWithCapacity(groupNames.size());
+        str.addAll(groupNames);
+        return Response.ok(str).cacheControl(never()).build();
+    }
+    
+    
 }

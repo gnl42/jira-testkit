@@ -9,6 +9,10 @@
 
 package com.atlassian.jira.testkit.client;
 
+import java.util.List;
+
+import com.sun.jersey.api.client.GenericType;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Permissions, including global permissions
  * and permission schemes.
@@ -19,7 +23,9 @@ package com.atlassian.jira.testkit.client;
  */
 public class PermissionsControl extends BackdoorControl<PermissionsControl>
 {
-    public PermissionsControl(JIRAEnvironmentData environmentData)
+    private static final GenericType<List<String>> LIST_GENERIC_TYPE = new GenericType<List<String>>(){};
+
+	public PermissionsControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
     }
@@ -30,11 +36,29 @@ public class PermissionsControl extends BackdoorControl<PermissionsControl>
                 .queryParam("type", "" + permissionType)
                 .queryParam("group", group));
     }
+    
+    public void addAnyoneGlobalPermission(final int permissionType)
+    {
+    	get(createResource().path("permissions/global/add")
+    			.queryParam("type", "" + permissionType));
+    }
 
     public void removeGlobalPermission(final int permissionType, final String group)
     {
         get(createResource().path("permissions/global/remove")
                 .queryParam("type", "" + permissionType)
                 .queryParam("group", group));
+    }
+    
+    public void removeAnyoneGlobalPermission(final int permissionType)
+    {
+    	get(createResource().path("permissions/global/remove")
+    			.queryParam("type", "" + permissionType));
+    }
+    
+    public List<String> getGlobalPermissionGroups(final int permissionType)
+    {
+    	return createResource().path("permissions/global/getgroups")
+    			.queryParam("type", "" + permissionType).get(LIST_GENERIC_TYPE);
     }
 }
