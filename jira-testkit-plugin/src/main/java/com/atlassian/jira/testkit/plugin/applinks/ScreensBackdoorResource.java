@@ -22,6 +22,7 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -154,7 +155,7 @@ public class ScreensBackdoorResource
     		if (navigableField.getName().equals(field))
     		{
     			FieldScreenLayoutItem layoutItem = getFieldScreenLayoutItem(getScreenByName(screen), navigableField.getId());
-				layoutItem.setPosition(Integer.valueOf(position));
+    			layoutItem.getFieldScreenTab().moveFieldScreenLayoutItemToPosition(Collections.singletonMap(Integer.valueOf(position), layoutItem));
     			fieldScreenManager.updateFieldScreenLayoutItem(layoutItem);
     		}
     	}
