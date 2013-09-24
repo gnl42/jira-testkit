@@ -82,19 +82,21 @@ public class PermissionsBackdoor
     
     @GET
     @AnonymousAllowed
-    @Produces ({MediaType.APPLICATION_JSON})
-    @Path("global/getgroups")
-    public Response getGlobalPermissionGroups(@QueryParam ("type") int permissionType) {
-    
+    @Produces ({ MediaType.APPLICATION_JSON })
+    @Path ("global/getgroups")
+    public Response getGlobalPermissionGroups(@QueryParam ("type") int permissionType)
+    {
         Collection<String> groupNames = new ArrayList<String>();
-        //Use this method instead getGroupNames as it will not retrun "anyone" group which means null for group name. 
-        for (JiraPermission jiraPermission : globalPermissionManager.getPermissions(permissionType)) {
+        // Use this method instead getGroupNames as it will not retrun "anyone"
+        // group which means null for group name.
+        for (JiraPermission jiraPermission : globalPermissionManager.getPermissions(permissionType))
+        {
             groupNames.add(jiraPermission.getGroup());
         }
         List<String> str = Lists.newArrayListWithCapacity(groupNames.size());
         str.addAll(groupNames);
+        
         return Response.ok(str).cacheControl(never()).build();
     }
-    
-    
+
 }

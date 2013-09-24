@@ -23,9 +23,11 @@ import com.sun.jersey.api.client.GenericType;
  */
 public class PermissionsControl extends BackdoorControl<PermissionsControl>
 {
-    private static final GenericType<List<String>> LIST_GENERIC_TYPE = new GenericType<List<String>>(){};
+    private static final GenericType<List<String>> LIST_GENERIC_TYPE = new GenericType<List<String>>()
+    {
+    };
 
-	public PermissionsControl(JIRAEnvironmentData environmentData)
+    public PermissionsControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
     }
@@ -39,8 +41,8 @@ public class PermissionsControl extends BackdoorControl<PermissionsControl>
     
     public void addAnyoneGlobalPermission(final int permissionType)
     {
-    	get(createResource().path("permissions/global/add")
-    			.queryParam("type", "" + permissionType));
+        get(createResource().path("permissions/global/add").queryParam("type",
+                "" + permissionType));
     }
 
     public void removeGlobalPermission(final int permissionType, final String group)
@@ -52,13 +54,13 @@ public class PermissionsControl extends BackdoorControl<PermissionsControl>
     
     public void removeAnyoneGlobalPermission(final int permissionType)
     {
-    	get(createResource().path("permissions/global/remove")
-    			.queryParam("type", "" + permissionType));
+        get(createResource().path("permissions/global/remove")
+                .queryParam("type", "" + permissionType));
     }
-    
+
     public List<String> getGlobalPermissionGroups(final int permissionType)
     {
-    	return createResource().path("permissions/global/getgroups")
-    			.queryParam("type", "" + permissionType).get(LIST_GENERIC_TYPE);
+        return createResource().path("permissions/global/getgroups")
+                .queryParam("type", "" + permissionType).get(LIST_GENERIC_TYPE);
     }
 }
