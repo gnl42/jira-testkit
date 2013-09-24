@@ -26,4 +26,8 @@ public class AttachmentsControl extends BackdoorControl<AttachmentsControl> {
 	public void disable() {
 		get(createResource().path("attachments").path("disable"));
 	}
+
+    public String getAttachmentPath() {
+        return get(createResource().path("attachments").path("attachmentPath"));
+    }
 }

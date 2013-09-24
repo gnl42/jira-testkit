@@ -51,4 +51,10 @@ public class AttachmentsBackdoor {
 		attachmentPathManager.disableAttachments();
 		return Response.ok().cacheControl(never()).build();
 	}
+
+    @GET
+    @Path("attachmentPath")
+    public Response attachmentPath() {
+        return Response.ok(attachmentPathManager.getUseDefaultDirectory() ? attachmentPathManager.getDefaultAttachmentPath() : attachmentPathManager.getAttachmentPath()).build();
+    }
 }
