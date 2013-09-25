@@ -22,8 +22,10 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -31,6 +33,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 import static com.google.common.collect.Iterables.transform;
@@ -76,7 +80,7 @@ public class ScreensBackdoorResource
     }
 
     @GET
-    public Response get(@QueryParam("screen") String nameOrId)
+    public Response get(@QueryParam ("screen") String nameOrId)
     {
         if (nameOrId == null)
         {
@@ -102,16 +106,82 @@ public class ScreensBackdoorResource
     @Path ("removeField")
     public Response removeFieldFromScreen(@QueryParam ("screen") String screen, @QueryParam ("field") String field)
     {
-        final Set<OrderableField> navigableFields = fieldManager.getOrderableFields();
-        for (OrderableField navigableField : navigableFields)
+        OrderableField navigableField = getFieldByName(field);
+        if (navigableField != null)
         {
-            if (navigableField.getName().equals(field))
+            final FieldScreen fieldScreen = getScreenByName(screen);
+            fieldScreen.removeFieldScreenLayoutItem(navigableField.getId());
+        }
+        return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
+    @GET
+    @Path ("addField")
+    public Response addFieldToScreen(@QueryParam ("screen") String screen, @QueryParam ("tab") String tab, @QueryParam ("field") String field, @QueryParam ("position") String position)
+    {
+        FieldScreen fieldScreen = getScreenByName(screen);
+        FieldScreenTab screenTab;
+        if (StringUtils.isEmpty(tab))
+        {
+            screenTab = fieldScreen.getTab(0);
+        } else
+        {
+            screenTab = getTab(tab, fieldScreen);
+        }
+
+        OrderableField navigableField = getFieldByName(field);
+        if (navigableField != null)
+        {
+            if (StringUtils.isEmpty(position))
             {
-                final FieldScreen fieldScreen = getScreenByName(screen);
-                fieldScreen.removeFieldScreenLayoutItem(navigableField.getId());
+                screenTab.addFieldScreenLayoutItem(navigableField.getId());
+            } else
+            {
+                screenTab.addFieldScreenLayoutItem(navigableField.getId(), Integer.valueOf(position));
             }
         }
         return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
+    @GET
+    @Path ("setFieldPosition")
+    public Response changeFieldPosition(@QueryParam ("screen") String screen, @QueryParam ("field") String field, @QueryParam ("position") String position)
+    {
+        OrderableField navigableField = getFieldByName(field);
+        if (navigableField != null)
+        {
+            FieldScreenLayoutItem layoutItem = getFieldScreenLayoutItem(getScreenByName(screen), navigableField.getId());
+            layoutItem.getFieldScreenTab().moveFieldScreenLayoutItemToPosition(Collections.singletonMap(Integer.valueOf(position), layoutItem));
+            fieldScreenManager.updateFieldScreenLayoutItem(layoutItem);
+        }
+        return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
+    private OrderableField getFieldByName(String fieldName)
+    {
+        final Set<OrderableField> navigableFields = fieldManager.getOrderableFields();
+        for (OrderableField navigableField : navigableFields)
+        {
+            if (navigableField.getName().equals(fieldName))
+            {
+                return navigableField;
+            }
+        }
+        return null;
+    }
+
+    private FieldScreenLayoutItem getFieldScreenLayoutItem(FieldScreen screen, String fieldId)
+    {
+        for (FieldScreenTab fieldScreenTab : screen.getTabs())
+        {
+            FieldScreenLayoutItem fieldScreenLayoutItem = fieldScreenTab.getFieldScreenLayoutItem(fieldId);
+            if (fieldScreenLayoutItem != null)
+            {
+                return fieldScreenLayoutItem;
+            }
+        }
+
+        return null;
     }
 
     @GET
@@ -127,15 +197,25 @@ public class ScreensBackdoorResource
     public Response deleteTab(@QueryParam ("screen") String screen, @QueryParam ("name") String name)
     {
         final FieldScreen screenByName = getScreenByName(screen);
-        final List<FieldScreenTab> tabs = screenByName.getTabs();
+        FieldScreenTab tab = getTab(name, screenByName);
+        if (tab != null)
+        {
+            tab.remove();
+        }
+        return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
+    private FieldScreenTab getTab(String name, final FieldScreen screen)
+    {
+        final List<FieldScreenTab> tabs = screen.getTabs();
         for (FieldScreenTab tab : tabs)
         {
             if (tab.getName().equals(name))
             {
-                tab.remove();
+                return tab;
             }
         }
-        return Response.ok().cacheControl(CacheControl.never()).build();
+        return null;
     }
 
     public FieldScreen getScreenByName(String name)
