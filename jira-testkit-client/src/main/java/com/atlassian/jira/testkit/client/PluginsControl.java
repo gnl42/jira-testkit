@@ -69,15 +69,12 @@ public class PluginsControl extends BackdoorControl<PluginsControl>
 
 	public void setPluginLicense(String pluginKey, String license) throws JSONException {
 		pluginKey += "-key";
-		final String pluginDescStr = createResourceForPath("plugins").path(pluginKey).get(String.class);
-		final JSONObject pluginDesc = new JSONObject(pluginDescStr);
 		final JSONObject licenseDetails = new JSONObject();
 		licenseDetails.put("rawLicense", license);
-		pluginDesc.put("licenseDetails", licenseDetails);
 
 		createResourceForPath("plugins").
-				path(pluginKey).
-				accept("application/vnd.atl.plugins.plugin+json").
-				type("application/vnd.atl.plugins.plugin+json").put(pluginDesc.toString());
+				path(pluginKey + "/license").
+				accept("application/vnd.atl.plugins+json").
+				type("application/vnd.atl.plugins+json").put(licenseDetails.toString());
 	}
 }
