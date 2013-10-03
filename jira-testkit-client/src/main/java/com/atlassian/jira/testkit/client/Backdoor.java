@@ -12,6 +12,7 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
+import com.sun.jersey.api.client.WebResource;
 
 /**
  * Top-level of Backdoor control hierarchy. Use components of this class to
@@ -56,6 +57,7 @@ public class Backdoor
 	private final LogControl logControl;
 	private final IndexingControl indexingControl;
     private final ApplicationLinkControl applicationLinkControl;
+    private final RawRestApiControl rawRestApiControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -94,6 +96,7 @@ public class Backdoor
 		this.logControl = new LogControl(environmentData);
 		this.indexingControl = new IndexingControl(environmentData);
         this.applicationLinkControl = new ApplicationLinkControl(environmentData);
+        this.rawRestApiControl = new RawRestApiControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -319,5 +322,10 @@ public class Backdoor
     public ApplicationLinkControl applicationLink()
     {
         return applicationLinkControl;
+    }
+
+    public WebResource restApi()
+    {
+        return rawRestApiControl.rootReource();
     }
 }
