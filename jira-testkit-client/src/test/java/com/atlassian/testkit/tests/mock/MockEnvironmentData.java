@@ -10,6 +10,7 @@
 package com.atlassian.testkit.tests.mock;
 
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
+import com.atlassian.jira.testkit.client.UserCredentials;
 import junit.framework.TestCase;
 
 import java.io.File;
@@ -109,6 +110,24 @@ public class MockEnvironmentData implements JIRAEnvironmentData
 
     @Override
     public String getProperty(String key) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public UserCredentials getSysadminCredentials()
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public UserCredentials getAdminCredentials()
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public boolean isOnDemand()
+    {
         throw new UnsupportedOperationException("Not implemented");
     }
 }

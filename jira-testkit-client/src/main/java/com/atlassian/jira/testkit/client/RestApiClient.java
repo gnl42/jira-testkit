@@ -77,9 +77,9 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     /**
      * The user to log in as.
      */
-    private String loginAs = "admin";
+    private String loginAs;
 
-    private String loginPassword = loginAs;
+    private String loginPassword;
 
     /**
      * The version of the REST plugin to test.
@@ -106,6 +106,9 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     {
         this.environmentData = environmentData;
         this.version = version;
+        final UserCredentials sysadminCredentials = environmentData.getSysadminCredentials();
+        this.loginAs = sysadminCredentials.getUsername();
+        this.loginPassword = sysadminCredentials.getPassword();
     }
 
     /**
@@ -185,17 +188,29 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
      * @param url a String containing a URL
      * @return a WebResource, with optional authentication parameters
      */
-    protected WebResource resourceRoot(String url)
+    protected WebResource resourceRoot(final String url)
     {
-        WebResource resource = client().resource(url);
-        if (loginAs != null)
-        {
-            resource = resource.queryParam("os_authType", "basic")
-                    .queryParam("os_username", percentEncode(loginAs))
-                    .queryParam("os_password", percentEncode(loginPassword));
-        }
+        return addOptionalAuthenticationParameters(resourceRootAnonymous(url));
+    }
 
-        return resource;
+    private WebResource addOptionalAuthenticationParameters(final WebResource resource)
+    {
+        return loginAs == null
+                ? resource
+                : resource.queryParam("os_authType", "basic")
+                        .queryParam("os_username", percentEncode(loginAs))
+                        .queryParam("os_password", percentEncode(loginPassword));
+    }
+
+    /**
+     * Creates a WebResource for the given URL.
+     *
+     * @param url a String containing a URL
+     * @return a WebResource, without authentication parameters
+     */
+    protected WebResource resourceRootAnonymous(final String url)
+    {
+        return client().resource(url);
     }
 
     /**

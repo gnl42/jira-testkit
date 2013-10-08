@@ -116,7 +116,8 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     {
         try
         {
-            get(resourceRoot(environmentData.getBaseUrl().toExternalForm()).path("rest").path("api").path(REST_VERSION).path("serverInfo"));
+            // serverInfo is @AnonymousAllowed
+            get(resourceRootAnonymous(environmentData.getBaseUrl().toExternalForm()).path("rest").path("api").path(REST_VERSION).path("serverInfo"));
             return true;
         }
         catch (UniformInterfaceException interfaceException)
