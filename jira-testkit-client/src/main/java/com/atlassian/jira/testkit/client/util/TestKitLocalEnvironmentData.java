@@ -57,7 +57,7 @@ public class TestKitLocalEnvironmentData extends AbstractEnvironmentData
         this(null);
     }
 
-    public TestKitLocalEnvironmentData(final String xmlDataLocation)
+    public TestKitLocalEnvironmentData(final @Nullable String xmlDataLocation)
     {
         this(loadProperties(TEST_SERVER_PROPERTIES, DEFAULT_PROPERTIES_FILENAME), xmlDataLocation);
     }
