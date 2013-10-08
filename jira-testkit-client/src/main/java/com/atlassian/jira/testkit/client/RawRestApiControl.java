@@ -24,7 +24,7 @@ public class RawRestApiControl extends BackdoorControl
      * Creates a root resource pointing at
      * @return the resource pointing at the root of all JIRA REST API.
      */
-    public WebResource rootReource()
+    public WebResource rootResource()
     {
         return createResourceForPath(BackdoorControl.API_REST_PATH, BackdoorControl.API_REST_VERSION);
     }

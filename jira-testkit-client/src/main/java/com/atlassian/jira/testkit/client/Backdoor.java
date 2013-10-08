@@ -326,6 +326,6 @@ public class Backdoor
 
     public WebResource restApi()
     {
-        return rawRestApiControl.rootReource();
+        return rawRestApiControl.rootResource();
     }
 }
