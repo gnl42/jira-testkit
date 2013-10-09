@@ -95,24 +95,4 @@ public interface JIRAEnvironmentData
      * @return a property from the test environment, or null if not available.
      */
     public String getProperty(String key);
-
-    /**
-     * Returns sysadmin user credentials (sysadmin has more rights than admin in OnDemand).
-     * @return UserCredentials instance
-     */
-    public UserCredentials getSysadminCredentials();
-
-    /**
-     * Returns admin user credentials.
-     * @return UserCredentials instance
-     */
-    public UserCredentials getAdminCredentials();
-
-
-    /**
-     * Tell is we run tests against OnDemand JIRA instance
-     *
-     * @return true if testing OnDemand instance, false in other case
-     */
-    public boolean isOnDemand();
 }

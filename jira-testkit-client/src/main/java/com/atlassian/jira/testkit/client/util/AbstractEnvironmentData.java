@@ -10,7 +10,6 @@
 package com.atlassian.jira.testkit.client.util;
 
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
-import com.atlassian.jira.testkit.client.UserCredentials;
 import junit.framework.TestCase;
 import org.apache.commons.lang.StringUtils;
 
@@ -20,24 +19,11 @@ public abstract class AbstractEnvironmentData implements JIRAEnvironmentData
 {
     private final String releaseInfo;
     private final Properties properties;
-    private final UserCredentials adminCredentials;
-    private final UserCredentials sysadminCredentials;
-    private final boolean isOnDemand;
 
-    protected AbstractEnvironmentData(final Properties properties)
+    protected AbstractEnvironmentData(Properties properties)
     {
         this.properties = properties;
         releaseInfo = properties.getProperty("jira.release.info");
-        isOnDemand = Boolean.parseBoolean(getEnvironmentProperty("test.ondemand", "false"));
-        adminCredentials = getCredentialsFromProperty("admin", "admin");
-        sysadminCredentials = getCredentialsFromProperty("sysadmin", isOnDemand ? "sysadmin" : "admin");
-    }
-
-    private UserCredentials getCredentialsFromProperty(final String user, final String defaultUsernameAndPassword)
-    {
-        final String username = getEnvironmentProperty("jira." + user + ".username", defaultUsernameAndPassword);
-        final String password = getEnvironmentProperty("jira." + user + ".password", defaultUsernameAndPassword);
-        return UserCredentials.credentialsFor(username, password);
     }
 
     public boolean isBundledPluginsOnly()
@@ -79,13 +65,8 @@ public abstract class AbstractEnvironmentData implements JIRAEnvironmentData
 
     protected String getEnvironmentProperty(final String key, final String defaultValue)
     {
-        return getEnvironmentProperty(key, defaultValue, false);
-    }
-
-    protected String getEnvironmentProperty(final String key, final String defaultValue, boolean allowEmpty)
-    {
         String property = System.getProperty(key);
-        if(property == null || (!allowEmpty && property.isEmpty()))
+        if(StringUtils.isEmpty(property))
         {
             if (properties != null)
             {
@@ -136,22 +117,4 @@ public abstract class AbstractEnvironmentData implements JIRAEnvironmentData
         }
     }
 
-    @Override
-    public boolean isOnDemand()
-    {
-        return isOnDemand;
-    }
-
-    @Override
-    public UserCredentials getSysadminCredentials()
-    {
-        return sysadminCredentials;
-    }
-
-    @Override
-    public UserCredentials getAdminCredentials()
-    {
-        return adminCredentials;
-    }
 }
-
