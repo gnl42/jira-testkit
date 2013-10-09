@@ -12,7 +12,6 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
-import com.sun.jersey.api.client.WebResource;
 
 /**
  * Top-level of Backdoor control hierarchy. Use components of this class to
@@ -324,8 +323,8 @@ public class Backdoor
         return applicationLinkControl;
     }
 
-    public WebResource restApi()
+    public RawRestApiControl rawRestApiControl()
     {
-        return rawRestApiControl.rootResource();
+        return rawRestApiControl;
     }
 }
