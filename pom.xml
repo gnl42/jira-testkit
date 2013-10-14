@@ -155,12 +155,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.atlassian.jira</groupId>
-				<artifactId>jira-api</artifactId>
-				<scope>provided</scope>
-				<version>${jira.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.jira</groupId>
 				<artifactId>jira-func-tests</artifactId>
 				<scope>provided</scope>
 				<version>${jira.version}</version>
