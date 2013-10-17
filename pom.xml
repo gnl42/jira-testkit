@@ -35,7 +35,7 @@
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>6.2-auditing-SNAPSHOT</jira.version>
+		<jira.version>6.2-auditing-20131017.215413</jira.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
 		<log4j.version>1.2.16</log4j.version>
