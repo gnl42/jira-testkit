@@ -56,6 +56,8 @@ public class Backdoor
 	private final LogControl logControl;
 	private final IndexingControl indexingControl;
     private final ApplicationLinkControl applicationLinkControl;
+    private final RawRestApiControl rawRestApiControl;
+    private final WhatsNewControl whatsNewControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -94,6 +96,8 @@ public class Backdoor
 		this.logControl = new LogControl(environmentData);
 		this.indexingControl = new IndexingControl(environmentData);
         this.applicationLinkControl = new ApplicationLinkControl(environmentData);
+        this.rawRestApiControl = new RawRestApiControl(environmentData);
+        this.whatsNewControl = new WhatsNewControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -319,5 +323,15 @@ public class Backdoor
     public ApplicationLinkControl applicationLink()
     {
         return applicationLinkControl;
+    }
+
+    public RawRestApiControl rawRestApiControl()
+    {
+        return rawRestApiControl;
+    }
+
+    public WhatsNewControl whatsNew()
+    {
+        return whatsNewControl;
     }
 }

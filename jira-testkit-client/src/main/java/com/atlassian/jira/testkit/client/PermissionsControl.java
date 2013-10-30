@@ -38,7 +38,12 @@ public class PermissionsControl extends BackdoorControl<PermissionsControl>
                 .queryParam("type", "" + permissionType)
                 .queryParam("group", group));
     }
-    
+
+    public String getPermissions(int permissionType)
+    {
+        return get(createResource().path("permissions/global").queryParam("type", String.valueOf(permissionType)));
+    }
+
     public void addAnyoneGlobalPermission(final int permissionType)
     {
         get(createResource().path("permissions/global/add").queryParam("type",

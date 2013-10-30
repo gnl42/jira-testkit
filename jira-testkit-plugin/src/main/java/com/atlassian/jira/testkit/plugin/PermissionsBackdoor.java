@@ -9,25 +9,25 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+import com.atlassian.jira.security.GlobalPermissionManager;
+import com.atlassian.jira.security.JiraPermission;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.atlassian.jira.exception.CreateException;
-import com.atlassian.jira.exception.RemoveException;
-import com.atlassian.jira.security.GlobalPermissionManager;
-import com.atlassian.jira.security.JiraPermission;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.collect.Lists;
+import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
 /**
  * Use this backdoor to manipulate Permissions as part of setup for tests.
@@ -51,16 +51,37 @@ public class PermissionsBackdoor
     @Path("global/add")
     public Response addGlobalPermission(@QueryParam ("type") int permissionType, @QueryParam ("group") String group)
     {
-        try
-        {
-            globalPermissionManager.addPermission(permissionType, group);
-        }
-        catch (CreateException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+        globalPermissionManager.addPermission(permissionType, group);
         return Response.ok(null).build();
+    }
+
+
+    @GET
+    @Path ("global")
+    public Collection<PermissionBean> getPermissions(@QueryParam ("type") Integer permissionType)
+    {
+        if (permissionType == null) { throw new WebApplicationException(400); }
+
+        return Collections2.transform(globalPermissionManager.getPermissions(permissionType), PermissionBean.CONVERT_FN);
+    }
+
+    private static class PermissionBean
+    {
+        static Function<JiraPermission, PermissionBean> CONVERT_FN = new Function<JiraPermission, PermissionBean>()
+        {
+            @Override
+            public PermissionBean apply(JiraPermission jiraPermission)
+            {
+                PermissionBean permissionBean = new PermissionBean();
+                permissionBean.permType = jiraPermission.getPermType();
+                permissionBean.group = jiraPermission.getGroup();
+
+                return permissionBean;
+            }
+        };
+
+        public String permType;
+        public String group;
     }
 
     @GET
@@ -68,15 +89,7 @@ public class PermissionsBackdoor
     @Path("global/remove")
     public Response removeGlobalPermission(@QueryParam ("type") int permissionType, @QueryParam ("group") String group)
     {
-        try
-        {
-            globalPermissionManager.removePermission(permissionType, group);
-        }
-        catch (RemoveException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+        globalPermissionManager.removePermission(permissionType, group);
         return Response.ok(null).build();
     }
     

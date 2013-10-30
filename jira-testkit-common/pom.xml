@@ -2,7 +2,7 @@
     <parent>
         <groupId>com.atlassian.jira.tests</groupId>
         <artifactId>jira-testkit-plugin-parent</artifactId>
-        <version>6.0.47-SNAPSHOT</version>
+        <version>6.2.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jira-testkit-common</artifactId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-api</artifactId>
-            <version>${jira.version}</version>
+            <version>${jira.rest.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

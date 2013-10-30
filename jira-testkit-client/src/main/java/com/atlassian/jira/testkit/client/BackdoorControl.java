@@ -35,6 +35,16 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
     public static final String DEFAULT_REST_PATH = "testkit-test";
 
     /**
+     * The default REST path for the JIRA API resources.
+     */
+    public static final String API_REST_PATH = "api";
+
+    /**
+     * The REST version for the JIRA API resources.
+     */
+    public static final String API_REST_VERSION = "2";
+
+    /**
      * The JIRA base URL.
      */
     protected final String rootPath;
@@ -82,7 +92,23 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
      */
     protected final WebResource createResourceForPath(String restModulePath)
     {
-        WebResource resource = resourceRoot(rootPath).path("rest").path(restModulePath).path("1.0");
+        return createResourceForPath(restModulePath, "1.0");
+    }
+
+    /**
+     * Creates the resource that corresponds to the root of a REST API. Note that the created {@code WebResource} has
+     * the following properties: <ul> <li>it logs all GET/POST/etc requests made through it</li> <li>it sets the
+     * <code>Content-Type: application/json</code> by default (override with {@link
+     * WebResource#type(javax.ws.rs.core.MediaType)})</li> </ul>
+     *
+     * @param restModulePath a String containing the REST path
+     * @param restModuleVersion a String containing the REST module version
+     * @return a WebResource for the the API root at the specified path
+     * @see #getRestModulePath()
+     */
+    protected final WebResource createResourceForPath(String restModulePath, String restModuleVersion)
+    {
+        WebResource resource = resourceRoot(rootPath).path("rest").path(restModulePath).path(restModuleVersion);
         resource.addFilter(new BackdoorLoggingFilter());
         resource.addFilter(new JsonMediaTypeFilter());
 
