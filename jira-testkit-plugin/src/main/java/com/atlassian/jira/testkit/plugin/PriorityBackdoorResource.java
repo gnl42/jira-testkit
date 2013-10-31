@@ -16,10 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import com.atlassian.jira.config.PriorityManager;
-import com.atlassian.jira.issue.priority.Priority;
+import com.atlassian.jira.testkit.beans.Priority;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 
@@ -39,36 +37,35 @@ public class PriorityBackdoorResource
     @GET
     public Response getAllPriorities()
     {
-        List<Priority> priorities = priorityManager.getPriorities();
-        final List<PriorityBean> priorityBeans = Lists.newArrayList();
-        for (Priority priority: priorities)
+        final List<Priority> priorityBeans = Lists.newArrayList();
+        for (com.atlassian.jira.issue.priority.Priority priority: priorityManager.getPriorities())
         {
-            priorityBeans.add(new PriorityBean(priority));
+            priorityBeans.add(create(priority));
         }
         return Response.ok(priorityBeans).cacheControl(never()).build();
     }
     
     @POST
-    public Response createPriority(PriorityBean bean)
+    public Response createPriority(Priority bean)
     {
-        Priority priority =  priorityManager.createPriority(bean.name, bean.description, bean.iconUrl, bean.color);
-        return Response.ok(new PriorityBean(priority)).cacheControl(never()).build();
+        com.atlassian.jira.issue.priority.Priority priority =  priorityManager.createPriority(bean.getName(), bean.getDescription(), bean.getIconUrl(), bean.getColor());
+        return Response.ok(create(priority)).cacheControl(never()).build();
     }
     
     @PUT
-    public Response updatePriority(PriorityBean bean)
+    public Response updatePriority(Priority bean)
     {
-        Priority priority = priorityManager.getPriority(bean.id);
-        priorityManager.editPriority(priority, bean.name, bean.description, bean.iconUrl, bean.color);
-        return Response.ok(new PriorityBean(priority)).cacheControl(never()).build();
+        com.atlassian.jira.issue.priority.Priority priority = priorityManager.getPriority(bean.getId());
+        priorityManager.editPriority(priority, bean.getName(), bean.getDescription(), bean.getIconUrl(), bean.getColor());
+        return Response.ok(create(priority)).cacheControl(never()).build();
     }
 
     @DELETE
     @Path("{id}")
     public Response deletePriority(@PathParam("id") long id)
     {
-        Priority defaultPriority = priorityManager.getDefaultPriority();
-        if(defaultPriority==null) {
+        com.atlassian.jira.issue.priority.Priority defaultPriority = priorityManager.getDefaultPriority();
+        if(defaultPriority == null) {
             defaultPriority = priorityManager.getPriorities().get(0);
         }
         priorityManager.removePriority(String.valueOf(id), defaultPriority.getId());
@@ -98,40 +95,14 @@ public class PriorityBackdoorResource
         priorityManager.setDefaultPriority(String.valueOf(id));
         return Response.ok().cacheControl(never()).build();
     }
-
-    public static class PriorityBean
-    {
-        @JsonProperty
-        private String id;
-
-        @JsonProperty
-        private String description;
-
-        @JsonProperty
-        private String name;
-
-        @JsonProperty
-        private Long sequence;
-
-        @JsonProperty
-        private String color;
-
-        @JsonProperty
-        private String iconUrl;
-
-
-        public PriorityBean()
-        {
-        }
-
-        public PriorityBean(Priority priority)
-        {
-            id = trimToNull(priority.getId());
-            name = trimToNull(priority.getName());
-            iconUrl = trimToNull(priority.getIconUrl());
-            description = trimToNull(priority.getDescription());
-            color = trimToNull(priority.getStatusColor());
-            sequence = priority.getSequence();
-        }
+    
+    private Priority create(com.atlassian.jira.issue.priority.Priority priority) {
+    	return new Priority(
+    			trimToNull(priority.getId()), 
+    			trimToNull(priority.getDescription()),
+    			trimToNull(priority.getName()), 
+    			priority.getSequence(), 
+    			trimToNull(priority.getStatusColor()), 
+    			trimToNull(priority.getIconUrl()));
     }
 }

@@ -3,7 +3,6 @@ package com.atlassian.jira.testkit.plugin;
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 import static org.apache.commons.lang.StringUtils.trimToNull;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -17,10 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import com.atlassian.jira.config.StatusManager;
-import com.atlassian.jira.issue.status.Status;
+import com.atlassian.jira.testkit.beans.Status;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 
@@ -40,28 +37,27 @@ public class StatusBackdoorResource
     @GET
     public Response getAllStatuses()
     {
-        Collection<Status> statuses = statusManager.getStatuses();
-        final List<StatusBean> statusBeans = Lists.newArrayList();
-        for (Status status : statuses)
+        final List<Status> statusBeans = Lists.newArrayList();
+        for (com.atlassian.jira.issue.status.Status status : statusManager.getStatuses())
         {
-            statusBeans.add(new StatusBean(status));
+            statusBeans.add(create(status));
         }
         return Response.ok(statusBeans).cacheControl(never()).build();
     }
     
     @POST
-    public Response createStatus(StatusBean bean)
+    public Response createStatus(Status bean)
     {
-        Status status =  statusManager.createStatus(bean.name, bean.description, bean.iconUrl);
-        return Response.ok(new StatusBean(status)).cacheControl(never()).build();
+        com.atlassian.jira.issue.status.Status status =  statusManager.createStatus(bean.getName(), bean.getDescription(), bean.getIconUrl());
+        return Response.ok(create(status)).cacheControl(never()).build();
     }
     
     @PUT
-    public Response updateStatus(StatusBean bean)
+    public Response updateStatus(Status bean)
     {
-        Status status = statusManager.getStatus(bean.id);
-        statusManager.editStatus(status, bean.name, bean.description, bean.iconUrl);
-        return Response.ok(new StatusBean(status)).cacheControl(never()).build();
+        com.atlassian.jira.issue.status.Status status = statusManager.getStatus(bean.getId());
+        statusManager.editStatus(status, bean.getName(), bean.getDescription(), bean.getIconUrl());
+        return Response.ok(create(status)).cacheControl(never()).build();
     }
     
     @DELETE
@@ -72,31 +68,11 @@ public class StatusBackdoorResource
         return Response.ok().cacheControl(never()).build();
     }
     
-    public static class StatusBean
-    {
-        @JsonProperty
-        private String id;
-
-        @JsonProperty
-        private String description;
-
-        @JsonProperty
-        private String iconUrl;
-
-        @JsonProperty
-        private String name;
-
-
-        public StatusBean()
-        {
-        }
-
-        public StatusBean(Status status)
-        {
-            id = trimToNull(status.getId());
-            name = trimToNull(status.getName());
-            iconUrl = trimToNull(status.getIconUrl());
-            description = trimToNull(status.getDescription());
-        }
+    private Status create(com.atlassian.jira.issue.status.Status status) {
+    	return new Status(
+    			trimToNull(status.getId()), 
+    			trimToNull(status.getName()),
+    			trimToNull(status.getDescription()),
+    			trimToNull(status.getIconUrl()));
     }
 }

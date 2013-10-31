@@ -13,6 +13,7 @@ import static java.lang.String.valueOf;
 
 import java.util.List;
 
+import com.atlassian.jira.testkit.beans.Priority;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 
@@ -83,84 +84,5 @@ public class PriorityControl extends BackdoorControl<PriorityControl>
     private WebResource createPriorityResource()
     {
         return createResource().path("priority");
-    }
-
-    public static class Priority
-    {
-        private String id;
-        private String description;
-        private String name;
-        private String iconUrl;
-        private String color;
-        private Long sequence;
-
-        public Priority()
-        {
-        }
-
-        public Priority(String id, String name, String description)
-        {
-            this.id = id;
-            this.description = description;
-            this.name = name;
-        }
-
-        public String getId()
-        {
-            return id;
-        }
-
-        public void setId(String id)
-        {
-            this.id = id;
-        }
-
-        public String getDescription()
-        {
-            return description;
-        }
-
-        public void setDescription(String description)
-        {
-            this.description = description;
-        }
-
-        public String getName()
-        {
-            return name;
-        }
-
-        public void setName(String name)
-        {
-            this.name = name;
-        }
-
-        public Long getSequence() {
-            return sequence;
-        }
-
-        public void setSequence(Long sequence)
-        {
-            this.sequence = sequence;
-        }
-
-        public String getColor() {
-            return color;
-        }
-
-        public void setColor(String color)
-        {
-            this.color = color;
-        }
-
-        public String getIconUrl()
-        {
-            return iconUrl;
-        }
-
-        public void setIconUrl(String iconUrl)
-        {
-            this.iconUrl = iconUrl;
-        }
     }
 }

@@ -13,6 +13,7 @@ import static java.lang.String.valueOf;
 
 import java.util.List;
 
+import com.atlassian.jira.testkit.beans.Status;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 
@@ -79,59 +80,5 @@ public class StatusControl extends BackdoorControl<StatusControl>
         return createResource().path("status");
     }
 
-    public static class Status {
-        private String id;
-        private String description;
-        private String iconUrl;
-        private String name;
-
-        public Status() {
-        }
-
-        public Status(String id, String name, String description, String iconUrl)
-        {
-            this.id = id;
-            this.description = description;
-            this.iconUrl = iconUrl;
-            this.name = name;
-        }
-
-        public String getId()
-        {
-            return id;
-        }
-
-        public void setId(String id)
-        {
-            this.id = id;
-        }
-
-        public String getDescription()
-        {
-            return description;
-        }
-
-        public void setDescription(String description)
-        {
-            this.description = description;
-        }
-
-        public String getIconUrl() {
-            return iconUrl;
-        }
-
-        public void setIconUrl(String iconUrl)
-        {
-            this.iconUrl = iconUrl;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name)
-        {
-            this.name = name;
-        }
-    }
+   
 }

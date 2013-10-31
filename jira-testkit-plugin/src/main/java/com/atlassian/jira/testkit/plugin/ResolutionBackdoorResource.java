@@ -1,7 +1,7 @@
 package com.atlassian.jira.testkit.plugin;
 
-import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 import static org.apache.commons.lang.StringUtils.trimToNull;
+import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
 import java.util.List;
 
@@ -16,10 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import com.atlassian.jira.config.ResolutionManager;
-import com.atlassian.jira.issue.resolution.Resolution;
+import com.atlassian.jira.testkit.beans.Resolution;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 
@@ -39,28 +37,27 @@ public class ResolutionBackdoorResource
     @GET
     public Response getAllResolutions()
     {
-        List<Resolution> resolutions = resolutionManager.getResolutions();
-        final List<ResolutionBean> resolutionBeans = Lists.newArrayList();
-        for (Resolution resolution: resolutions)
+        final List<Resolution> resolutionBeans = Lists.newArrayList();
+        for (com.atlassian.jira.issue.resolution.Resolution resolution: resolutionManager.getResolutions())
         {
-            resolutionBeans.add(new ResolutionBean(resolution));
+            resolutionBeans.add(create(resolution));
         }
         return Response.ok(resolutionBeans).cacheControl(never()).build();
     }
     
     @POST
-    public Response createResolution(ResolutionBean bean)
+    public Response createResolution(Resolution bean)
     {
-        Resolution resolution =  resolutionManager.createResolution(bean.name, bean.description);
-        return Response.ok(new ResolutionBean(resolution)).cacheControl(never()).build();
+        com.atlassian.jira.issue.resolution.Resolution resolution =  resolutionManager.createResolution(bean.getName(), bean.getDescription());
+        return Response.ok(create(resolution)).cacheControl(never()).build();
     }
     
     @PUT
-    public Response updateResolution(ResolutionBean bean)
+    public Response updateResolution(Resolution bean)
     {
-        Resolution resolution =  resolutionManager.getResolution(bean.id);
-        resolutionManager.editResolution(resolution, bean.name, bean.description);
-        return Response.ok(new ResolutionBean(resolution)).cacheControl(never()).build();
+        com.atlassian.jira.issue.resolution.Resolution resolution =  resolutionManager.getResolution(bean.getId());
+        resolutionManager.editResolution(resolution, bean.getName(), bean.getDescription());
+        return Response.ok(create(resolution)).cacheControl(never()).build();
     }
 
     @DELETE
@@ -94,31 +91,12 @@ public class ResolutionBackdoorResource
         resolutionManager.setDefaultResolution(String.valueOf(id));
         return Response.ok().cacheControl(never()).build();
     }
-
-    public static class ResolutionBean
-    {
-        @JsonProperty
-        private String id;
-
-        @JsonProperty
-        private String description;
-
-        @JsonProperty
-        private String name;
-
-        @JsonProperty
-        private Long sequence;
-
-        public ResolutionBean()
-        {
-        }
-
-        public ResolutionBean(Resolution resolution)
-        {
-            id = trimToNull(resolution.getId());
-            name = trimToNull(resolution.getName());
-            description = trimToNull(resolution.getDescription());
-            sequence = resolution.getSequence();
-        }
+    
+    private Resolution create(com.atlassian.jira.issue.resolution.Resolution resolution) {
+    	return new Resolution(
+    			trimToNull(resolution.getId()), 
+    			trimToNull(resolution.getName()), 
+    			trimToNull(resolution.getDescription()), 
+    			resolution.getSequence());
     }
 }
