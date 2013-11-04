@@ -21,6 +21,7 @@ import java.util.List;
 public class FieldMetaData
 {
     public Boolean required;
+    public Boolean hasDefaultValue;
     public Boolean visible;
     public Boolean editable;
     public IssueCreateMeta.JsonType schema;
