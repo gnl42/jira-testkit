@@ -37,6 +37,9 @@ public class Backdoor
     private final ServicesControl services;
     private final FieldConfigurationControl fieldConfigurationControl;
     private final IssueTypeControl issueTypeControl;
+    private final StatusControl statusControl;
+    private final ResolutionControl resolutionControl;
+    private final PriorityControl priorityControl;
     private final SubtaskControl subtaskCotnrol;
     private final IssueLinkingControl issueLinkingControl;
     private final ScreensControl screensControl;
@@ -50,11 +53,11 @@ public class Backdoor
     private final AdvancedSettingsControl advancedSettingsControl;
     private final SearchClient searchClient;
     private final CustomFieldsControl customFieldsControl;
-	private final AttachmentsControl attachmentsControl;
-	private final TimeTrackingControl timeTrackingControl;
-	private final LicenseControl licenseControl;
-	private final LogControl logControl;
-	private final IndexingControl indexingControl;
+    private final AttachmentsControl attachmentsControl;
+    private final TimeTrackingControl timeTrackingControl;
+    private final LicenseControl licenseControl;
+    private final LogControl logControl;
+    private final IndexingControl indexingControl;
     private final ApplicationLinkControl applicationLinkControl;
     private final RawRestApiControl rawRestApiControl;
     private final WhatsNewControl whatsNewControl;
@@ -90,14 +93,17 @@ public class Backdoor
         this.customFieldsControl = new CustomFieldsControl(environmentData);
         this.screensControl = new ScreensControl(environmentData);
         this.projectRoleClient = new ProjectRoleClient(environmentData);
-		this.attachmentsControl = new AttachmentsControl(environmentData);
-		this.timeTrackingControl = new TimeTrackingControl(environmentData);
-		this.licenseControl = new LicenseControl(environmentData);
-		this.logControl = new LogControl(environmentData);
-		this.indexingControl = new IndexingControl(environmentData);
+        this.attachmentsControl = new AttachmentsControl(environmentData);
+        this.timeTrackingControl = new TimeTrackingControl(environmentData);
+        this.licenseControl = new LicenseControl(environmentData);
+        this.logControl = new LogControl(environmentData);
+        this.indexingControl = new IndexingControl(environmentData);
         this.applicationLinkControl = new ApplicationLinkControl(environmentData);
         this.rawRestApiControl = new RawRestApiControl(environmentData);
         this.whatsNewControl = new WhatsNewControl(environmentData);
+        this.statusControl = new StatusControl(environmentData);
+        this.resolutionControl = new ResolutionControl(environmentData);
+        this.priorityControl = new PriorityControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -195,6 +201,21 @@ public class Backdoor
     {
         return issueTypeControl;
     }
+    
+    public StatusControl status()
+    {
+        return statusControl;
+    }
+    
+    public ResolutionControl resolutions()
+    {
+        return resolutionControl;
+    }
+
+    public PriorityControl priorities()
+    {
+        return priorityControl;
+    }
 
     public SubtaskControl subtask()
     {
@@ -290,35 +311,35 @@ public class Backdoor
         return projectRoleClient;
     }
 
-	public AttachmentsControl attachments()
+    public AttachmentsControl attachments()
     {
-		return attachmentsControl;
-	}
+        return attachmentsControl;
+    }
 
-	public TimeTrackingControl timeTracking()
+    public TimeTrackingControl timeTracking()
     {
-		return timeTrackingControl;
-	}
+        return timeTrackingControl;
+    }
 
-	public LicenseControl license()
+    public LicenseControl license()
     {
-		return licenseControl;
-	}
+        return licenseControl;
+    }
 
     public ProjectRoleClient projectRoles()
     {
         return projectRoleClient;
     }
 
-	public LogControl logControl()
+    public LogControl logControl()
     {
-		return logControl;
-	}
+        return logControl;
+    }
 
-	public IndexingControl indexing()
-	{
-		return indexingControl;
-	}
+    public IndexingControl indexing()
+    {
+        return indexingControl;
+    }
 
     public ApplicationLinkControl applicationLink()
     {
