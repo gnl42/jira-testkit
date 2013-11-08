@@ -65,7 +65,7 @@ public class PermissionsBackdoor
         return Collections2.transform(globalPermissionManager.getPermissions(permissionType), PermissionBean.CONVERT_FN);
     }
 
-    private static class PermissionBean
+    public static class PermissionBean
     {
         static Function<JiraPermission, PermissionBean> CONVERT_FN = new Function<JiraPermission, PermissionBean>()
         {
