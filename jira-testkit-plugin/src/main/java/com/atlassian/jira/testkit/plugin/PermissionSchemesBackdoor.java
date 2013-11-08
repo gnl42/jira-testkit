@@ -17,6 +17,7 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
+import java.util.List;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,7 +26,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Use this backdoor to manipulate Permission Schemes as part of setup for tests.
@@ -56,6 +56,16 @@ public class PermissionSchemesBackdoor
         // TODO - create new scheme blah blah immutable blah
         copyScheme.setName(newSchemeName);
         schemeManager.updateScheme(copyScheme);
+
+        return Response.ok(copyScheme.getId()).build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("create")
+    public Response create(@QueryParam ("schemeName") String newSchemeName, @QueryParam("schemeDescription") String description)
+    {
+        Scheme copyScheme = schemeManager.createSchemeObject(newSchemeName, description);
 
         return Response.ok(copyScheme.getId()).build();
     }

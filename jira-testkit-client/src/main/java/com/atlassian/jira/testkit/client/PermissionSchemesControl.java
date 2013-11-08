@@ -34,6 +34,18 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
                 .queryParam("schemeName", schemeName).get(String.class));
     }
 
+    /**
+     * Makes a copy of the Default Permission Scheme and returns the id of the new scheme.
+     * @param schemeName the name of the new scheme
+     * @param description can be null
+     * @return {Long} the schemeId of the created scheme
+     */
+    public Long createScheme(String schemeName, String description)
+    {
+        return Long.parseLong(createResource().path("permissionSchemes/create")
+                .queryParam("schemeName", schemeName).queryParam("schemeDescription", description).get(String.class));
+    }
+
     public void deleteScheme(long schemeId)
     {
         createResource().path("permissionSchemes").path(String.valueOf(schemeId)).delete();

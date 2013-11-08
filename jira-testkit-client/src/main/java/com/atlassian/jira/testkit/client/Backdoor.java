@@ -61,6 +61,7 @@ public class Backdoor
     private final ApplicationLinkControl applicationLinkControl;
     private final RawRestApiControl rawRestApiControl;
     private final WhatsNewControl whatsNewControl;
+    private final AuditingControl auditingControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -104,6 +105,7 @@ public class Backdoor
         this.statusControl = new StatusControl(environmentData);
         this.resolutionControl = new ResolutionControl(environmentData);
         this.priorityControl = new PriorityControl(environmentData);
+        this.auditingControl = new AuditingControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -354,5 +356,10 @@ public class Backdoor
     public WhatsNewControl whatsNew()
     {
         return whatsNewControl;
+    }
+
+    public AuditingControl auditing()
+    {
+        return auditingControl;
     }
 }
