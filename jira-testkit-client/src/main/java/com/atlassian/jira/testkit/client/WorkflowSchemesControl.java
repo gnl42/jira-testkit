@@ -152,6 +152,12 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
         workflowSchemeResource.delete();
     }
 
+    public Long copyScheme(String schemeName, String newSchemeName)
+    {
+        return Long.parseLong(createWorkflowSchemeResource().path("copy")
+                .queryParam("schemeName", schemeName).queryParam("newSchemeName", newSchemeName).get(String.class));
+    }
+
     private WebResource createWorkflowSchemeResource(long id)
     {
         return createWorkflowSchemeResource().path(String.valueOf(id));

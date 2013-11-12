@@ -11,6 +11,7 @@ package com.atlassian.jira.testkit.plugin.workflows;
 
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
@@ -63,6 +64,20 @@ public class WorkflowSchemesBackdoor
         this.projectManager = projectManager;
         this.context = context;
         this.dataFactory = dataFactory;
+    }
+
+    @GET
+    @Path("copy")
+    public Response copyWorkflowScheme(@QueryParam("schemeName") String schemeName, @QueryParam("newSchemeName") String newSchemeName)
+    {
+        final Scheme defaultScheme = workflowSchemeManager.getSchemeObject(schemeName);
+        final Scheme copyScheme = workflowSchemeManager.copyScheme(defaultScheme);
+
+        // TODO - create new scheme blah blah immutable blah
+        copyScheme.setName(newSchemeName);
+        workflowSchemeManager.updateScheme(copyScheme);
+
+        return Response.ok(copyScheme.getId()).build();
     }
 
     @GET
