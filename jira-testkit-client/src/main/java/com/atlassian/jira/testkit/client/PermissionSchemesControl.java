@@ -63,15 +63,11 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     private void addPermission(long schemeId, int permission, String type, String parameter)
     {
-        WebResource webResource = createResource().path("permissionSchemes/entity/add")
+        get(createResource().path("permissionSchemes/entity/add")
                 .queryParam("schemeId", "" + schemeId)
                 .queryParam("permission", "" + permission)
-                .queryParam("type", type);
-        if (parameter != null)
-        {
-            webResource.queryParam("parameter", parameter);
-        }
-        get(webResource);
+                .queryParam("type", type)
+                .queryParam("parameter", parameter));
     }
 
     private void removePermission(long schemeId, int permission, String type, String parameter)
