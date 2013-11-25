@@ -63,28 +63,34 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     private void addPermission(long schemeId, int permission, String type, String parameter)
     {
-        get(createResource().path("permissionSchemes/entity/add")
-                .queryParam("schemeId", "" + schemeId)
-                .queryParam("permission", "" + permission)
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
+        WebResource webResource = createWebResource("permissionSchemes/entity/add", schemeId, permission, type, parameter);
+        get(webResource);
     }
 
     private void removePermission(long schemeId, int permission, String type, String parameter)
     {
-        get(createResource().path("permissionSchemes/entity/remove")
-                .queryParam("schemeId", "" + schemeId)
-                .queryParam("permission", "" + permission)
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
+        WebResource webResource = createWebResource("permissionSchemes/entity/remove", schemeId, permission, type, parameter);
+        get(webResource);
     }
 
     private void replacePermissions(long schemeId, int permission, String type, String parameter)
     {
-        get(createResource().path("permissionSchemes/entity/replace")
+        WebResource webResource = createWebResource("permissionSchemes/entity/replace", schemeId, permission, type, parameter);
+        get(webResource);
+    }
+
+    private WebResource createWebResource(String path, long schemeId, int permission, String type, String parameter)
+    {
+        WebResource webResource = createResource().path(path)
                 .queryParam("schemeId", "" + schemeId)
                 .queryParam("permission", "" + permission)
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
+                .queryParam("type", type);
+
+        // parameter may be null if referring to "group" ANYONE
+        if (parameter != null)
+        {
+            webResource = webResource.queryParam("parameter", parameter);
+        }
+        return webResource;
     }
 }
