@@ -31,6 +31,7 @@ public class Backdoor
     private final SystemPropertiesControl systemProperties;
     private final ProjectControl project;
     private final PermissionSchemesControl permissionSchemes;
+    private final NotificationSchemesControl notificationSchemes;
     private final MailServersControl mailServers;
     private final SearchRequestControl searchRequests;
     private final UserProfileControl userProfile;
@@ -75,6 +76,7 @@ public class Backdoor
         this.systemProperties = new SystemPropertiesControl(environmentData);
         this.project = new ProjectControl(environmentData);
         this.permissionSchemes = new PermissionSchemesControl(environmentData);
+        this.notificationSchemes = new NotificationSchemesControl(environmentData);
         this.mailServers = new MailServersControl(environmentData);
         this.searchRequests = new SearchRequestControl(environmentData);
         this.userProfile = new UserProfileControl(environmentData);
@@ -161,6 +163,11 @@ public class Backdoor
     public PermissionSchemesControl permissionSchemes()
     {
         return permissionSchemes;
+    }
+
+    public NotificationSchemesControl notificationSchemes()
+    {
+        return notificationSchemes;
     }
 
     public ScreensControl screensControl()
