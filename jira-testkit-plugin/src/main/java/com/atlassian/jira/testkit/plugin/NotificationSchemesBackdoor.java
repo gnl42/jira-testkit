@@ -124,7 +124,7 @@ public class NotificationSchemesBackdoor
         try
         {
             GenericValue scheme = schemeManager.getScheme(schemeId);
-            List<GenericValue> entities = schemeManager.getEntities(scheme, eventTypeId, type);
+            List<GenericValue> entities = schemeManager.getEntities(scheme, eventTypeId, parameter);
             if (entities.isEmpty())
             {
                 throw new IllegalStateException("NotificationScheme entity to be removed does not exist");
@@ -145,20 +145,20 @@ public class NotificationSchemesBackdoor
     }
 
     /**
-     * Removes all matching entities for the given eventTypeId and type, and adds the entity with the given parameter.
+     * Removes all matching entities for the given notification and type, and adds the entity with the given parameter.
      */
     @GET
     @AnonymousAllowed
     @Path("entity/replace")
     public Response replaceEntities(@QueryParam ("schemeId") long schemeId,
-            @QueryParam ("eventTypeId") long eventTypeId,
+            @QueryParam ("eventTypeId") long notification,
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
         try
         {
             GenericValue scheme = schemeManager.getScheme(schemeId);
-            List<GenericValue> entities = schemeManager.getEntities(scheme, eventTypeId);
+            List<GenericValue> entities = schemeManager.getEntities(scheme, notification);
 
             for (GenericValue entity : entities)
             {
@@ -166,7 +166,7 @@ public class NotificationSchemesBackdoor
                 schemeManager.deleteEntity(id);
             }
 
-            SchemeEntity entity = new SchemeEntity(type, parameter, eventTypeId);
+            SchemeEntity entity = new SchemeEntity(type, parameter, notification);
             schemeManager.createSchemeEntity(scheme, entity);
         }
         catch (GenericEntityException e)

@@ -9,6 +9,8 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.notification.type.NotificationType;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Notification Schemes.
  *
@@ -53,32 +55,32 @@ public class NotificationSchemesControl extends BackdoorControl<NotificationSche
 
     public void addGroupNotification(Long schemeId, long eventTypeId, String groupName)
     {
-        addNotification(schemeId, eventTypeId, "group", groupName);
+        addNotification(schemeId, eventTypeId, NotificationType.GROUP.dbCode(), groupName);
     }
 
     public void removeGroupNotification(long schemeId, long eventTypeId, String groupName)
     {
-        removeNotification(schemeId, eventTypeId, "group", groupName);
+        removeNotification(schemeId, eventTypeId, NotificationType.GROUP.dbCode(), groupName);
     }
 
     public void addProjectRoleNotification(long schemeId, long eventTypeId, long projectRoleId)
     {
-        addNotification(schemeId, eventTypeId, "projectrole", Long.toString(projectRoleId));
+        addNotification(schemeId, eventTypeId, NotificationType.PROJECT_ROLE.dbCode(), Long.toString(projectRoleId));
     }
 
     public void removeProjectRoleNotification(long schemeId, long eventTypeId, long projectRoleId)
     {
-        removeNotification(schemeId, eventTypeId, "projectrole", Long.toString(projectRoleId));
+        removeNotification(schemeId, eventTypeId, NotificationType.PROJECT_ROLE.dbCode(), Long.toString(projectRoleId));
     }
 
     public void addUserNotification(long schemeId, long eventTypeId, String userName)
     {
-        addNotification(schemeId, eventTypeId, "user", userName);
+        addNotification(schemeId, eventTypeId, NotificationType.SINGLE_USER.dbCode(), userName);
     }
 
     public void removeUserNotification(long schemeId, long eventTypeId, String userName)
     {
-        removeNotification(schemeId, eventTypeId, "user", userName);
+        removeNotification(schemeId, eventTypeId, NotificationType.SINGLE_USER.dbCode(), userName);
     }
 
     /**
@@ -86,7 +88,7 @@ public class NotificationSchemesControl extends BackdoorControl<NotificationSche
      */
     public void replaceGroupNotifications(long schemeId, long eventTypeId, String groupName)
     {
-        replaceNotifications(schemeId, eventTypeId, "group", groupName);
+        replaceNotifications(schemeId, eventTypeId, NotificationType.GROUP.dbCode(), groupName);
     }
 
     private void addNotification(long schemeId, long eventTypeId, String type, String parameter)
