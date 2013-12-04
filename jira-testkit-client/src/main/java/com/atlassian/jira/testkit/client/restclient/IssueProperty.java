@@ -5,6 +5,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.util.Map;
+
 /**
  * Representation of an issue property in the JIRA REST API.
  *
@@ -14,25 +16,7 @@ public class IssueProperty
 {
     public String self;
     public String key;
-    public String value;
-
-    public IssueProperty self(String self)
-    {
-        this.self = self;
-        return this;
-    }
-
-    public IssueProperty key(String key)
-    {
-        this.key = key;
-        return this;
-    }
-
-    public IssueProperty value(String value)
-    {
-        this.value = value;
-        return this;
-    }
+    public Map<String, Object> value;
 
     @Override
     public String toString()
