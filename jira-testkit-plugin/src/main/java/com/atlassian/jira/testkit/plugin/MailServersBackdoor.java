@@ -12,6 +12,7 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.mail.MailException;
 import com.atlassian.mail.MailFactory;
 import com.atlassian.mail.MailProtocol;
+import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.server.MailServer;
 import com.atlassian.mail.server.MailServerManager;
 import com.atlassian.mail.server.PopMailServer;
@@ -21,13 +22,14 @@ import com.atlassian.mail.server.impl.SMTPMailServerImpl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Use this backdoor to manipulate Mail Servers as part of setup for tests.
@@ -42,6 +44,13 @@ import java.util.List;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class MailServersBackdoor
 {
+    private final MailQueue mailQueue;
+
+    public MailServersBackdoor(final MailQueue mailQueue)
+    {
+        this.mailQueue = mailQueue;
+    }
+
     @POST
     @Path("smtp")
     public Response addSmtpServer(MailServersBean mailServerBean) throws MailException
@@ -90,5 +99,13 @@ public class MailServersBackdoor
         mailServerManager.create(mailServer);
 
         return Response.ok(null).build();
+    }
+
+    @GET
+    @Path("flush")
+    public Response flushMailQueue()
+    {
+        mailQueue.sendBuffer();
+        return Response.ok().build();
     }
 }

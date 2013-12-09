@@ -9,6 +9,8 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.sun.jersey.api.client.ClientResponse;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Mail Servers.
  *
@@ -120,6 +122,7 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         createResource().path("mailServers/smtp").post(String.class, bean);
     }
 
+
     /**
      * Adds a POP server with the specified parameters.
      *
@@ -130,6 +133,7 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
     {
         addPopServer(name, "", "pop3", "localhost", port, "username", "password");
     }
+
     /**
      * Adds an IMAP server with the specified parameters.
      *
@@ -140,15 +144,14 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
     {
         addPopServer(name, "", "imap", "localhost", port, "username", "password");
     }
-
     /**
-     * Adds a POP/IMAP server with the specified parameters.
-     *
-     * @param name The name of this server within JIRA.
-     * @param description The description for this server.
-     * @param protocol The server protocol (one of pop3, pop3s, imap, imaps).
-     * @param serverName The POP/IMAP host name of your mail server.
-     * @param port The POP/IMAP port of your mail server.
+    * Adds a POP/IMAP server with the specified parameters.
+    *
+    * @param name The name of this server within JIRA.
+    * @param description The description for this server.
+    * @param protocol The server protocol (one of pop3, pop3s, imap, imaps).
+    * @param serverName The POP/IMAP host name of your mail server.
+    * @param port The POP/IMAP port of your mail server.
      * @param username Username.
      * @param password Password.
      */
@@ -164,6 +167,14 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         bean.username = username;
         bean.password = password;
         createResource().path("mailServers/pop").post(String.class, bean);
+    }
+
+    /**
+     * Flushing mail queue.
+     */
+    public void flushMailQueue()
+    {
+        createResource().path("mailServers/flush").get(ClientResponse.class);
     }
 
     static class MailServersBean
