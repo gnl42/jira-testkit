@@ -8,11 +8,11 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import java.util.Map;
 
 /**
- * Representation of an issue property in the JIRA REST API.
+ * Representation of an entity property in the JIRA REST API.
  *
  * @since v6.2
  */
-public class IssueProperty
+public class EntityProperty
 {
     public String self;
     public String key;

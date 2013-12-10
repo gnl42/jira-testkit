@@ -8,14 +8,14 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import java.util.List;
 
 /**
- * Representation of an issue properties keys list in the JIRA REST API.
+ * Representation of an entity properties keys list in the JIRA REST API.
  * @since v6.2
  */
-public class IssuePropertyKeys
+public class EntityPropertyKeys
 {
-    public List<IssuePropertyKey> keys;
+    public List<EntityPropertyKey> keys;
 
-    public IssuePropertyKeys keys(List<IssuePropertyKey> keys)
+    public EntityPropertyKeys keys(List<EntityPropertyKey> keys)
     {
         this.keys = keys;
         return this;
@@ -39,18 +39,18 @@ public class IssuePropertyKeys
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    public static class IssuePropertyKey
+    public static class EntityPropertyKey
     {
         public String self;
         public String key;
 
-        IssuePropertyKey self(String self)
+        EntityPropertyKey self(String self)
         {
             this.self = self;
             return this;
         }
 
-        IssuePropertyKey key(String key)
+        EntityPropertyKey key(String key)
         {
             this.key = key;
             return this;
