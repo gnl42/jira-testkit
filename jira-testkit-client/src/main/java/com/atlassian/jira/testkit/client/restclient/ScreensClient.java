@@ -29,18 +29,27 @@ public class ScreensClient extends RestApiClient<ScreensClient>
 
     public List<ScreenTab> getAllTabs()
     {
-        return getTabsResource().get(ScreenTab.LIST);
+        return getAllTabs(null);
     }
 
+    public List<ScreenTab> getAllTabs(String projectKey)
+    {
+        return getTabsResource(projectKey).get(ScreenTab.LIST);
+    }
 
     public Response getAllTabsResponse()
+    {
+        return getAllTabsResponse(null);
+    }
+
+    public Response getAllTabsResponse(final String projectKey)
     {
         return toResponse(new Method()
         {
             @Override
             public ClientResponse call()
             {
-                return getTabsResource().get(ClientResponse.class);
+                return getTabsResource(projectKey).get(ClientResponse.class);
             }
         });
     }
@@ -234,9 +243,35 @@ public class ScreensClient extends RestApiClient<ScreensClient>
                 .get(ScreenField.LIST);
     }
 
+    public Response getFieldsResponse(Long tab)
+    {
+        return getFieldsResponse(tab, null);
+    }
+
+    public Response getFieldsResponse(final Long tab, final String projectKey)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return getTabsResource(projectKey)
+                        .path("" + tab)
+                        .path("fields")
+                        .type(MediaType.APPLICATION_JSON_TYPE)
+                        .get(ClientResponse.class);
+            }
+        });
+    }
+
     public List<ScreenField> getFields(Long tab)
     {
-        return getTabsResource()
+        return getFields(tab, null);
+    }
+
+    public List<ScreenField> getFields(Long tab, String projectKey)
+    {
+        return getTabsResource(projectKey)
                 .path("" + tab)
                 .path("fields")
                 .type(MediaType.APPLICATION_JSON_TYPE)
@@ -254,5 +289,15 @@ public class ScreensClient extends RestApiClient<ScreensClient>
         return createResource().path("screens").path("" + this.id);
     }
 
-    private WebResource getTabsResource() {return screen().path("tabs");}
+    private WebResource getTabsResource() {return getTabsResource(null);}
+
+    private WebResource getTabsResource(String projectKey)
+    {
+        WebResource screenWebResource = screen();
+        if (projectKey != null)
+        {
+            screenWebResource = screenWebResource.queryParam("projectKey", projectKey);
+        }
+        return screenWebResource.path("tabs");
+    }
 }
