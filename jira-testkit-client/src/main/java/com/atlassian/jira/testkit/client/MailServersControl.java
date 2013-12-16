@@ -10,6 +10,12 @@
 package com.atlassian.jira.testkit.client;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+
+import javax.ws.rs.core.Response;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Mail Servers.
@@ -174,7 +180,9 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
      */
     public void flushMailQueue()
     {
-        createResource().path("mailServers/flush").get(ClientResponse.class);
+        final WebResource webResourcePath = createResource().path("mailServers/flush");
+        final ClientResponse clientResponse = webResourcePath.get(ClientResponse.class);
+        assertThat("Clinet response status should be equal to \"OK\"", clientResponse.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
 
     static class MailServersBean
