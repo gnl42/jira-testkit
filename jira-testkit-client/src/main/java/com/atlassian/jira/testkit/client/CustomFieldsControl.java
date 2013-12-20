@@ -51,6 +51,24 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     }
 
     /**
+     * Updates a custom field
+     *
+     * @param id the id of the custom field
+     * @param name the new name of the custom field
+     * @param description the new description of the custom field
+     * @param searcherKey the new searcher key of the custom field
+     */
+    public void updateCustomField(String id, String name, String description, String searcherKey)
+    {
+        CustomFieldRequest request = new CustomFieldRequest();
+        request.name = name;
+        request.description = description;
+        request.searcherKey = searcherKey;
+
+        createResource().path("customFields").path(id).put(request);
+    }
+
+    /**
      * Deletes a custom field
      *
      * @param customFieldId The id of the custom field (e.g. customfield_10000)

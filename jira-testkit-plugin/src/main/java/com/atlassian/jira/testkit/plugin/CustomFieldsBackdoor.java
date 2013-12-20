@@ -49,6 +49,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -123,6 +124,54 @@ public class CustomFieldsBackdoor
         {
             throw new IllegalStateException("Something went really wrong", e);
         }
+    }
+
+    @PUT
+    @Path ("{id}")
+    public Response updateCustomField(@PathParam ("id") String customFieldId, final CustomFieldRequest field)
+    {
+        if (customFieldId == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field id").build();
+        }
+
+        CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
+        if (customField == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Custom field with id " + customFieldId + " does not exist").build();
+        }
+
+        customField.setName(field.name);
+        customField.setDescription(field.description);
+        if (field.type != null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Type cannot be changed").build();
+        }
+        CustomFieldSearcher searcher = null;
+        if (field.searcherKey != null)
+        {
+            final List<CustomFieldSearcher> searchers = customFieldManager.getCustomFieldSearchers(customField.getCustomFieldType());
+            try
+            {
+                searcher = Iterables.find(searchers, new Predicate<CustomFieldSearcher>()
+                {
+                    @Override
+                    public boolean apply(CustomFieldSearcher customFieldSearcher)
+                    {
+                        return field.searcherKey.equals(customFieldSearcher.getDescriptor().getCompleteKey());
+                    }
+                });
+            }
+            catch (NoSuchElementException e)
+            {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Searcher with key " + field.searcherKey
+                        + " not found for type '" + field.type + "'").build();
+            }
+        }
+        customField.setCustomFieldSearcher(searcher);
+
+        customFieldManager.updateCustomField(customField);
+        return Response.ok().build();
     }
 
     @GET
