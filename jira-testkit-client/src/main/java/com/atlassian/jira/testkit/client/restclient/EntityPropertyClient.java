@@ -5,8 +5,15 @@ import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.atlassian.jira.util.json.JSONObject;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.List;
 
 /**
  * Client for entity property resource.
@@ -69,33 +76,28 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
         resource(entityKeyOrId, propertyKey).delete();
     }
 
+    public void delete(final String propertyKey, final List<String> entityKeys, final List<Long> entityIds)
+    {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.put(propertyName + "Key", entityKeys);
+        params.put(propertyName + "Id", Lists.transform(entityIds, Functions.toStringFunction()));
+        resource(Option.<String>none(), Option.some(propertyKey)).queryParams(params).delete();
+    }
+
     public WebResource resource(String entityKeyOrId)
     {
-        return resource(entityKeyOrId, Option.<String>none());
+        return resource(Option.<String>some(entityKeyOrId), Option.<String>none());
     }
 
     public WebResource resource(String entityKeyOrId, String propertyKey)
     {
-        return resource(entityKeyOrId, Option.some(propertyKey));
+        return resource(Option.<String>some(entityKeyOrId), Option.some(propertyKey));
     }
 
-    private WebResource resource(final String entityKeyOrId, final Option<String> propertyKey)
+    private WebResource resource(final Option<String> entityKeyOrId, final Option<String> propertyKey)
     {
-        final WebResource webResource = createResource().path(propertyName).path(entityKeyOrId).path("properties");
-        return propertyKey.fold(new Supplier<WebResource>()
-        {
-            @Override
-            public WebResource get()
-            {
-                return webResource;
-            }
-        }, new Function<String, WebResource>()
-        {
-            @Override
-            public WebResource apply(final String propertyKey)
-            {
-                return webResource.path(propertyKey);
-            }
-        });
+        final WebResource webResource = createResource().path(propertyName).path(entityKeyOrId.getOrElse("")).path("properties");
+        return webResource.path(propertyKey.getOrElse(""));
     }
+
 }
