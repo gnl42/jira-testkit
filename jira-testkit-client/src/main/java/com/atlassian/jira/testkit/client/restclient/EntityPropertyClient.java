@@ -76,12 +76,14 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
         resource(entityKeyOrId, propertyKey).delete();
     }
 
-    public void delete(final String propertyKey, final List<String> entityKeys, final List<Long> entityIds)
-    {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.put(propertyName + "Key", entityKeys);
-        params.put(propertyName + "Id", Lists.transform(entityIds, Functions.toStringFunction()));
-        resource(Option.<String>none(), Option.some(propertyKey)).queryParams(params).delete();
+    /**
+     * Removes the value of the property with given key for all issues matched by given jql query
+     *
+     * @param propertyKey key of the property to remove.
+     * @param jql         JQL query
+     */
+    public void deleteByJQL(final String propertyKey, final String jql) {
+        resource(Option.<String>none(), Option.some(propertyKey)).queryParam("jql", jql).delete();
     }
 
     public WebResource resource(String entityKeyOrId)
