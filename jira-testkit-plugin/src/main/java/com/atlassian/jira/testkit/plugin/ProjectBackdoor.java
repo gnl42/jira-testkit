@@ -15,6 +15,8 @@ import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
+import com.atlassian.jira.issue.security.IssueSecuritySchemeManager;
+import com.atlassian.jira.notification.NotificationSchemeManager;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.AssigneeTypes;
 import com.atlassian.jira.project.Project;
@@ -52,16 +54,22 @@ public class ProjectBackdoor
     private final UserUtil userUtil;
     private final IssueTypeSchemeManager issueTypeSchemeManager;
     private final IssueTypeScreenSchemeManager issueTypeScreenSchemeManager;
+    private final NotificationSchemeManager notificationSchemeManager;
+    private final IssueSecuritySchemeManager issueSecuritySchemeManager;
 
     public ProjectBackdoor(ProjectService projectService, PermissionSchemeManager permissionSchemeManager,
             UserUtil userUtil, IssueTypeSchemeManager issueTypeSchemeManager,
-            IssueTypeScreenSchemeManager issueTypeScreenSchemeManager)
+            IssueTypeScreenSchemeManager issueTypeScreenSchemeManager,
+            NotificationSchemeManager notificationSchemeManager,
+            IssueSecuritySchemeManager issueSecuritySchemeManager)
     {
         this.projectService = projectService;
         this.permissionSchemeManager = permissionSchemeManager;
         this.userUtil = userUtil;
         this.issueTypeSchemeManager = issueTypeSchemeManager;
         this.issueTypeScreenSchemeManager = issueTypeScreenSchemeManager;
+        this.notificationSchemeManager = notificationSchemeManager;
+        this.issueSecuritySchemeManager = issueSecuritySchemeManager;
     }
 
     /**
@@ -121,13 +129,50 @@ public class ProjectBackdoor
     public Response setPermissionScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") long schemeId)
     {
-
         User admin = getUserWithAdminPermission();
         Scheme scheme = permissionSchemeManager.getSchemeObject(schemeId);
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         permissionSchemeManager.removeSchemesFromProject(project);
         permissionSchemeManager.addSchemeToProject(project, scheme);
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("notificationScheme/set")
+    public Response setNotificationScheme(@QueryParam ("project") long projectId,
+            @QueryParam ("scheme") Long schemeId)
+    {
+        User admin = getUserWithAdminPermission();
+        Project project = projectService.getProjectById(admin, projectId).getProject();
+
+        notificationSchemeManager.removeSchemesFromProject(project);
+
+        if (schemeId != null)
+        {
+            Scheme scheme = notificationSchemeManager.getSchemeObject(schemeId);
+            notificationSchemeManager.addSchemeToProject(project, scheme);
+        }
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("issueSecurityScheme/set")
+    public Response setIssueSecurityScheme(@QueryParam ("project") long projectId,
+            @QueryParam ("scheme") Long schemeId)
+    {
+        User admin = getUserWithAdminPermission();
+        Project project = projectService.getProjectById(admin, projectId).getProject();
+
+        issueSecuritySchemeManager.removeSchemesFromProject(project);
+
+        if (schemeId != null)
+        {
+            Scheme scheme = issueSecuritySchemeManager.getSchemeObject(schemeId);
+            issueSecuritySchemeManager.addSchemeToProject(project, scheme);
+        }
 
         return Response.ok().build();
     }

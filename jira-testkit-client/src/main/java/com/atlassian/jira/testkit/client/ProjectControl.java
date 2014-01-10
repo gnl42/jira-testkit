@@ -63,6 +63,36 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
                 .queryParam("scheme", "" + schemeId));
     }
 
+    /**
+     * Sets the notification scheme for the given Project to be the given Scheme.
+     *
+     * @param projectId the id of the project.
+     * @param schemeId  the id of the scheme.
+     */
+    public void setNotificationScheme(long projectId, Long schemeId)
+    {
+        WebResource r = createResource().path("project/notificationScheme/set")
+                .queryParam("project", "" + projectId);
+        if (schemeId != null)
+            r = r.queryParam("scheme", "" + schemeId);
+        get(r);
+    }
+
+    /**
+     * Sets the notification scheme for the given Project to be the given Scheme.
+     *
+     * @param projectId the id of the project.
+     * @param schemeId  the id of the scheme.
+     */
+    public void setIssueSecurityScheme(long projectId, Long schemeId)
+    {
+        WebResource r = createResource().path("project/issueSecurityScheme/set")
+                .queryParam("project", "" + projectId);
+        if (schemeId != null)
+            r = r.queryParam("scheme", "" + schemeId);
+        get(r);
+    }
+
     public void setIssueTypeScreenScheme(long projectId, long issueTypeScreenSchemeId)
     {
         get(createResource().path("project/issueTypeScreenScheme/set")

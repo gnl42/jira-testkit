@@ -63,6 +63,7 @@ public class Backdoor
     private final RawRestApiControl rawRestApiControl;
     private final WhatsNewControl whatsNewControl;
     private final AuditingControl auditingControl;
+    private final IssueSecuritySchemesControl issueSecuritySchemes;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -77,6 +78,7 @@ public class Backdoor
         this.project = new ProjectControl(environmentData);
         this.permissionSchemes = new PermissionSchemesControl(environmentData);
         this.notificationSchemes = new NotificationSchemesControl(environmentData);
+        this.issueSecuritySchemes = new IssueSecuritySchemesControl(environmentData);
         this.mailServers = new MailServersControl(environmentData);
         this.searchRequests = new SearchRequestControl(environmentData);
         this.userProfile = new UserProfileControl(environmentData);
@@ -168,6 +170,11 @@ public class Backdoor
     public NotificationSchemesControl notificationSchemes()
     {
         return notificationSchemes;
+    }
+
+    public IssueSecuritySchemesControl issueSecuritySchemes()
+    {
+        return issueSecuritySchemes;
     }
 
     public ScreensControl screensControl()
