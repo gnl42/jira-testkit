@@ -67,18 +67,6 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
     }
 
     /**
-     * Sets the value of the property with given key for all issues matched by given jql query
-     *
-     * @param propertyKey key of the property to remove.
-     * @param jql         JQL query
-     * @param value value of the property.
-     */
-    public void putByJQL(final String propertyKey, final String jql, final JSONObject value) {
-        resource(Option.<String>none(), Option.some(propertyKey)).queryParam("jql", jql).header("Content-Type", "application/json")
-                .put(String.class, value.toString());
-    }
-
-    /**
      * Removes the value of the property with given key, associated with a given entity.
      * @param entityKeyOrId key or id of an entity.
      * @param propertyKey key of the property to remove.
@@ -86,16 +74,6 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
     public void delete(final String entityKeyOrId, final String propertyKey)
     {
         resource(entityKeyOrId, propertyKey).delete();
-    }
-
-    /**
-     * Removes the value of the property with given key for all issues matched by given jql query
-     *
-     * @param propertyKey key of the property to remove.
-     * @param jql         JQL query
-     */
-    public void deleteByJQL(final String propertyKey, final String jql) {
-        resource(Option.<String>none(), Option.some(propertyKey)).queryParam("jql", jql).delete();
     }
 
     public WebResource resource(String entityKeyOrId)
