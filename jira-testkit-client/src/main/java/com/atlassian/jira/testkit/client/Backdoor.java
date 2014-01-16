@@ -31,6 +31,7 @@ public class Backdoor
     private final SystemPropertiesControl systemProperties;
     private final ProjectControl project;
     private final PermissionSchemesControl permissionSchemes;
+    private final FieldConfigurationSchemesControl fieldConfigurationSchemes;
     private final NotificationSchemesControl notificationSchemes;
     private final MailServersControl mailServers;
     private final SearchRequestControl searchRequests;
@@ -110,6 +111,7 @@ public class Backdoor
         this.resolutionControl = new ResolutionControl(environmentData);
         this.priorityControl = new PriorityControl(environmentData);
         this.auditingControl = new AuditingControl(environmentData);
+        this.fieldConfigurationSchemes = new FieldConfigurationSchemesControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -375,5 +377,10 @@ public class Backdoor
     public AuditingControl auditing()
     {
         return auditingControl;
+    }
+
+    public FieldConfigurationSchemesControl fieldConfigurationSchemes()
+    {
+        return fieldConfigurationSchemes;
     }
 }

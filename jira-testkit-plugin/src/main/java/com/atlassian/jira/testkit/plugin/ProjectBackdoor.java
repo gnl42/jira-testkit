@@ -13,6 +13,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
+import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 import com.atlassian.jira.issue.security.IssueSecuritySchemeManager;
@@ -56,12 +57,13 @@ public class ProjectBackdoor
     private final IssueTypeScreenSchemeManager issueTypeScreenSchemeManager;
     private final NotificationSchemeManager notificationSchemeManager;
     private final IssueSecuritySchemeManager issueSecuritySchemeManager;
+    private final FieldLayoutManager fieldLayoutManager;
 
     public ProjectBackdoor(ProjectService projectService, PermissionSchemeManager permissionSchemeManager,
             UserUtil userUtil, IssueTypeSchemeManager issueTypeSchemeManager,
             IssueTypeScreenSchemeManager issueTypeScreenSchemeManager,
             NotificationSchemeManager notificationSchemeManager,
-            IssueSecuritySchemeManager issueSecuritySchemeManager)
+            IssueSecuritySchemeManager issueSecuritySchemeManager, final FieldLayoutManager fieldLayoutManager)
     {
         this.projectService = projectService;
         this.permissionSchemeManager = permissionSchemeManager;
@@ -70,6 +72,7 @@ public class ProjectBackdoor
         this.issueTypeScreenSchemeManager = issueTypeScreenSchemeManager;
         this.notificationSchemeManager = notificationSchemeManager;
         this.issueSecuritySchemeManager = issueSecuritySchemeManager;
+        this.fieldLayoutManager = fieldLayoutManager;
     }
 
     /**
@@ -173,6 +176,32 @@ public class ProjectBackdoor
             Scheme scheme = issueSecuritySchemeManager.getSchemeObject(schemeId);
             issueSecuritySchemeManager.addSchemeToProject(project, scheme);
         }
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("fieldConfigurationScheme/add")
+    public Response addFieldConfigurationScheme(@QueryParam ("project") long projectId,
+            @QueryParam ("scheme") Long schemeId)
+    {
+        User admin = getUserWithAdminPermission();
+        Project project = projectService.getProjectById(admin, projectId).getProject();
+
+        fieldLayoutManager.addSchemeAssociation(project, schemeId);
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("fieldConfigurationScheme/remove")
+    public Response deleteFieldConfigurationScheme(@QueryParam ("project") long projectId,
+            @QueryParam ("scheme") Long schemeId)
+    {
+        User admin = getUserWithAdminPermission();
+        Project project = projectService.getProjectById(admin, projectId).getProject();
+
+        fieldLayoutManager.removeSchemeAssociation(project, schemeId);
 
         return Response.ok().build();
     }

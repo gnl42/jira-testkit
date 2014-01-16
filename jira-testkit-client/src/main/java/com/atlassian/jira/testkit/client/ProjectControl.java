@@ -93,6 +93,32 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
         get(r);
     }
 
+    /**
+     * Sets the field configuration scheme for the given Project to be the given Scheme.
+     *
+     * @param projectId the id of the project.
+     * @param schemeId  the id of the scheme.
+     */
+    public void addFieldConfigurationScheme(long projectId, long schemeId)
+    {
+        get(createResource().path("project/fieldConfigurationScheme/add")
+                .queryParam("project", "" + projectId)
+                .queryParam("scheme", "" + schemeId));
+    }
+
+    /**
+     * Sets the field configuration scheme for the given Project to be the given Scheme.
+     *
+     * @param projectId the id of the project.
+     * @param schemeId  the id of the scheme.
+     */
+    public void removeFieldConfigurationScheme(long projectId, long schemeId)
+    {
+        get(createResource().path("project/fieldConfigurationScheme/remove")
+                .queryParam("project", "" + projectId)
+                .queryParam("scheme", "" + schemeId));
+    }
+
     public void setIssueTypeScreenScheme(long projectId, long issueTypeScreenSchemeId)
     {
         get(createResource().path("project/issueTypeScreenScheme/set")
