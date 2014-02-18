@@ -9,15 +9,6 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.core.AtlassianCoreException;
-import com.atlassian.core.user.preferences.Preferences;
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.preferences.PreferenceKeys;
-import com.atlassian.jira.user.preferences.UserPreferencesManager;
-import com.atlassian.jira.user.util.UserUtil;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,6 +21,14 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.atlassian.core.AtlassianCoreException;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.preferences.ExtendedPreferences;
+import com.atlassian.jira.user.preferences.PreferenceKeys;
+import com.atlassian.jira.user.preferences.UserPreferencesManager;
+import com.atlassian.jira.user.util.UserUtil;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+
 /**
  * Use this backdoor to manipulate User Profiles as part of setup for tests.
  *
@@ -40,8 +39,8 @@ import javax.ws.rs.core.Response;
 @Path ("userProfile")
 public class UserProfileBackdoor
 {
-    private UserPreferencesManager userPreferencesManager;
-    private UserUtil userUtil;
+    private final UserPreferencesManager userPreferencesManager;
+    private final UserUtil userUtil;
 
     public UserProfileBackdoor(UserPreferencesManager userPreferencesManager, UserUtil userUtil)
     {
@@ -55,21 +54,15 @@ public class UserProfileBackdoor
     public Response addGlobalPermission(@QueryParam ("username") String username,
             @QueryParam ("format") String format)
     {
-        ApplicationUser user = getUserByName(username);
-        Preferences preferences = userPreferencesManager.getPreferences(user);
-
+        final ApplicationUser user = getUserByName(username);
         try
         {
-            preferences.setString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE, format);
+            preferencesOf(user).setString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE, format);
         }
         catch (AtlassianCoreException e)
         {
             throw new RuntimeException(e);
         }
-
-        // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(user);
-
         return Response.ok(null).build();
     }
 
@@ -78,20 +71,15 @@ public class UserProfileBackdoor
     @Path("timeZone")
     public Response setTimeZone(@QueryParam ("username") String username, @QueryParam ("timeZone") String timeZone)
     {
-        ApplicationUser user = getUserByName(username);
-        Preferences preferences = userPreferencesManager.getPreferences(user);
-
+        final ApplicationUser user = getUserByName(username);
         try
         {
-            preferences.setString(PreferenceKeys.USER_TIMEZONE, timeZone);
+            preferencesOf(user).setString(PreferenceKeys.USER_TIMEZONE, timeZone);
         }
         catch (AtlassianCoreException e)
         {
             throw new RuntimeException(e);
         }
-
-        // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(user);
 
         return Response.ok(null).build();
     }
@@ -105,23 +93,20 @@ public class UserProfileBackdoor
     public void setUserPreference(@QueryParam ("username") String username, @PathParam ("name") String name, @QueryParam ("type") String type, String value)
             throws AtlassianCoreException
     {
-        ApplicationUser user = getUserByName(username);
+        final ApplicationUser user = getUserByName(username);
         if ("boolean".equalsIgnoreCase(type))
         {
             preferencesOf(user).setBoolean(name, Boolean.valueOf(value));
-            clearCache(user);
             return;
         }
 
         if ("long".equalsIgnoreCase(type))
         {
             preferencesOf(user).setLong(name, Long.parseLong(value));
-            clearCache(user);
             return;
         }
 
         preferencesOf(user).setString(name, value != null ? value : "");
-        clearCache(user);
     }
 
     /**
@@ -132,8 +117,8 @@ public class UserProfileBackdoor
     @Produces ({MediaType.APPLICATION_JSON})
     public Response getUserPreference(@QueryParam("username") String username, @PathParam("name") String name, @QueryParam("type") String type)
     {
-        ApplicationUser user = getUserByName(username);
-        Object value;
+        final ApplicationUser user = getUserByName(username);
+        final Object value;
         if ("boolean".equalsIgnoreCase(type))
         {
             value = preferencesOf(user).getBoolean(name);
@@ -158,30 +143,22 @@ public class UserProfileBackdoor
     @Consumes (MediaType.TEXT_PLAIN)
     public void removeUserPreference(@QueryParam ("username") String username, @PathParam ("name") String name) throws AtlassianCoreException
     {
-        ApplicationUser user = getUserByName(username);
+        final ApplicationUser user = getUserByName(username);
         preferencesOf(user).remove(name);
-        clearCache(user);
-    }
-
-    private void clearCache(ApplicationUser user)
-    {
-        // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(user);
     }
 
     private ApplicationUser getUserByName(String username)
     {
-        ApplicationUser user = userUtil.getUserByName(username);
+        final ApplicationUser user = userUtil.getUserByName(username);
         if (user == null)
         {
             throw new WebApplicationException(404);
         }
-
         return user;
     }
 
-    private Preferences preferencesOf(ApplicationUser user)
+    private ExtendedPreferences preferencesOf(ApplicationUser user)
     {
-        return userPreferencesManager.getPreferences(user);
+        return userPreferencesManager.getExtendedPreferences(user);
     }
 }

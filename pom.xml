@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>6.2.22-SNAPSHOT</version>
+	<version>6.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>JIRA TestKit</name>
 
@@ -35,7 +35,7 @@
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>6.2-20140115.144517</jira.version>
+		<jira.version>6.3-20140217.104425</jira.version>
 		<jira.rest.version>6.8.6</jira.rest.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
