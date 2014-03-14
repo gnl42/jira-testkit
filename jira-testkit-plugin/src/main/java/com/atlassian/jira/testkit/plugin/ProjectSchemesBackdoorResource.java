@@ -38,6 +38,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
+ * Retrieves the schemes for the project specified. This resource may not be exhaustive - it may not return all schemes
+ * for the project.
+ *
  * @since v6.3
  */
 @AnonymousAllowed

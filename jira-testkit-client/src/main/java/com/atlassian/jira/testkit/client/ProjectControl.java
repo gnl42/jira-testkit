@@ -175,11 +175,21 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
         get(resource);
     }
 
+    /**
+     * Retrieves the schemes for the specified project
+     * @param projectId the ID of the project. Must not be null.
+     * @return the schemes for the specified project
+     */
     public ProjectSchemesBean getSchemes(Long projectId)
     {
         return getSchemes(Long.toString(projectId));
     }
 
+    /**
+     * Retrieves the schemes for the specified project
+     * @param projectIdOrKey the ID or key of the project. Must not be null.
+     * @return the schemes for the specified project
+     */
     public ProjectSchemesBean getSchemes(String projectIdOrKey)
     {
         return createProjectSchemesResource(projectIdOrKey).get(ProjectSchemesBean.class);
