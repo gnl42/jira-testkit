@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.ProjectSchemesBean;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.beans.EntityList;
 import com.sun.jersey.api.client.WebResource;
@@ -174,14 +175,19 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
         get(resource);
     }
 
-    public WorkflowSchemeData getWorkflowScheme(String projectKey)
+    public ProjectSchemesBean getSchemes(Long projectId)
     {
-        return createWorkflowSchemeResource(projectKey).get(WorkflowSchemeData.class);
+        return getSchemes(Long.toString(projectId));
     }
 
-    private WebResource createWorkflowSchemeResource(String projectKey)
+    public ProjectSchemesBean getSchemes(String projectIdOrKey)
     {
-        return createResource().path("project").path(projectKey).path("workflowscheme");
+        return createProjectSchemesResource(projectIdOrKey).get(ProjectSchemesBean.class);
+    }
+
+    private WebResource createProjectSchemesResource(String projectIdOrKey)
+    {
+        return createResource().path("project").path(projectIdOrKey).path("schemes");
     }
 
     public EntityList getEntityLinks(Long projectId)
