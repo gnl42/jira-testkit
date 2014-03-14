@@ -23,25 +23,24 @@ import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.testkit.beans.LoginInfoBean;
+import com.atlassian.jira.testkit.beans.UserDTO;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
-import com.google.common.primitives.Longs;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to manipulate Users and Groups as part of setup for tests
- * NOT specfically testing the Admin UI.
+ * NOT specifically testing the Admin UI.
  *
  * This class should only be called by the com.atlassian.jira.testkit.client.UsersAndGroupsControl in jira-testkit-client.
  *
@@ -51,6 +50,7 @@ import javax.ws.rs.core.Response;
 public class UsersAndGroupsBackdoor
 {
     private static final Logger log = Logger.getLogger(UsersAndGroupsBackdoor.class);
+    private static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
 
     private final CrowdService crowdService;
     private final LoginService loginService;
@@ -341,6 +341,20 @@ public class UsersAndGroupsBackdoor
         return Response.ok(bean).build();
     }
 
+    @GET
+    @AnonymousAllowed
+    @Path("user/byName")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserByName(@QueryParam("userName") String userName)
+    {
+        final ApplicationUser user = userUtil.getUserByName(userName);
+        if (user == null)
+        {
+            return NOT_FOUND;
+        }
+        return Response.ok(new UserDTO(user)).build();
+    }
+
     private static long nullToZero(Long theLong)
     {
         return theLong != null ? theLong : 0;
@@ -364,4 +378,5 @@ public class UsersAndGroupsBackdoor
             return groupName.compareTo(o.getName());
         }
     }
+
 }

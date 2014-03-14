@@ -30,6 +30,10 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-api</artifactId>
             <version>${jira.rest.version}</version>
             <scope>provided</scope>
