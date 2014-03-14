@@ -10,6 +10,7 @@
 package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.beans.LoginInfoBean;
+import com.atlassian.jira.testkit.beans.UserDTO;
 import com.sun.jersey.api.client.WebResource;
 
 /**
@@ -20,6 +21,7 @@ import com.sun.jersey.api.client.WebResource;
  *
  * @since v5.0
  */
+@SuppressWarnings("unused")
 public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl>
 {
     public UsersAndGroupsControl(JIRAEnvironmentData environmentData)
@@ -171,6 +173,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public LoginInfoBean getLoginInfo(String username)
     {
         return createResource().path("user").path("loginInfo").queryParam("userName", username).get(LoginInfoBean.class);
+    }
+
+    public UserDTO getUserByName(final String username)
+    {
+        return createResource().path("user").path("byName").queryParam("userName", username).get(UserDTO.class);
     }
 
     @Override
