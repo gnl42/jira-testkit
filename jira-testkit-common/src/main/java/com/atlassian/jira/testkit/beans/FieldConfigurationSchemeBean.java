@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.beans;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -8,6 +9,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  *
  * @since 6.3
  */
+@JsonIgnoreProperties (ignoreUnknown = true)
 public class FieldConfigurationSchemeBean
 {
     @JsonProperty
