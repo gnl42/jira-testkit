@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -63,6 +64,13 @@ public class ServicesBackdoor
     {
         final JiraServiceContainer container = serviceManager.getServiceWithId(id);
         return container == null ? Response.status(Response.Status.NOT_FOUND).build() : Response.ok(new ServiceBean(container)).build();
+    }
+
+    @POST
+    @Path ("/{id}/run")
+    public void runService(@PathParam ("id") Long id) throws Exception
+    {
+        serviceManager.runNow(id);
     }
 
     public static class ServiceBean

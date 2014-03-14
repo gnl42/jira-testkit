@@ -41,6 +41,11 @@ public class ServicesControl extends BackdoorControl<ServicesControl>
         return createResource().path("services/" + id).get(ServiceBean.class);
     }
 
+    public void runService(long id)
+    {
+        createResource().path("services/" + id + "/run").post();
+    }
+
     public static class ServiceBean
     {
         public Long id;
