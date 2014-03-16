@@ -34,33 +34,33 @@
 	</modules>
 
 	<properties>
+        <activeobjects.version>0.19.9</activeobjects.version>
+        <amps.version>3.10.1</amps.version>
+        <applinks.version>3.9.0</applinks.version>
+        <atlassian.core.version>4.6.2</atlassian.core.version>
+        <clover.version>3.0.2</clover.version>
+        <common.lang.version>2.5</common.lang.version>
+        <crowd.version>2.4.3</crowd.version>
+        <fp.version>0.3</fp.version>
+        <guava.version>10.0.1</guava.version>
+        <hallelujah.version>3.1-alpha-4</hallelujah.version>
+        <hamcrest.version>1.2</hamcrest.version>
+        <jackson.version>1.9.1</jackson.version>
+        <jdkLevel>1.6</jdkLevel>
+        <jersey.contrib.version>1.9.1</jersey.contrib.version>
+        <jersey.version>1.8-atlassian-6</jersey.version>
+        <jira.amps.version>${jira.version}</jira.amps.version>
+        <jira.data.version>${jira.version}</jira.data.version>
+        <jira.rest.version>6.8.6</jira.rest.version>
+        <jira.version>6.3-20140217.104425</jira.version>
+        <joda.time.version>2.0</joda.time.version>
+        <jsr311.version>1.1</jsr311.version>
+        <junit.version>4.10</junit.version>
+        <log4j.version>1.2.16</log4j.version>
+        <mockito.version>1.9.0</mockito.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jira.version>6.3-20140217.104425</jira.version>
-		<jira.rest.version>6.8.6</jira.rest.version>
-		<applinks.version>3.9.0</applinks.version>
-		<fp.version>0.3</fp.version>
-		<log4j.version>1.2.16</log4j.version>
-		<jsr311.version>1.1</jsr311.version>
-		<rest.version>2.7.1</rest.version>
-		<activeobjects.version>0.19.9</activeobjects.version>
-		<amps.version>3.10.1</amps.version>
-		<sal.version>2.7.1</sal.version>
-		<jira.amps.version>${jira.version}</jira.amps.version>
-		<jira.data.version>${jira.version}</jira.data.version>
-		<mockito.version>1.9.0</mockito.version>
-		<clover.version>3.0.2</clover.version>
-		<hamcrest.version>1.2</hamcrest.version>
-		<jersey.version>1.8-atlassian-6</jersey.version>
-		<jersey.contrib.version>1.9.1</jersey.contrib.version>
-		<crowd.version>2.4.3</crowd.version>
-		<atlassian.core.version>4.6.2</atlassian.core.version>
-		<joda.time.version>2.0</joda.time.version>
-		<junit.version>4.10</junit.version>
-		<common.lang.version>2.5</common.lang.version>
-		<guava.version>10.0.1</guava.version>
-		<jackson.version>1.9.1</jackson.version>
-		<hallelujah.version>3.1-alpha-4</hallelujah.version>
-		<jdkLevel>1.6</jdkLevel>
+        <rest.version>2.7.1</rest.version>
+        <sal.version>2.7.1</sal.version>
         <spring.version>2.5.6.SEC01</spring.version>
 	</properties>
 
