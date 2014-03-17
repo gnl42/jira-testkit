@@ -9,6 +9,8 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import java.lang.Object;
+import java.lang.String;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonRawValue;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -28,7 +30,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonSerialize
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class    Comment
+public class Comment
 {
     public String self;
     public String id;
@@ -51,7 +53,7 @@ public class    Comment
         this.visibility = new Visibility("ROLE", roleLevel);
     }
 
-    public void setProperties(List<Map<String, Object>> properties)
+    public void setProperties(final List<Map<String, Object>> properties)
     {
         this.properties = Lists.transform(properties, new Function<Map<String, Object>, CommentProperty>()
         {
@@ -59,18 +61,15 @@ public class    Comment
             public CommentProperty apply(final Map<String, Object> commentProperty)
             {
                 String key = (String) commentProperty.get("key");
-                JSONObject value = new JSONObject((Map<String, Object>) commentProperty.get("value"));
-                return new CommentProperty(key, value.toString());
+                return new CommentProperty(key, new JSONObject((Map<String, Object>) commentProperty.get("value")).toString());
             }
         });
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CommentProperty
     {
-        @JsonProperty
         public String key;
-        @JsonProperty
+        @JsonRawValue
         public String value;
 
         public CommentProperty()
