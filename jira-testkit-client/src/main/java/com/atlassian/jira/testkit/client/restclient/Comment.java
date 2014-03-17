@@ -9,6 +9,18 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import java.lang.Object;
+import java.lang.String;
+import java.util.List;
+import java.util.Map;
+
+import com.atlassian.jira.util.json.JSONObject;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonRawValue;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -17,6 +29,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * @since v4.3
  */
 @JsonSerialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Comment
 {
     public String self;
@@ -28,6 +41,7 @@ public class Comment
     public UserJson author;
     public UserJson updateAuthor;
     public Visibility visibility;
+    public List<CommentProperty> properties;
 
     public Comment()
     {
@@ -37,5 +51,45 @@ public class Comment
     {
         this.body = body;
         this.visibility = new Visibility("ROLE", roleLevel);
+    }
+
+    public void setProperties(final List<Map<String, Object>> properties)
+    {
+        this.properties = Lists.transform(properties, new Function<Map<String, Object>, CommentProperty>()
+        {
+            @Override
+            public CommentProperty apply(final Map<String, Object> commentProperty)
+            {
+                String key = (String) commentProperty.get("key");
+                return new CommentProperty(key, new JSONObject((Map<String, Object>) commentProperty.get("value")).toString());
+            }
+        });
+    }
+
+    public static class CommentProperty
+    {
+        public String key;
+        @JsonRawValue
+        public String value;
+
+        public CommentProperty()
+        {
+        }
+
+        public CommentProperty(String key, String value)
+        {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey()
+        {
+            return key;
+        }
+
+        public String getValue()
+        {
+            return value;
+        }
     }
 }
