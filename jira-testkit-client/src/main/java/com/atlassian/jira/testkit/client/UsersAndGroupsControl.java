@@ -13,6 +13,8 @@ import com.atlassian.jira.testkit.beans.LoginInfoBean;
 import com.atlassian.jira.testkit.beans.UserDTO;
 import com.sun.jersey.api.client.WebResource;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Users and
  * Groups.
@@ -178,6 +180,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public UserDTO getUserByName(final String username)
     {
         return createResource().path("user").path("byName").queryParam("userName", username).get(UserDTO.class);
+    }
+
+    public void updateUser(final UserDTO user)
+    {
+        createResource().path("user").path("byName").entity(user, APPLICATION_JSON_TYPE).post();
     }
 
     @Override
