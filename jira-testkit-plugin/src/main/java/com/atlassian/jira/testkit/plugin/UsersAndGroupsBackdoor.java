@@ -14,6 +14,7 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
 import com.atlassian.crowd.exception.embedded.InvalidGroupException;
+import com.atlassian.crowd.exception.runtime.UserNotFoundException;
 import com.atlassian.jira.bc.security.login.LoginInfo;
 import com.atlassian.jira.bc.security.login.LoginService;
 import com.atlassian.jira.event.user.UserEventType;
@@ -25,6 +26,7 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.testkit.beans.LoginInfoBean;
 import com.atlassian.jira.testkit.beans.UserDTO;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
@@ -32,11 +34,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static javax.ws.rs.core.Response.Status;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
  * Use this backdoor to manipulate Users and Groups as part of setup for tests
@@ -50,19 +56,23 @@ import javax.ws.rs.core.Response;
 public class UsersAndGroupsBackdoor
 {
     private static final Logger log = Logger.getLogger(UsersAndGroupsBackdoor.class);
-    private static final Response NOT_FOUND = Response.status(Response.Status.NOT_FOUND).build();
+    private static final Response NOT_FOUND = Response.status(Status.NOT_FOUND).build();
+    private static final Response OK = Response.ok().build();
 
     private final CrowdService crowdService;
     private final LoginService loginService;
     private final UserUtil userUtil;
     private final GroupManager groupManager;
+    private final UserManager userManager;
 
-    public UsersAndGroupsBackdoor(UserUtil userUtil, CrowdService crowdService, LoginService loginService, GroupManager groupManager)
+    public UsersAndGroupsBackdoor(final UserUtil userUtil, final CrowdService crowdService,
+            final LoginService loginService, final GroupManager groupManager, final UserManager userManager)
     {
         this.crowdService = crowdService;
         this.userUtil = userUtil;
         this.loginService = loginService;
         this.groupManager = groupManager;
+        this.userManager = userManager;
     }
 
     @GET
@@ -332,7 +342,7 @@ public class UsersAndGroupsBackdoor
         LoginInfo info = loginService.getLoginInfo(userName);
         if (info == null)
         {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No user '" + userName + "' found").build();
+            return Response.status(Status.BAD_REQUEST).entity("No user '" + userName + "' found").build();
         }
         final LoginInfoBean bean = new LoginInfoBean();
         bean.setLoginCount(nullToZero(info.getLoginCount()));
@@ -353,6 +363,32 @@ public class UsersAndGroupsBackdoor
             return NOT_FOUND;
         }
         return Response.ok(new UserDTO(user)).build();
+    }
+
+    @POST
+    @AnonymousAllowed
+    @Path("user/byName")
+    public Response updateUser(final UserDTO user)
+    {
+        if (log.isDebugEnabled())
+        {
+            log.debug("Updating user with: " + user);
+        }
+        final ApplicationUser existingUser = userManager.getUserByKey(user.getKey());
+        if (existingUser == null)
+        {
+            return NOT_FOUND;
+        }
+        final ApplicationUser updatedUser = user.asApplicationUser(existingUser.getDirectoryUser());
+        try
+        {
+            userManager.updateUser(updatedUser);
+        }
+        catch (final UserNotFoundException e)
+        {
+            return Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
+        return OK;
     }
 
     private static long nullToZero(Long theLong)
