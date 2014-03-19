@@ -99,7 +99,9 @@ public class ProjectSchemesBackdoorResource
                 .issueTypeScheme(getIssueTypeScheme(project))
                 .notificationScheme(getNotificationScheme(project))
                 .permissionScheme(getPermissionScheme(project))
-                .workflowScheme(getWorkflowScheme(project))).build();
+                .workflowScheme(getWorkflowScheme(project))
+                .build()
+        ).build();
     }
 
     private Project getProject(final String projectIdOrKey)

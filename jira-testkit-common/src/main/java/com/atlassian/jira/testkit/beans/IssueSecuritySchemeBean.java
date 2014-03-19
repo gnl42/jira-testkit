@@ -13,9 +13,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class IssueSecuritySchemeBean
 {
     @JsonProperty
-    public final Long id;
+    public Long id;
     @JsonProperty
-    public final String name;
+    public String name;
+
+    public IssueSecuritySchemeBean()
+    {
+    }
 
     public IssueSecuritySchemeBean(final Long id, final String name)
     {

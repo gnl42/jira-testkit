@@ -13,9 +13,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class PermissionSchemeBean
 {
     @JsonProperty
-    public final Long id;
+    public Long id;
     @JsonProperty
-    public final String name;
+    public String name;
+
+    public PermissionSchemeBean()
+    {
+    }
 
     public PermissionSchemeBean(final Long id, final String name)
     {

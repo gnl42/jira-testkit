@@ -13,9 +13,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class IssueTypeSchemeBean
 {
     @JsonProperty
-    public final Long id;
+    public Long id;
     @JsonProperty
-    public final String name;
+    public String name;
+
+    public IssueTypeSchemeBean()
+    {
+    }
 
     public IssueTypeSchemeBean(final Long id, final String name)
     {

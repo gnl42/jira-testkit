@@ -13,9 +13,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class FieldConfigurationSchemeBean
 {
     @JsonProperty
-    public final Long id;
+    public Long id;
     @JsonProperty
-    public final String name;
+    public String name;
+
+    public FieldConfigurationSchemeBean()
+    {
+    }
 
     public FieldConfigurationSchemeBean(Long id, String name)
     {

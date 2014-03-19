@@ -13,17 +13,21 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class ProjectSchemesBean
 {
     @JsonProperty
-    public final FieldConfigurationSchemeBean fieldConfigurationScheme;
+    public FieldConfigurationSchemeBean fieldConfigurationScheme;
     @JsonProperty
-    public final IssueSecuritySchemeBean issueSecurityScheme;
+    public IssueSecuritySchemeBean issueSecurityScheme;
     @JsonProperty
-    public final IssueTypeSchemeBean issueTypeScheme;
+    public IssueTypeSchemeBean issueTypeScheme;
     @JsonProperty
-    public final NotificationSchemeBean notificationScheme;
+    public NotificationSchemeBean notificationScheme;
     @JsonProperty
-    public final PermissionSchemeBean permissionScheme;
+    public PermissionSchemeBean permissionScheme;
     @JsonProperty
     public WorkflowSchemeData workflowScheme;
+
+    public ProjectSchemesBean()
+    {
+    }
 
     public ProjectSchemesBean(final FieldConfigurationSchemeBean fieldConfigurationSchemeBean,
             final IssueSecuritySchemeBean issueSecuritySchemeBean,

@@ -13,9 +13,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class NotificationSchemeBean
 {
     @JsonProperty
-    public final Long id;
+    public Long id;
     @JsonProperty
-    public final String name;
+    public String name;
+
+    public NotificationSchemeBean()
+    {
+    }
 
     public NotificationSchemeBean(final Long id, final String name)
     {
