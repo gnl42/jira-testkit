@@ -201,6 +201,13 @@
 				<artifactId>functest-plugin</artifactId>
 				<version>${fp.version}</version>
 				<scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <!-- Because we already have the core and library -->
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-all</artifactId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
 			<dependency>
 				<groupId>log4j</groupId>
@@ -253,6 +260,18 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.1</version>
             </dependency>
-		</dependencies>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+                <!-- Not test scope, used in production -->
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest.version}</version>
+                <!-- Not test scope, used in production -->
+            </dependency>
+        </dependencies>
 	</dependencyManagement>
 </project>
