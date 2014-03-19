@@ -69,9 +69,41 @@ public class UserDTO
         );
     }
 
+    @SuppressWarnings("unused")
+    public long getDirectoryId()
+    {
+        return directoryId;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
     public String getKey()
     {
         return key;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getUsername()
+    {
+        return username;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isActive()
+    {
+        return active;
     }
 
     // For debugging only
