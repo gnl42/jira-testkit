@@ -17,7 +17,7 @@
 		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</developerConnection>
 		<url>http://bitbucket.org/atlassian/jira-testkit</url>
 	  <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <licenses>
         <license>
@@ -271,6 +271,12 @@
                 <artifactId>hamcrest-library</artifactId>
                 <version>${hamcrest.version}</version>
                 <!-- Not test scope, used in production -->
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>1.9.5</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
 	</dependencyManagement>
