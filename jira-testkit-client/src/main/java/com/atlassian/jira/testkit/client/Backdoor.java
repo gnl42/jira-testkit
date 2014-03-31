@@ -11,6 +11,7 @@ package com.atlassian.jira.testkit.client;
 
 
 import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
+import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient2;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
 
 /**

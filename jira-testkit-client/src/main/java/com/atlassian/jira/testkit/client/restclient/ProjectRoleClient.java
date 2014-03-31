@@ -27,21 +27,23 @@ import java.util.Map;
  */
 public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
 {
+    protected final ProjectRoleClient2 projectRoleClient2;
+
     public GenericType<Map<String, String>> TYPE = new GenericType<Map<String, String>>(HashMap.class);
 
     public ProjectRoleClient(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
-    }
-
-    public ProjectRoleClient(JIRAEnvironmentData environmentData, String version)
-    {
-        super(environmentData, version);
+        projectRoleClient2 = new ProjectRoleClient2(environmentData);
     }
 
     public Map<String, String> get(String projectKey) throws UniformInterfaceException
     {
         return rolesWithProjectKey(projectKey).get(TYPE);
+    }
+
+    public void deleteRole(String name) {
+        projectRoleClient2.deleteRole(name);
     }
 
     public ProjectRole get(String projectKey, String role)
