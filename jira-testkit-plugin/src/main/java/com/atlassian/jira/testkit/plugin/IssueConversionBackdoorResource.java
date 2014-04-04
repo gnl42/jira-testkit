@@ -16,7 +16,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -58,7 +58,7 @@ public class IssueConversionBackdoorResource
         return userManager.getUserObject("admin");
     }
 
-    @GET
+    @PUT
     @Path("changeSubtaskToIssue")
     public Response changeSubtaskToIssue(@QueryParam("subtaskKey") String subtaskKey,
                                          @QueryParam("issueTypeId") String issueTypeId)
@@ -67,7 +67,7 @@ public class IssueConversionBackdoorResource
         JiraServiceContext context = new JiraServiceContextImpl(getUser());
         if (!subTaskToIssueConversionService.canConvertIssue(context, mutableIssue))
         {
-            throw new RuntimeException("can't convert this issue");
+            throw new RuntimeException("can't convert issue "+subtaskKey);
         }
         MutableIssue targetIssue = issueFactory.cloneIssueNoParent(mutableIssue);
         targetIssue.setIssueTypeId(issueTypeId);
@@ -81,7 +81,7 @@ public class IssueConversionBackdoorResource
     }
 
 
-    @GET
+    @PUT
     @Path("changeIssueToSubtask")
     public Response changeIssueToSubtask(@QueryParam("issueKey")String issueKey,
                                          @QueryParam("newParentIssueKey")String newParentIssueKey,
@@ -91,7 +91,7 @@ public class IssueConversionBackdoorResource
         JiraServiceContext context = new JiraServiceContextImpl(getUser());
         if (!issueToSubTaskConversionService.canConvertIssue(context, originalIssue))
         {
-            throw new RuntimeException("can't convert this issue");
+            throw new RuntimeException("can't convert issue "+issueKey);
         }
         MutableIssue updatedIssue = issueFactory.cloneIssueNoParent(originalIssue);
         updatedIssue.setParentId(issueManager.getIssueObject(newParentIssueKey).getId());
@@ -104,9 +104,9 @@ public class IssueConversionBackdoorResource
         return Response.ok(null).build();
     }
 
-    @GET
-    @Path("moveSubtask")
-    public Response moveSubtask(@QueryParam("subtaskKey")String subtaskKey,
+    @PUT
+    @Path("changeSubtaskParent")
+    public Response changeSubtaskParent(@QueryParam("subtaskKey")String subtaskKey,
                                 @QueryParam("newParentKey") String newParentKey)
     {
         try

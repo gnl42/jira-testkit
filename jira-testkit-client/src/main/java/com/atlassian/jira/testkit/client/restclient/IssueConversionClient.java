@@ -23,21 +23,21 @@ public class IssueConversionClient extends BackdoorControl<IssueConversionClient
     public void changeSubtaskToIssue(String subtaskKey, String issueTypeId)
     {
         createIssueTypeResource().path("changeSubtaskToIssue").queryParam("subtaskKey", subtaskKey).
-                queryParam("issueTypeId", issueTypeId).get(ClientResponse.class);
+                queryParam("issueTypeId", issueTypeId).put(ClientResponse.class);
     }
 
     public void changeIssueToSubtask(String issueKey, String newParentIssueKey, String issueTypeId)
     {
         createIssueTypeResource().path("changeIssueToSubtask").queryParam("issueKey", issueKey).
                 queryParam("newParentIssueKey", newParentIssueKey).queryParam("issueTypeId", issueTypeId).
-                get(ClientResponse.class);
+                put(ClientResponse.class);
 
     }
 
-    public void moveSubtask(String subtaskKey, String newParentKey)
+    public void changeSubtaskParent(String subtaskKey, String newParentKey)
     {
-        createIssueTypeResource().path("moveSubtask").queryParam("subtaskKey", subtaskKey).
-                queryParam("newParentKey", newParentKey).get(ClientResponse.class);
+        createIssueTypeResource().path("changeSubtaskParent").queryParam("subtaskKey", subtaskKey).
+                queryParam("newParentKey", newParentKey).put(ClientResponse.class);
     }
 
 }
