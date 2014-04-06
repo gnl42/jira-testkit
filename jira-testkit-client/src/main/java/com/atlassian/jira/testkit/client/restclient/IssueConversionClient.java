@@ -10,6 +10,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Client for issue conversion.
+ *
+ * @since 5.0.34
  */
 public class IssueConversionClient extends BackdoorControl<IssueConversionClient>
 {

@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 
 /**
  * REST endpoint for conversion of issues.
+ *
  * @since 5.0.34
  */
 @Path("issueConversion")
