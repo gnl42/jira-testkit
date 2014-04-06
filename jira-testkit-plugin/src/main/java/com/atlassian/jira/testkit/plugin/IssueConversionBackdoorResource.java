@@ -17,15 +17,15 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * REST end point for conversion of issues.
+ * REST endpoint for conversion of issues.
+ * @since 5.0.34
  */
 @Path("issueConversion")
 @AnonymousAllowed
@@ -59,51 +59,47 @@ public class IssueConversionBackdoorResource
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
-    @PUT
+    @POST
     @Path("changeSubtaskToIssue")
-    public Response changeSubtaskToIssue(@QueryParam("subtaskKey") String subtaskKey,
-                                         @QueryParam("issueTypeId") String issueTypeId)
+    public Response changeSubtaskToIssue(final IssueConversionRequest request)
     {
-        MutableIssue mutableIssue = issueManager.getIssueObject(subtaskKey);
+        MutableIssue mutableIssue = issueManager.getIssueObject(request.issueKey);
         JiraServiceContext context = new JiraServiceContextImpl(jiraAuthenticationContext.getLoggedInUser());
         if (!subTaskToIssueConversionService.canConvertIssue(context, mutableIssue)) {
             return Response.status(Response.Status.FORBIDDEN).entity(context.getErrorCollection().toString()).build();
         }
         MutableIssue targetIssue = issueFactory.cloneIssueNoParent(mutableIssue);
-        targetIssue.setIssueTypeId(issueTypeId);
+        targetIssue.setIssueTypeId(request.issueTypeId);
         targetIssue.setParentObject(null);
         subTaskToIssueConversionService.convertIssue(context, mutableIssue, targetIssue);
         if (context.getErrorCollection().hasAnyErrors()) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(context.getErrorCollection().toString()).build();
         }
-        return Response.ok(new ConvertedIssue(subtaskKey, null, issueTypeId)).build();
+        return Response.ok(new IssueConversionResponse(request.issueKey, null, request.issueTypeId)).build();
     }
 
-    @PUT
+    @POST
     @Path("changeIssueToSubtask")
-    public Response changeIssueToSubtask(@QueryParam("issueKey") String issueKey,
-                                         @QueryParam("newParentIssueKey") String newParentIssueKey,
-                                         @QueryParam("issueTypeId") String issueTypeId) {
-        MutableIssue originalIssue = issueManager.getIssueObject(issueKey);
+    public Response changeIssueToSubtask(IssueConversionRequest request) {
+        MutableIssue originalIssue = issueManager.getIssueObject(request.issueKey);
         JiraServiceContext context = new JiraServiceContextImpl(jiraAuthenticationContext.getLoggedInUser());
         if (!issueToSubTaskConversionService.canConvertIssue(context, originalIssue)) {
             return Response.status(Response.Status.FORBIDDEN).entity(context.getErrorCollection().toString()).build();
         }
         MutableIssue updatedIssue = issueFactory.cloneIssueNoParent(originalIssue);
-        updatedIssue.setParentId(issueManager.getIssueObject(newParentIssueKey).getId());
-        updatedIssue.setIssueTypeId(issueTypeId);
+        updatedIssue.setParentId(issueManager.getIssueObject(request.parentKey).getId());
+        updatedIssue.setIssueTypeId(request.issueTypeId);
         issueToSubTaskConversionService.convertIssue(context, originalIssue, updatedIssue);
-        return Response.ok(new ConvertedIssue(issueKey, newParentIssueKey, issueTypeId)).build();
+        return Response.ok(new IssueConversionResponse(request.issueKey, request.parentKey, request.issueTypeId)).build();
     }
 
-    @PUT
+    @POST
     @Path("changeSubtaskParent")
-    public Response changeSubtaskParent(@QueryParam("subtaskKey") String subtaskKey,
-                                        @QueryParam("newParentKey") String newParentKey) {
+    public Response changeSubtaskParent(IssueConversionRequest request) {
         try
         {
-            Issue subTask = issueManager.getIssueObject(subtaskKey);
-            Issue newParentIssue = issueManager.getIssueObject(newParentKey);
+            Issue subTask = issueManager.getIssueObject(request.issueKey);
+            Issue newParentIssue = issueManager.getIssueObject(request.parentKey);
             IssueUpdateBean iub = subTaskManager.changeParent(subTask, newParentIssue,
                     jiraAuthenticationContext.getLoggedInUser());
             issueUpdater.doUpdate(iub, true);
@@ -112,16 +108,23 @@ public class IssueConversionBackdoorResource
         {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
         }
-        return Response.ok(new ConvertedIssue(subtaskKey, newParentKey, null)).build();
+        return Response.ok(new IssueConversionResponse(request.issueKey, request.parentKey, null)).build();
     }
 
-    private static class ConvertedIssue
+    public static class IssueConversionRequest
+    {
+        public String issueKey;
+        public String parentKey;
+        public String issueTypeId;
+    }
+
+    private static class IssueConversionResponse
     {
         public String issueKey;
         public String parentKey;
         public String issueTypeId;
 
-        public ConvertedIssue(String issueKey, String parentKey, String issueTypeId) {
+        public IssueConversionResponse(String issueKey, String parentKey, String issueTypeId) {
             this.issueKey = issueKey;
             this.parentKey = parentKey;
             this.issueTypeId = issueTypeId;
