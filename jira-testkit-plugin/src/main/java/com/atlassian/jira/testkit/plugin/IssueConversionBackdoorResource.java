@@ -96,19 +96,13 @@ public class IssueConversionBackdoorResource
 
     @POST
     @Path("changeSubtaskParent")
-    public Response changeSubtaskParent(IssueConversionRequest request) {
-        try
-        {
-            Issue subTask = issueManager.getIssueObject(request.issueKey);
-            Issue newParentIssue = issueManager.getIssueObject(request.parentKey);
-            IssueUpdateBean iub = subTaskManager.changeParent(subTask, newParentIssue,
-                    jiraAuthenticationContext.getLoggedInUser());
-            issueUpdater.doUpdate(iub, true);
-        }
-        catch (JiraException exception)
-        {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
-        }
+    public Response changeSubtaskParent(IssueConversionRequest request) throws JiraException
+    {
+        Issue subTask = issueManager.getIssueObject(request.issueKey);
+        Issue newParentIssue = issueManager.getIssueObject(request.parentKey);
+        IssueUpdateBean iub = subTaskManager.changeParent(subTask, newParentIssue,
+                jiraAuthenticationContext.getLoggedInUser());
+        issueUpdater.doUpdate(iub, true);
         return Response.ok(new IssueConversionResponse(request.issueKey, request.parentKey, null)).build();
     }
 
