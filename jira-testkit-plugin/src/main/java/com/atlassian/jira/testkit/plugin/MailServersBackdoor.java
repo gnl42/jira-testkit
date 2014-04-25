@@ -21,7 +21,8 @@ import com.atlassian.mail.server.impl.PopMailServerImpl;
 import com.atlassian.mail.server.impl.SMTPMailServerImpl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -45,7 +46,7 @@ import javax.ws.rs.core.Response;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class MailServersBackdoor
 {
-    private static final Logger log = Logger.getLogger(MailServersBackdoor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailServersBackdoor.class);
     private final MailQueue mailQueue;
 
 
@@ -108,7 +109,11 @@ public class MailServersBackdoor
     @Path("flush")
     public Response flushMailQueue()
     {
-        log.info("Flushing mail queue, currentQueueSize="+mailQueue.size());
+        LOGGER.info("Flushing mail Queue - currentQueueSize = {}", mailQueue.size());
+        LOGGER.debug("Mail queue of type: {}, from classloader: {}, ",
+                mailQueue.getClass().getName(),
+                mailQueue.getClass().getClassLoader().toString());
+
         mailQueue.sendBuffer();
         return Response.ok().build();
     }
