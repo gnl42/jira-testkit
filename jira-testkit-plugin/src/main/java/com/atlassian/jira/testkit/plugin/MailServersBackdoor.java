@@ -23,6 +23,8 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -111,7 +113,7 @@ public class MailServersBackdoor
     {
         LOGGER.info("Flushing mail Queue - currentQueueSize = {}", mailQueue.size());
         LOGGER.debug("Mail queue of type: {}, from classloader: {}, ",
-                mailQueue.getClass().getName(),
+                mailQueue.toString(),
                 mailQueue.getClass().getClassLoader().toString());
 
         mailQueue.sendBuffer();
