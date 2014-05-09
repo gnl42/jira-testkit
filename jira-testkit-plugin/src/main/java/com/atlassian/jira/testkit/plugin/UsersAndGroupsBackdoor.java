@@ -9,7 +9,18 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
+import com.atlassian.crowd.embedded.api.Directory;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
@@ -23,6 +34,7 @@ import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.testkit.beans.DirectoryDTO;
 import com.atlassian.jira.testkit.beans.LoginInfoBean;
 import com.atlassian.jira.testkit.beans.UserDTO;
 import com.atlassian.jira.user.ApplicationUser;
@@ -30,19 +42,15 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import static javax.ws.rs.core.Response.Status;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
  * Use this backdoor to manipulate Users and Groups as part of setup for tests
@@ -64,15 +72,18 @@ public class UsersAndGroupsBackdoor
     private final UserUtil userUtil;
     private final GroupManager groupManager;
     private final UserManager userManager;
+    private final CrowdDirectoryService crowdDirectoryService;
 
     public UsersAndGroupsBackdoor(final UserUtil userUtil, final CrowdService crowdService,
-            final LoginService loginService, final GroupManager groupManager, final UserManager userManager)
+            final LoginService loginService, final GroupManager groupManager, final UserManager userManager,
+            final CrowdDirectoryService crowdDirectoryService)
     {
         this.crowdService = crowdService;
         this.userUtil = userUtil;
         this.loginService = loginService;
         this.groupManager = groupManager;
         this.userManager = userManager;
+        this.crowdDirectoryService = crowdDirectoryService;
     }
 
     @GET
@@ -365,6 +376,22 @@ public class UsersAndGroupsBackdoor
         return Response.ok(new UserDTO(user)).build();
     }
 
+    @GET
+    @AnonymousAllowed
+    @Path("user/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllUsers()
+    {
+        return Response.ok(Collections2.transform(userManager.getAllApplicationUsers(), new Function<ApplicationUser, UserDTO>()
+        {
+            @Override
+            public UserDTO apply(final ApplicationUser user)
+            {
+                return new UserDTO(user);
+            }
+        })).build();
+    }
+
     @POST
     @AnonymousAllowed
     @Path("user/byName")
@@ -389,6 +416,31 @@ public class UsersAndGroupsBackdoor
             return Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
         }
         return OK;
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("directory")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllDirectories()
+    {
+        return Response.ok(Lists.transform(crowdDirectoryService.findAllDirectories(), new Function<Directory, DirectoryDTO>()
+        {
+            @Override
+            public DirectoryDTO apply(final Directory directory)
+            {
+                return new DirectoryDTO(directory);
+            }
+        })).build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("directory/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDirectory(@PathParam("id") final long id)
+    {
+        return Response.ok(new DirectoryDTO(crowdDirectoryService.findDirectoryById(id))).build();
     }
 
     private static long nullToZero(Long theLong)

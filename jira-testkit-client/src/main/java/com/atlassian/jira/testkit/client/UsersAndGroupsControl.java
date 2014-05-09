@@ -9,8 +9,13 @@
 
 package com.atlassian.jira.testkit.client;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.atlassian.jira.testkit.beans.DirectoryDTO;
 import com.atlassian.jira.testkit.beans.LoginInfoBean;
 import com.atlassian.jira.testkit.beans.UserDTO;
+
 import com.sun.jersey.api.client.WebResource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -177,6 +182,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         return createResource().path("user").path("loginInfo").queryParam("userName", username).get(LoginInfoBean.class);
     }
 
+    public List<UserDTO> getAllUsers()
+    {
+        return Arrays.asList(createResource().path("user").path("all").get(UserDTO[].class));
+    }
+
     public UserDTO getUserByName(final String username)
     {
         return createResource().path("user").path("byName").queryParam("userName", username).get(UserDTO.class);
@@ -185,6 +195,16 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public void updateUser(final UserDTO user)
     {
         createResource().path("user").path("byName").entity(user, APPLICATION_JSON_TYPE).post();
+    }
+
+    public List<DirectoryDTO> getAllDirectories()
+    {
+        return Arrays.asList(createResource().path("directory").get(DirectoryDTO[].class));
+    }
+
+    public DirectoryDTO getDirectory(final long id)
+    {
+        return createResource().path("directory").path(String.valueOf(id)).get(DirectoryDTO.class);
     }
 
     @Override
