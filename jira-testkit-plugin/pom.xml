@@ -25,8 +25,13 @@
                         <Export-Package>
                             com.atlassian.jira.testkit*
                         </Export-Package>
+                        <!--
+                            Some JIRA upgrade tasks use XPath. We need to import JAXP from Xalan,
+                            otherwise data importing will fail under Java 8.
+                        -->
                         <Import-Package>
-                            *
+                            *,
+                            org.apache.xpath.jaxp
                         </Import-Package>
 					</instructions>
 				</configuration>
