@@ -9,9 +9,9 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.jira.auditing.AuditingManager;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.ofbiz.OfBizDelegator;
+import com.atlassian.jira.testkit.plugin.auditing.AuditingManagerAdapterFactory;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericValue;
 
@@ -35,20 +35,25 @@ public class AuditingBackdoor
     private static String ITEMS_ENTITY_NAME = "AuditItem";
     private static String CHANGED_VALUES_ENTITY_NAME = "AuditChangedValue";
 
-    private final AuditingManager auditingManager;
+    private final AuditingManagerAdapterFactory auditingManagerAdapterFactory;
     private final OfBizDelegator ofBizDelegator;
 
-    public AuditingBackdoor(AuditingManager auditingManager, OfBizDelegator ofBizDelegator) {
-        this.auditingManager = auditingManager;
+    public AuditingBackdoor(AuditingManagerAdapterFactory auditingManagerAdapterFactory, OfBizDelegator ofBizDelegator) {
+        this.auditingManagerAdapterFactory = auditingManagerAdapterFactory;
         this.ofBizDelegator = ofBizDelegator;
     }
 
 	@GET
 	@Path("enable")
 	public Response enable() {
+        if (!auditingManagerAdapterFactory.isAvailable())
+        {
+            return Response.serverError().cacheControl(never()).build();
+        }
+
         try
         {
-            auditingManager.setAuditingEnabled(true);
+            auditingManagerAdapterFactory.create().setAuditingEnabled(true);
         }
         catch (PermissionException e)
         {
@@ -60,9 +65,14 @@ public class AuditingBackdoor
 	@GET
 	@Path("disable")
 	public Response disable() {
+        if (!auditingManagerAdapterFactory.isAvailable())
+        {
+            return Response.serverError().cacheControl(never()).build();
+        }
+
         try
         {
-            auditingManager.setAuditingEnabled(false);
+            auditingManagerAdapterFactory.create().setAuditingEnabled(false);
         }
         catch (PermissionException e)
         {
@@ -74,6 +84,11 @@ public class AuditingBackdoor
     @GET
     @Path("clearAll")
     public Response clearAll() {
+        if (!auditingManagerAdapterFactory.isAvailable())
+        {
+            return Response.serverError().cacheControl(never()).build();
+        }
+
         final List<GenericValue> records = ofBizDelegator.findAll (ENTITY_NAME);
         if (records != null)
         {

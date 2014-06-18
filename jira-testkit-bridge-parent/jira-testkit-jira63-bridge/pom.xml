@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.atlassian.jira.tests</groupId>
+		<artifactId>jira-testkit-bridge-parent</artifactId>
+		<version>6.3.12-SNAPSHOT</version>
+	</parent>
+	<artifactId>jira-testkit-jira63-bridge</artifactId>
+	<packaging>jar</packaging>
+
+    <name>JIRA TestKit - JIRA 6.3 Bridge</name>
+
+    <properties>
+        <jira.compile.version>6.3-20140217.104425</jira.compile.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+            <version>${jira.compile.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-bridge</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

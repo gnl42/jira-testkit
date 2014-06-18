@@ -16,9 +16,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -26,6 +23,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
@@ -51,7 +51,15 @@ public class PermissionsBackdoor
     @Path("global/add")
     public Response addGlobalPermission(@QueryParam ("type") int permissionType, @QueryParam ("group") String group)
     {
-        globalPermissionManager.addPermission(permissionType, group);
+        try
+        {
+            globalPermissionManager.addPermission(permissionType, group);
+        }
+        catch (Exception e)
+        {
+            // exceptions are thrown only in JIRA 6.1
+            throw new RuntimeException(e);
+        }
         return Response.ok(null).build();
     }
 
@@ -89,7 +97,15 @@ public class PermissionsBackdoor
     @Path("global/remove")
     public Response removeGlobalPermission(@QueryParam ("type") int permissionType, @QueryParam ("group") String group)
     {
-        globalPermissionManager.removePermission(permissionType, group);
+        try
+        {
+            globalPermissionManager.removePermission(permissionType, group);
+        }
+        catch (Exception e)
+        {
+            // exceptions are only thrown in JIRA 6.1
+            throw new RuntimeException(e);
+        }
         return Response.ok(null).build();
     }
     

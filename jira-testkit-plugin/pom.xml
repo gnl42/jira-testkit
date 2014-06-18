@@ -30,6 +30,7 @@
                             otherwise data importing will fail under Java 8.
                         -->
                         <Import-Package>
+                            com.atlassian.jira.testkit.beans,
                             *,
                             org.apache.xpath.jaxp
                         </Import-Package>
@@ -43,6 +44,21 @@
 		</plugins>
 	</build>
 	<dependencies>
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-bridge</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-jira62-bridge</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-jira63-bridge</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-api</artifactId>
@@ -87,6 +103,11 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.pocketknife</groupId>
+            <artifactId>jira-pocketknife-enablement</artifactId>
+            <version>0.27</version>
         </dependency>
     </dependencies>
 	<properties>

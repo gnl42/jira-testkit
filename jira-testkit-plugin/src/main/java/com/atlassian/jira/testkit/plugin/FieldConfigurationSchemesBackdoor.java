@@ -11,6 +11,7 @@ package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutScheme;
+import com.atlassian.jira.testkit.plugin.issue.fields.layout.field.FieldLayoutManagerAdapterFactory;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
@@ -34,11 +35,13 @@ import javax.ws.rs.core.Response;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class FieldConfigurationSchemesBackdoor
 {
-    private FieldLayoutManager schemeManager;
+    private final FieldLayoutManager schemeManager;
+    private final FieldLayoutManagerAdapterFactory fieldLayoutManagerAdapterFactory;
 
-    public FieldConfigurationSchemesBackdoor(FieldLayoutManager schemeManager)
+    public FieldConfigurationSchemesBackdoor(FieldLayoutManager schemeManager, FieldLayoutManagerAdapterFactory fieldLayoutManagerAdapterFactory)
     {
         this.schemeManager = schemeManager;
+        this.fieldLayoutManagerAdapterFactory = fieldLayoutManagerAdapterFactory;
     }
 
     @GET
@@ -46,9 +49,13 @@ public class FieldConfigurationSchemesBackdoor
     @Path("create")
     public Response create(@QueryParam ("schemeName") String newSchemeName, @QueryParam("schemeDescription") String description)
     {
-        FieldLayoutScheme copyScheme = schemeManager.createFieldLayoutScheme(newSchemeName, description);
+        if (fieldLayoutManagerAdapterFactory.isAvailable())
+        {
+            FieldLayoutScheme copyScheme = fieldLayoutManagerAdapterFactory.create().createFieldLayoutScheme(newSchemeName, description);
 
-        return Response.ok(copyScheme.getId()).build();
+            return Response.ok(copyScheme.getId()).build();
+        }
+        return Response.serverError().cacheControl(CacheControl.never()).build();
     }
 
     @DELETE

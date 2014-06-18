@@ -32,6 +32,7 @@
 		<module>jira-testkit-client</module>
         <module>jira-testkit-common</module>
         <module>jira-testkit-testresources</module>
+        <module>jira-testkit-bridge-parent</module>
 	</modules>
 
 	<properties>
@@ -53,7 +54,7 @@
         <jira.amps.version>${jira.version}</jira.amps.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.rest.version>6.8.6</jira.rest.version>
-        <jira.version>6.3-20140217.104425</jira.version>
+        <jira.version>6.1</jira.version>
         <joda.time.version>2.0</joda.time.version>
         <jsr311.version>1.1</jsr311.version>
         <junit.version>4.10</junit.version>

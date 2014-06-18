@@ -24,4 +24,24 @@
                interface="com.atlassian.jira.testkit.plugin.workflows.WorkflowSchemeDataFactory"
                public="true"/>
 
+    <component key="auditingManagerAdapterFactory"
+               class="com.atlassian.jira.testkit.plugin.auditing.AuditingManagerAdapterFactoryImpl"
+               interface="com.atlassian.jira.testkit.plugin.auditing.AuditingManagerAdapterFactory"
+               public="true"/>
+
+    <component key="serviceManagerAdapterFactory"
+               class="com.atlassian.jira.testkit.plugin.service.ServiceManagerAdapterFactoryImpl"
+               interface="com.atlassian.jira.testkit.plugin.service.ServiceManagerAdapterFactory"
+               public="true"/>
+
+    <component key="fieldLayoutManagerAdapterFactory"
+               class="com.atlassian.jira.testkit.plugin.issue.fields.layout.field.FieldLayoutManagerAdapterFactoryImpl"
+               interface="com.atlassian.jira.testkit.plugin.issue.fields.layout.field.FieldLayoutManagerAdapterFactory"
+               public="true"/>
+
+    <component key="jiraVersionService"
+               class="com.atlassian.pocketknife.internal.version.JiraVersionServiceImpl"
+               interface="com.atlassian.pocketknife.api.version.JiraVersionService"
+               public="true"/>
+
 </atlassian-plugin>

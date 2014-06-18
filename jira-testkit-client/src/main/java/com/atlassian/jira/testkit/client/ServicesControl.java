@@ -41,6 +41,9 @@ public class ServicesControl extends BackdoorControl<ServicesControl>
         return createResource().path("services/" + id).get(ServiceBean.class);
     }
 
+    /**
+     * Only works for JIRA 6.3 and higher.
+     */
     public void runService(long id)
     {
         createResource().path("services/" + id + "/run").post();

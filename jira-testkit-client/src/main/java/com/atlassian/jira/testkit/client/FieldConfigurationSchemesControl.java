@@ -24,6 +24,8 @@ public class FieldConfigurationSchemesControl extends BackdoorControl<FieldConfi
     }
 
     /**
+     * Will only work in JIRA 6.2 and newer.
+     *
      * Makes a copy of the Default Permission Scheme and returns the id of the new scheme.
      * @param schemeName the name of the new scheme
      * @param description can be null

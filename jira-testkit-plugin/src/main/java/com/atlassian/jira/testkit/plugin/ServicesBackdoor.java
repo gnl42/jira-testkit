@@ -12,6 +12,7 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.configurable.ObjectConfigurationException;
 import com.atlassian.jira.service.JiraServiceContainer;
 import com.atlassian.jira.service.ServiceManager;
+import com.atlassian.jira.testkit.plugin.service.ServiceManagerAdapterFactory;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,10 +42,12 @@ import java.util.Map;
 public class ServicesBackdoor
 {
     private final ServiceManager serviceManager;
+    private final ServiceManagerAdapterFactory serviceManagerAdapterFactory;
 
-    public ServicesBackdoor(ServiceManager serviceManager)
+    public ServicesBackdoor(ServiceManager serviceManager, ServiceManagerAdapterFactory serviceManagerAdapterFactory)
     {
         this.serviceManager = serviceManager;
+        this.serviceManagerAdapterFactory = serviceManagerAdapterFactory;
     }
 
     @GET
@@ -70,7 +73,10 @@ public class ServicesBackdoor
     @Path ("/{id}/run")
     public void runService(@PathParam ("id") Long id) throws Exception
     {
-        serviceManager.runNow(id);
+        if (serviceManagerAdapterFactory.isAvailable())
+        {
+            serviceManagerAdapterFactory.create().runNow(id);
+        }
     }
 
     public static class ServiceBean

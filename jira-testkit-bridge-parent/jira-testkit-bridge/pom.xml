@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.atlassian.jira.tests</groupId>
+		<artifactId>jira-testkit-bridge-parent</artifactId>
+		<version>6.3.12-SNAPSHOT</version>
+	</parent>
+	<artifactId>jira-testkit-bridge</artifactId>
+	<packaging>jar</packaging>
+
+    <name>JIRA TestKit - Generic Bridge</name>
+	<description>Interfaces of adapters which need implementation.</description>
+
+    <properties>
+        <jira.compile.version>6.1</jira.compile.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+            <version>${jira.compile.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
