@@ -48,13 +48,25 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
-     * GETs a list of versions, which are visible to the current user.
+     * GETs a list of projects, which are visible to the current user.
      *
-     * @return a map of projects.
+     * @return a list of projects.
      */
     public List<Project> getProjects()
     {
         return projects().get(Project.PROJECTS_TYPE);
+    }
+
+    /**
+     * GETs a list of projects, which are visible to the current user, possibly expanding one or more fields.
+     *
+     * @param expand a comma separated list of fields to expand.
+     *
+     * @return a list of projects.
+     */
+    public List<Project> getProjects(String expand)
+    {
+        return projects(expand).get(Project.PROJECTS_TYPE);
     }
 
     /**
@@ -180,5 +192,16 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     protected WebResource projects()
     {
         return createResource().path("project");
+    }
+
+    /**
+     * Returns a WebResource for the projects visible to the current user, optionally expanding fields.
+     *
+     * @param expand a comma separated list of fields to expand in the response
+     * @return a Response
+     */
+    protected WebResource projects(String expand)
+    {
+        return createResource().path("project").queryParam("expand", expand);
     }
 }
