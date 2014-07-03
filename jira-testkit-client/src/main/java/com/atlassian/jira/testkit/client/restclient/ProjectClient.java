@@ -63,6 +63,8 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      * @param expand a comma separated list of fields to expand.
      *
      * @return a list of projects.
+     *
+     * @since 7.0
      */
     public List<Project> getProjects(String expand)
     {
