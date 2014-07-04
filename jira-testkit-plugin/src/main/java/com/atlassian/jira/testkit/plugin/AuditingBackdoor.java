@@ -13,13 +13,17 @@ import com.atlassian.jira.auditing.AuditingManager;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -83,6 +87,19 @@ public class AuditingBackdoor
                 ofBizDelegator.removeRelated("Child" + CHANGED_VALUES_ENTITY_NAME, record);
                 ofBizDelegator.removeValue(record);
             }
+        }
+        return Response.ok().cacheControl(never()).build();
+    }
+
+    @GET
+    @Path("moveAllRecordsBackInTime")
+    public Response moveAllRecordsBackInTime(@QueryParam ("secondsIntoPast") Long secondsIntoPast) throws GenericEntityException
+    {
+        final List<GenericValue> records = ofBizDelegator.findAll (ENTITY_NAME);
+        for (GenericValue record : records)
+        {
+            record.set("created", new Timestamp(record.getTimestamp("created").getTime() - secondsIntoPast * 1000));
+            record.store();
         }
         return Response.ok().cacheControl(never()).build();
     }

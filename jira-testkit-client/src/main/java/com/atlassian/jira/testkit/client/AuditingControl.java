@@ -7,6 +7,9 @@ package com.atlassian.jira.testkit.client;
  */
 public class AuditingControl extends BackdoorControl<AuditingControl>
 {
+
+    public static final String AUDITING_PATH = "auditing";
+
     /**
      * Creates a new BackdoorControl.
      *
@@ -18,14 +21,20 @@ public class AuditingControl extends BackdoorControl<AuditingControl>
     }
 
     public void enable() {
-        get(createResource().path("auditing").path("enable"));
+        get(createResource().path(AUDITING_PATH).path("enable"));
     }
 
     public void disable() {
-        get(createResource().path("auditing").path("disable"));
+        get(createResource().path(AUDITING_PATH).path("disable"));
     }
 
     public void clearAllRecords() {
-        get(createResource().path("auditing").path("clearAll"));
+        get(createResource().path(AUDITING_PATH).path("clearAll"));
+    }
+
+    public void moveAllRecordsBackInTime(long secondsIntoPast)
+    {
+        get(createResource().path(AUDITING_PATH).path("moveAllRecordsBackInTime")
+                .queryParam("secondsIntoPast", Long.toString(secondsIntoPast)));
     }
 }
