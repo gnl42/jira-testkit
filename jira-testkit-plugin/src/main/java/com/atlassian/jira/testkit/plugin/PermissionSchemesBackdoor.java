@@ -10,8 +10,10 @@
 package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.permission.PermissionSchemeManager;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
+import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
@@ -87,7 +89,8 @@ public class PermissionSchemesBackdoor
 
     @GET
     @AnonymousAllowed
-    @Path("entity/add")
+    @Path("legacy/entity/add")
+    @Deprecated
     public Response addSchemeEntity(@QueryParam ("schemeId") long schemeId,
             @QueryParam ("permission") long permission,
             @QueryParam ("type") String type,
@@ -115,7 +118,37 @@ public class PermissionSchemesBackdoor
 
     @GET
     @AnonymousAllowed
-    @Path("entity/remove")
+    @Path("entity/add")
+    public Response addSchemeEntity(@QueryParam ("schemeId") long schemeId,
+            @QueryParam ("permission") String permissionKey,
+            @QueryParam ("type") String type,
+            @QueryParam ("parameter") String parameter)
+    {
+        try
+        {
+            GenericValue scheme = schemeManager.getScheme(schemeId);
+            ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
+            List<GenericValue> entities = schemeManager.getEntities(scheme, permission, type, parameter);
+            if (!entities.isEmpty())
+            {
+                throw new IllegalStateException("PermissionScheme entity to be added already exists");
+            }
+
+            SchemeEntity entity = new SchemeEntity(type, parameter, permissionKey);
+            schemeManager.createSchemeEntity(scheme, entity);
+        }
+        catch (GenericEntityException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return Response.ok(null).build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("legacy/entity/remove")
+    @Deprecated
     public Response removeEntity(@QueryParam ("schemeId") long schemeId,
                                 @QueryParam ("permission") long permission,
                                 @QueryParam ("type") String type,
@@ -144,12 +177,45 @@ public class PermissionSchemesBackdoor
         return Response.ok(null).build();
     }
 
+    @GET
+    @AnonymousAllowed
+    @Path("entity/remove")
+    public Response removeEntity(@QueryParam ("schemeId") long schemeId,
+            @QueryParam ("permission") String permissionKey,
+            @QueryParam ("type") String type,
+            @QueryParam ("parameter") String parameter)
+    {
+        try
+        {
+            GenericValue scheme = schemeManager.getScheme(schemeId);
+            ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
+            List<GenericValue> entities = schemeManager.getEntities(scheme, permission, type, parameter);
+            if (entities.isEmpty())
+            {
+                throw new IllegalStateException("PermissionScheme entity to be removed does not exist");
+            }
+
+            for (GenericValue entity : entities)
+            {
+                Long id = entity.getLong("id");
+                schemeManager.deleteEntity(id);
+            }
+        }
+        catch (GenericEntityException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return Response.ok(null).build();
+    }
+
     /**
      * Removes all matching entities for the given permission and type, and adds the entity with the given parameter.
      */
     @GET
     @AnonymousAllowed
-    @Path("entity/replace")
+    @Path("legacy/entity/replace")
+    @Deprecated
     public Response replaceEntities(@QueryParam ("schemeId") long schemeId,
             @QueryParam ("permission") long permission,
             @QueryParam ("type") String type,
@@ -158,6 +224,40 @@ public class PermissionSchemesBackdoor
         try
         {
             GenericValue scheme = schemeManager.getScheme(schemeId);
+            List<GenericValue> entities = schemeManager.getEntities(scheme, permission);
+
+            for (GenericValue entity : entities)
+            {
+                Long id = entity.getLong("id");
+                schemeManager.deleteEntity(id);
+            }
+
+            SchemeEntity entity = new SchemeEntity(type, parameter, permission);
+            schemeManager.createSchemeEntity(scheme, entity);
+        }
+        catch (GenericEntityException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return Response.ok(null).build();
+    }
+
+    /**
+     * Removes all matching entities for the given permission and type, and adds the entity with the given parameter.
+     */
+    @GET
+    @AnonymousAllowed
+    @Path("entity/replace")
+    public Response replaceEntities(@QueryParam ("schemeId") long schemeId,
+            @QueryParam ("permission") String permissionKey,
+            @QueryParam ("type") String type,
+            @QueryParam ("parameter") String parameter)
+    {
+        try
+        {
+            GenericValue scheme = schemeManager.getScheme(schemeId);
+            ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
             List<GenericValue> entities = schemeManager.getEntities(scheme, permission);
 
             for (GenericValue entity : entities)
