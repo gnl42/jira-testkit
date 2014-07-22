@@ -148,6 +148,11 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         replacePermissions(schemeId, permission, "group", groupName);
     }
 
+    public void addEveryonePermission(Long schemeId, ProjectPermissionKey permission)
+    {
+        addPermission(schemeId, permission, "group", "");
+    }
+
     private void addPermission(long schemeId, int permission, String type, String parameter)
     {
         get(createResource().path("permissionSchemes/legacy/entity/add")
