@@ -150,7 +150,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     public void addEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, "group", "");
+        addPermission(schemeId, permission, "group");
     }
 
     private void addPermission(long schemeId, int permission, String type, String parameter)
@@ -169,6 +169,15 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
                 .queryParam("permission", "" + permission.permissionKey())
                 .queryParam("type", type)
                 .queryParam("parameter", parameter));
+    }
+
+    private void addPermission(long schemeId, ProjectPermissionKey permission, String type)
+    {
+        get(createResource().path("permissionSchemes/entity/add")
+                    .queryParam("schemeId", "" + schemeId)
+                    .queryParam("permission", "" + permission.permissionKey())
+                    .queryParam("type", type)
+        );
     }
 
     private void removePermission(long schemeId, int permission, String type, String parameter)
