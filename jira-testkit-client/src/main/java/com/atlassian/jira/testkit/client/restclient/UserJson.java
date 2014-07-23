@@ -31,6 +31,7 @@ public class UserJson
     public boolean active;
     public Map<String, String> avatarUrls;
     public String emailAddress;
+    public String timeZone;
 
     public UserJson self(String self)
     {
@@ -77,6 +78,12 @@ public class UserJson
     public UserJson emailAddress(String emailAddress)
     {
         this.emailAddress = emailAddress;
+        return this;
+    }
+
+
+    public UserJson timeZone(String timeZone) {
+        this.timeZone = timeZone;
         return this;
     }
 
