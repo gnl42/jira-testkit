@@ -20,14 +20,6 @@ public class AuditingControl extends BackdoorControl<AuditingControl>
         super(environmentData);
     }
 
-    public void enable() {
-        get(createResource().path(AUDITING_PATH).path("enable"));
-    }
-
-    public void disable() {
-        get(createResource().path(AUDITING_PATH).path("disable"));
-    }
-
     public void clearAllRecords() {
         get(createResource().path(AUDITING_PATH).path("clearAll"));
     }

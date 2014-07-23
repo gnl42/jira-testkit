@@ -9,15 +9,12 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.jira.auditing.AuditingManager;
-import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -39,41 +36,11 @@ public class AuditingBackdoor
     private static String ITEMS_ENTITY_NAME = "AuditItem";
     private static String CHANGED_VALUES_ENTITY_NAME = "AuditChangedValue";
 
-    private final AuditingManager auditingManager;
     private final OfBizDelegator ofBizDelegator;
 
-    public AuditingBackdoor(AuditingManager auditingManager, OfBizDelegator ofBizDelegator) {
-        this.auditingManager = auditingManager;
+    public AuditingBackdoor(OfBizDelegator ofBizDelegator) {
         this.ofBizDelegator = ofBizDelegator;
     }
-
-	@GET
-	@Path("enable")
-	public Response enable() {
-        try
-        {
-            auditingManager.setAuditingEnabled(true);
-        }
-        catch (PermissionException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return Response.ok().cacheControl(never()).build();
-	}
-
-	@GET
-	@Path("disable")
-	public Response disable() {
-        try
-        {
-            auditingManager.setAuditingEnabled(false);
-        }
-        catch (PermissionException e)
-        {
-            throw new RuntimeException(e);
-        }
-		return Response.ok().cacheControl(never()).build();
-	}
 
     @GET
     @Path("clearAll")
