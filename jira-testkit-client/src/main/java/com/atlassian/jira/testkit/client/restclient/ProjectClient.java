@@ -15,6 +15,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,16 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     public Project get(String projectKey) throws UniformInterfaceException
     {
         return projectWithKey(projectKey).get(Project.class);
+    }
+
+    /**
+     * Creates a specified project
+     *
+     * @param project a Java class that will be JSON-ized and send to the server
+     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     */
+    public ClientResponse create(Object project) {
+        return projects().type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, project);
     }
 
     /**
