@@ -59,6 +59,16 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
+     * Creates a specified project
+     *
+     * @param keyOrId key or id of project to delete
+     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     */
+    public ClientResponse delete(String keyOrId) {
+        return projectWithKey(keyOrId).type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class, keyOrId);
+    }
+
+    /**
      * GETs a list of projects, which are visible to the current user.
      *
      * @return a list of projects.
