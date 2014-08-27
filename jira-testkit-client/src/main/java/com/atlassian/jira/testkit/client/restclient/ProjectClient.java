@@ -93,6 +93,32 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
+     * GETs a list of current user recent projects, possibly expanding one or more fields.
+     *
+     * @param expand a comma separated list of fields to expand.
+     *
+     * @return a list of projects.
+     *
+     * @since 7.0
+     */
+    public ClientResponse getRecentProjects(String expand)
+    {
+        return projects(expand).path("recent").get(ClientResponse.class);
+    }
+
+    /**
+     * GETs a list of current user recent projects.
+     *
+     * @return a list of projects.
+     *
+     * @since 7.0
+     */
+    public ClientResponse getRecentProjects()
+    {
+        return projects().path("recent").get(ClientResponse.class);
+    }
+
+    /**
      * GETs a list of versions, associated with the passed project.
      *
      * @param key the key of the project to query.
