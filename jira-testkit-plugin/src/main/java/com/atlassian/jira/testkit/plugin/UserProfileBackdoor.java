@@ -3,6 +3,7 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.core.AtlassianCoreException;
 import com.atlassian.core.user.preferences.Preferences;
 import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
 import com.atlassian.jira.user.preferences.UserPreferencesManager;
 import com.atlassian.jira.user.util.UserUtil;
@@ -52,7 +53,7 @@ public class UserProfileBackdoor
         }
 
         // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(username);
+        userPreferencesManager.clearCache(ApplicationUsers.from(user));
 
         return Response.ok(null).build();
     }
@@ -75,7 +76,7 @@ public class UserProfileBackdoor
         }
 
         // Clear any caches, to ensure they are refreshed (defensive code - see UpdateUserPreferences)
-        userPreferencesManager.clearCache(username);
+        userPreferencesManager.clearCache(ApplicationUsers.from(user));
 
         return Response.ok(null).build();
     }
