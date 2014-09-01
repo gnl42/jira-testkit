@@ -103,7 +103,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     public ClientResponse getRecentProjects(String expand)
     {
-        return projects(expand).path("recent").get(ClientResponse.class);
+        return projects(expand).queryParam("recent", "true").get(ClientResponse.class);
     }
 
     /**
@@ -115,7 +115,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     public ClientResponse getRecentProjects()
     {
-        return projects().path("recent").get(ClientResponse.class);
+        return projects().queryParam("recent", "true").get(ClientResponse.class);
     }
 
     /**
