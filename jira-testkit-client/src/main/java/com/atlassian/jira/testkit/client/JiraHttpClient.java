@@ -2,6 +2,7 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.restclient.Project;
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -81,8 +82,9 @@ public class JiraHttpClient
         return this;
     }
 
-    public List<Project> getRecentProjectsViaRestAPI() {
-        String projectsJSON = get("/rest/api/2/project?recent=true");
+    public List<Project> getRecentProjectsViaRestAPI(int count) {
+        Preconditions.checkArgument(count >= 0);
+        String projectsJSON = get("/rest/api/2/project?recent=" + count);
         ObjectMapper mapper = new ObjectMapper();
         try
         {

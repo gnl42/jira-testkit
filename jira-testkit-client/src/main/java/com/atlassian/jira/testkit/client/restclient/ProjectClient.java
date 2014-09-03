@@ -101,9 +101,9 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      *
      * @since 7.0
      */
-    public ClientResponse getRecentProjects(String expand)
+    public ClientResponse getRecentProjects(String expand, int count)
     {
-        return projects(expand).queryParam("recent", "true").get(ClientResponse.class);
+        return projects(expand).queryParam("recent", String.valueOf(count)).get(ClientResponse.class);
     }
 
     /**
@@ -113,9 +113,9 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      *
      * @since 7.0
      */
-    public ClientResponse getRecentProjects()
+    public ClientResponse getRecentProjects(int count)
     {
-        return projects().queryParam("recent", "true").get(ClientResponse.class);
+        return projects().queryParam("recent", String.valueOf(count)).get(ClientResponse.class);
     }
 
     /**
