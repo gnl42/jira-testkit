@@ -9,15 +9,25 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
+import com.google.common.base.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Objects;
+
+import static com.google.common.base.Objects.firstNonNull;
+
 
 /**
  * Client class for the Project resource.
@@ -26,6 +36,81 @@ import java.util.Map;
  */
 public class ProjectClient extends RestApiClient<ProjectClient>
 {
+
+    public class UpdateBean
+    {
+
+        private final Map<String, String> json;
+
+        private UpdateBean(Map<ProjectUpdateField, String> fieldsToUpdate)
+        {
+            ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+            for (ProjectUpdateField field : fieldsToUpdate.keySet())
+            {
+                mapBuilder.put(field.jsonFieldName(), fieldsToUpdate.get(field));
+            }
+            json = mapBuilder.build();
+        }
+
+        public Matcher<Project> equalToOriginalWithUpdatedFields(Project originalProject)
+        {
+            final Map<ProjectUpdateField, String> expectedFields = Maps.newHashMap();
+            for (ProjectUpdateField field : ProjectUpdateField.values())
+            {
+                expectedFields.put(field, json.get(field.jsonFieldName()) != null ? json.get(field.jsonFieldName()) :  field.getFrom(originalProject, backdoor));
+            }
+
+            return new TypeSafeMatcher<Project>()
+            {
+                private String description = "";
+
+                @Override
+                protected boolean matchesSafely(Project project)
+                {
+                    for (Map.Entry<ProjectUpdateField, String> entry : expectedFields.entrySet())
+                    {
+                        String projectValue = entry.getKey().getFrom(project, backdoor);
+                        if (!Objects.equals(projectValue, entry.getValue()))
+                        {
+                            description = "Field '" + entry.getKey().jsonFieldName() + "' of project should be '" + entry.getValue() + "' but was '" + projectValue + "'";
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                public void describeTo(Description description)
+                {
+                    description.appendText(this.description);
+                }
+            };
+        }
+    }
+
+    public class UpdateBeanBuilder
+    {
+        private final Map<ProjectUpdateField, String> builder;
+
+        public UpdateBeanBuilder(Map<ProjectUpdateField, String> builder)
+        {
+            this.builder = builder;
+        }
+
+        public UpdateBeanBuilder with(ProjectUpdateField field, Object value)
+        {
+            Map<ProjectUpdateField, String> newMap = ImmutableMap.<ProjectUpdateField, String>builder().putAll(builder).put(field, value.toString()).build();
+            return new UpdateBeanBuilder(newMap);
+        }
+
+        public UpdateBean build()
+        {
+            return new UpdateBean(builder);
+        }
+    }
+
+    private final Backdoor backdoor;
+
     /**
      * Constructs a new ProjectClient for a JIRA instance.
      *
@@ -34,6 +119,12 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     public ProjectClient(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
+        this.backdoor = new Backdoor(environmentData);
+    }
+
+    public UpdateBeanBuilder updateBean()
+    {
+        return new UpdateBeanBuilder(Collections.<ProjectUpdateField, String>emptyMap());
     }
 
     /**
@@ -49,23 +140,49 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
-     * Creates a specified project
+     * GETs the project having the given key, with all fields expanded
      *
-     * @param project a Java class that will be JSON-ized and send to the server
-     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     * @param projectKey a String containing the project key
+     * @return a Project
+     * @throws com.sun.jersey.api.client.UniformInterfaceException if there is a problem
      */
-    public ClientResponse create(Object project) {
-        return projects().type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, project);
+    public Project getAndExpandAll(String projectKey) throws UniformInterfaceException
+    {
+        return projectWithKey(projectKey).queryParam("expand", "description,lead,url,projectKeys").get(Project.class);
     }
 
     /**
      * Creates a specified project
      *
+     * @param project a Java class that will be JSON-ized and send to the server
+     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     */
+    public ClientResponse create(Object project)
+    {
+        return registerResponse(projects().type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, project));
+    }
+
+    /**
+     * Updates a specified project
+     *
+     * @param keyOrId key or id of project to update
+     * @param newData object containing new values for fields
+     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     */
+    public ClientResponse update(String keyOrId, UpdateBean newData)
+    {
+        return registerResponse(projectWithKey(keyOrId).type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, newData.json));
+    }
+
+    /**
+     * Deletes a specified project
+     *
      * @param keyOrId key or id of project to delete
      * @return a {@link com.sun.jersey.api.client.ClientResponse} object
      */
-    public ClientResponse delete(String keyOrId) {
-        return projectWithKey(keyOrId).type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class, keyOrId);
+    public ClientResponse delete(String keyOrId)
+    {
+        return registerResponse(projectWithKey(keyOrId).type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class));
     }
 
     /**
@@ -82,9 +199,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      * GETs a list of projects, which are visible to the current user, possibly expanding one or more fields.
      *
      * @param expand a comma separated list of fields to expand.
-     *
      * @return a list of projects.
-     *
      * @since 7.0
      */
     public List<Project> getProjects(String expand)
@@ -96,9 +211,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      * GETs a list of current user recent projects, possibly expanding one or more fields.
      *
      * @param expand a comma separated list of fields to expand.
-     *
      * @return a list of projects.
-     *
      * @since 7.0
      */
     public ClientResponse getRecentProjects(String expand, int count)
@@ -110,12 +223,11 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      * GETs a list of current user recent projects.
      *
      * @return a list of projects.
-     *
      * @since 7.0
      */
     public ClientResponse getRecentProjects(int count)
     {
-        return projects().queryParam("recent", String.valueOf(count)).get(ClientResponse.class);
+        return registerResponse(projects().queryParam("recent", String.valueOf(count)).get(ClientResponse.class));
     }
 
     /**
@@ -144,7 +256,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      * GETs a single avatar, associated with the passed project
      *
      * @param key the key of the project to query
-     * @param id the database id of the avatar
+     * @param id  the database id of the avatar
      * @return avatar
      */
     public Avatar getAvatar(String key, Long id)
@@ -208,7 +320,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     protected WebResource projectWithKey(String projectKey)
     {
-        return createResource().path("project").path(projectKey);
+        return projects().path(projectKey);
     }
 
     /**
@@ -219,7 +331,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     protected WebResource projectVersionWithKey(String projectKey)
     {
-        return createResource().path("project").path(projectKey).path("versions");
+        return projectWithKey(projectKey).path("versions");
     }
 
     /**
@@ -230,7 +342,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     protected WebResource projectComponentWithKey(String projectKey)
     {
-        return createResource().path("project").path(projectKey).path("components");
+        return projectWithKey(projectKey).path("components");
     }
 
     /**
@@ -251,6 +363,6 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     protected WebResource projects(String expand)
     {
-        return createResource().path("project").queryParam("expand", expand);
+        return projects().queryParam("expand", expand);
     }
 }

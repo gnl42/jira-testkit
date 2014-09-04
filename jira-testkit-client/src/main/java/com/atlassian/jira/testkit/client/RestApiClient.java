@@ -13,6 +13,7 @@ import com.atlassian.jira.testkit.client.jerseyclient.ApacheClientFactoryImpl;
 import com.atlassian.jira.testkit.client.jerseyclient.JerseyClientFactory;
 import com.atlassian.jira.testkit.client.restclient.Errors;
 import com.atlassian.jira.testkit.client.restclient.Response;
+import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
@@ -25,6 +26,7 @@ import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
@@ -80,6 +82,8 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     private String loginAs = "admin";
 
     private String loginPassword = loginAs;
+
+    private final Set<ClientResponse> responses = Sets.newHashSet();
 
     /**
      * The version of the REST plugin to test.
@@ -210,7 +214,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
 
     protected Response<?> toResponse(Method method)
     {
-        ClientResponse clientResponse = method.call();
+        ClientResponse clientResponse = registerResponse(method.call());
         if (clientResponse.getStatus() == 200)
         {
             final Response<?> response = new Response(clientResponse.getStatus(), null);
@@ -228,7 +232,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
 
     protected <T> Response<T> toResponse(Method method, GenericType<T> clazz)
     {
-        ClientResponse clientResponse = method.call();
+        ClientResponse clientResponse = registerResponse(method.call());
         if (clientResponse.getStatus() < 300)
         {
             T object = null;
@@ -277,6 +281,20 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         }
 
         return resource.queryParam("expand", percentEncode(StringUtils.join(expands, ",")));
+    }
+
+    protected ClientResponse registerResponse(ClientResponse response) {
+        responses.add(response);
+        return response;
+    }
+
+    public void cleanUp()
+    {
+        for(ClientResponse respnse : responses)
+        {
+            respnse.close();
+        }
+        responses.clear();
     }
 
     /**
