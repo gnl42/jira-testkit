@@ -121,6 +121,29 @@ public class FieldConfigurationBackdoor
 
     @POST
     @AnonymousAllowed
+    @Path("changeFieldDescription")
+    public Response changeFieldDescription(@QueryParam("fieldConfigurationName") String configurationName, @QueryParam("fieldName") String fieldName, @QueryParam("description") String description)
+    {
+        final EditableFieldLayout editableFieldLayout = getFieldLayout(configurationName);
+        final FieldLayoutItem fieldLayoutItem = editableFieldLayout.getFieldLayoutItem(fieldName);
+
+        editableFieldLayout.setDescription(fieldLayoutItem, description);
+
+        if (editableFieldLayout.isDefault())
+        {
+            fieldLayoutManager.storeEditableDefaultFieldLayout((EditableDefaultFieldLayout) editableFieldLayout);
+        }
+        else
+        {
+            fieldLayoutManager.storeEditableFieldLayout(editableFieldLayout);
+        }
+
+        return Response.ok().build();
+    }
+
+
+    @POST
+    @AnonymousAllowed
     @Path("associateCustomFieldWithProject")
     public Response associateCustomFieldWithProject(@QueryParam("fieldId") String fieldId, @QueryParam("projectName") String projectName)
     {

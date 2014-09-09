@@ -30,6 +30,12 @@ public class FieldConfigurationControl extends BackdoorControl<FieldConfiguratio
                 .queryParam("fieldConfigurationName", configurationName).queryParam("fieldName", fieldName).queryParam("hide", Boolean.toString(hide)).post();
     }
 
+    public void changeFieldDescription(String configurationName, String fieldName, String description)
+    {
+        createResource().path("fieldConfiguration/changeFieldDescription")
+                .queryParam("fieldConfigurationName", configurationName).queryParam("fieldName", fieldName).queryParam("description", description).post();
+    }
+
     public void associateCustomFieldWithProject(String customFieldId, String projectName)
     {
         createResource().path("fieldConfiguration/associateCustomFieldWithProject")
