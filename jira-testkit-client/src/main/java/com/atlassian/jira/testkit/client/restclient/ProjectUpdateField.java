@@ -13,7 +13,7 @@ public enum ProjectUpdateField
     LEAD
             {
                 @Override
-                protected String getFrom(Project project, Backdoor backdoor)
+                public String getFrom(Project project, Backdoor backdoor)
                 {
                     return project.lead.name;
                 }
@@ -26,7 +26,7 @@ public enum ProjectUpdateField
                 private final Pattern avatarIdPattern = Pattern.compile("avatarId=(\\d+)");
 
                 @Override
-                protected String getFrom(Project project, Backdoor backdoor)
+                public String getFrom(Project project, Backdoor backdoor)
                 {
                     // /secure/projectavatar?size=medium&pid=10010&avatarId=10011
                     java.util.regex.Matcher matcher = avatarIdPattern.matcher(project.avatarUrls.values().iterator().next());
@@ -37,7 +37,7 @@ public enum ProjectUpdateField
     ISSUE_SECURITY_SCHEME
             {
                 @Override
-                protected String getFrom(Project project, Backdoor backdoor)
+                public String getFrom(Project project, Backdoor backdoor)
                 {
                     ProjectSchemesBean schemes = backdoor.project().getSchemes(project.id);
                     return schemes.issueSecurityScheme != null ? schemes.issueSecurityScheme.id.toString() : null;
@@ -46,7 +46,7 @@ public enum ProjectUpdateField
     PERMISSION_SCHEME
             {
                 @Override
-                protected String getFrom(Project project, Backdoor backdoor)
+                public String getFrom(Project project, Backdoor backdoor)
                 {
                     ProjectSchemesBean schemes = backdoor.project().getSchemes(project.id);
                     return schemes.permissionScheme != null ? schemes.permissionScheme.id.toString() : null;
@@ -56,7 +56,7 @@ public enum ProjectUpdateField
     NOTIFICATION_SCHEME
             {
                 @Override
-                protected String getFrom(Project project, Backdoor backdoor)
+                public String getFrom(Project project, Backdoor backdoor)
                 {
                     ProjectSchemesBean schemes = backdoor.project().getSchemes(project.id);
                     return schemes.notificationScheme != null ? schemes.notificationScheme.id.toString() : null;
@@ -66,7 +66,7 @@ public enum ProjectUpdateField
     CATEGORY_ID
             {
                 @Override
-                protected String getFrom(Project project, Backdoor backdoor)
+                public String getFrom(Project project, Backdoor backdoor)
                 {
                     return project.projectCategory != null ? project.projectCategory.id.toString() : null;
                 }
@@ -77,7 +77,7 @@ public enum ProjectUpdateField
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
     }
 
-    protected String getFrom(Project project, Backdoor backdoor)
+    public String getFrom(Project project, Backdoor backdoor)
     {
         try
         {

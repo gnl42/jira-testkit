@@ -37,9 +37,8 @@ import static com.google.common.base.Objects.firstNonNull;
 public class ProjectClient extends RestApiClient<ProjectClient>
 {
 
-    public class UpdateBean
+    public static class UpdateBean
     {
-
         private final Map<String, String> json;
 
         private UpdateBean(Map<ProjectUpdateField, String> fieldsToUpdate)
@@ -52,64 +51,37 @@ public class ProjectClient extends RestApiClient<ProjectClient>
             json = mapBuilder.build();
         }
 
-        public Matcher<Project> equalToOriginalWithUpdatedFields(Project originalProject)
+        public Map<String, String> getJson()
         {
-            final Map<ProjectUpdateField, String> expectedFields = Maps.newHashMap();
-            for (ProjectUpdateField field : ProjectUpdateField.values())
+            return Maps.newHashMap(json);
+        }
+
+        public static UpdateBeanBuilder builder()
+        {
+            return new UpdateBeanBuilder(Collections.<ProjectUpdateField, String>emptyMap());
+        }
+
+        public static class UpdateBeanBuilder
+        {
+            private final Map<ProjectUpdateField, String> builder;
+
+            public UpdateBeanBuilder(Map<ProjectUpdateField, String> builder)
             {
-                expectedFields.put(field, json.get(field.jsonFieldName()) != null ? json.get(field.jsonFieldName()) :  field.getFrom(originalProject, backdoor));
+                this.builder = builder;
             }
 
-            return new TypeSafeMatcher<Project>()
+            public UpdateBeanBuilder with(ProjectUpdateField field, Object value)
             {
-                private String description = "";
+                Map<ProjectUpdateField, String> newMap = ImmutableMap.<ProjectUpdateField, String>builder().putAll(builder).put(field, value.toString()).build();
+                return new UpdateBeanBuilder(newMap);
+            }
 
-                @Override
-                protected boolean matchesSafely(Project project)
-                {
-                    for (Map.Entry<ProjectUpdateField, String> entry : expectedFields.entrySet())
-                    {
-                        String projectValue = entry.getKey().getFrom(project, backdoor);
-                        if (!Objects.equals(projectValue, entry.getValue()))
-                        {
-                            description = "Field '" + entry.getKey().jsonFieldName() + "' of project should be '" + entry.getValue() + "' but was '" + projectValue + "'";
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-
-                @Override
-                public void describeTo(Description description)
-                {
-                    description.appendText(this.description);
-                }
-            };
+            public UpdateBean build()
+            {
+                return new UpdateBean(builder);
+            }
         }
     }
-
-    public class UpdateBeanBuilder
-    {
-        private final Map<ProjectUpdateField, String> builder;
-
-        public UpdateBeanBuilder(Map<ProjectUpdateField, String> builder)
-        {
-            this.builder = builder;
-        }
-
-        public UpdateBeanBuilder with(ProjectUpdateField field, Object value)
-        {
-            Map<ProjectUpdateField, String> newMap = ImmutableMap.<ProjectUpdateField, String>builder().putAll(builder).put(field, value.toString()).build();
-            return new UpdateBeanBuilder(newMap);
-        }
-
-        public UpdateBean build()
-        {
-            return new UpdateBean(builder);
-        }
-    }
-
-    private final Backdoor backdoor;
 
     /**
      * Constructs a new ProjectClient for a JIRA instance.
@@ -119,12 +91,6 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     public ProjectClient(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
-        this.backdoor = new Backdoor(environmentData);
-    }
-
-    public UpdateBeanBuilder updateBean()
-    {
-        return new UpdateBeanBuilder(Collections.<ProjectUpdateField, String>emptyMap());
     }
 
     /**
