@@ -11,6 +11,7 @@ package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.project.ProjectService;
+import com.atlassian.jira.blueprint.core.api.CoreProjectConfigurator;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
@@ -58,12 +59,15 @@ public class ProjectBackdoor
     private final NotificationSchemeManager notificationSchemeManager;
     private final IssueSecuritySchemeManager issueSecuritySchemeManager;
     private final FieldLayoutManager fieldLayoutManager;
+    private final CoreProjectConfigurator coreProjectConfigurator;
 
     public ProjectBackdoor(ProjectService projectService, PermissionSchemeManager permissionSchemeManager,
             UserUtil userUtil, IssueTypeSchemeManager issueTypeSchemeManager,
             IssueTypeScreenSchemeManager issueTypeScreenSchemeManager,
             NotificationSchemeManager notificationSchemeManager,
-            IssueSecuritySchemeManager issueSecuritySchemeManager, final FieldLayoutManager fieldLayoutManager)
+            IssueSecuritySchemeManager issueSecuritySchemeManager,
+            FieldLayoutManager fieldLayoutManager,
+            CoreProjectConfigurator coreProjectConfigurator)
     {
         this.projectService = projectService;
         this.permissionSchemeManager = permissionSchemeManager;
@@ -73,6 +77,7 @@ public class ProjectBackdoor
         this.notificationSchemeManager = notificationSchemeManager;
         this.issueSecuritySchemeManager = issueSecuritySchemeManager;
         this.fieldLayoutManager = fieldLayoutManager;
+        this.coreProjectConfigurator = coreProjectConfigurator;
     }
 
     /**
@@ -109,6 +114,7 @@ public class ProjectBackdoor
         ProjectService.UpdateProjectSchemesValidationResult schemesResult = new ProjectService.UpdateProjectSchemesValidationResult(
                 errorCollection, permissionSchemeId, null, null);
         projectService.updateProjectSchemes(schemesResult, project);
+        coreProjectConfigurator.configure(project);
 
         return Response.ok(project.getId().toString()).build();
     }

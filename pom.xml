@@ -53,13 +53,14 @@
         <jira.amps.version>${jira.version}</jira.amps.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.rest.version>6.8.6</jira.rest.version>
-        <jira.version>6.4-OD-03-004</jira.version>
+        <jira.version>7.0-20140923.160000</jira.version>
         <joda.time.version>2.0</joda.time.version>
         <jsr311.version>1.1</jsr311.version>
         <junit.version>4.10</junit.version>
         <log4j.version>1.2.16</log4j.version>
         <mockito.version>1.9.0</mockito.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.template.version>3.6</project.template.version>
         <rest.version>2.7.1</rest.version>
         <sal.version>2.7.1</sal.version>
         <spring.version>2.5.6.SEC01</spring.version>
