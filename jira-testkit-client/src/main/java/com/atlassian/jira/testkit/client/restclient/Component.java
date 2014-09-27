@@ -39,6 +39,7 @@ public class Component
     public User assignee;
     public User realAssignee;
     public boolean isAssigneeTypeValid;
+    public long projectId;
 
     public Component self(URI self)
     {
@@ -115,6 +116,12 @@ public class Component
     public Component isAssigneeTypeValid(boolean isAssigneeTypeValid)
     {
         this.isAssigneeTypeValid = isAssigneeTypeValid;
+        return this;
+    }
+
+    public Component projectId(long projectId)
+    {
+        this.projectId = projectId;
         return this;
     }
 
