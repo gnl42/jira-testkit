@@ -9,24 +9,18 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
-import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
-import com.google.common.base.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.MediaType;
-import java.util.*;
-import java.util.Objects;
-
-import static com.google.common.base.Objects.firstNonNull;
 
 
 /**
