@@ -28,6 +28,8 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import java.util.EnumSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
 /**
@@ -105,7 +107,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
      *
      * @param environmentData The JIRA environment data
      * @param version a String containing the version to test against
-     */
+g     */
     protected RestApiClient(JIRAEnvironmentData environmentData, String version)
     {
         this.environmentData = environmentData;
@@ -150,6 +152,12 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         loginAs = username;
         loginPassword = password;
         return (T) this;
+    }
+
+    @Nonnull
+    public JIRAEnvironmentData getEnvironmentData()
+    {
+        return environmentData;
     }
 
     /**
