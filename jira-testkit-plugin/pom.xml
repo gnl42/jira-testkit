@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.atlassian.jira.tests</groupId>
 		<artifactId>jira-testkit-plugin-parent</artifactId>
-		<version>6.4.27</version>
+		<version>6.4.28-SNAPSHOT</version>
 	</parent>
 	<artifactId>jira-testkit-plugin</artifactId>
 	<packaging>atlassian-plugin</packaging>
