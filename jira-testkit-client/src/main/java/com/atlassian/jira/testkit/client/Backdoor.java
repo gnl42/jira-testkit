@@ -10,8 +10,8 @@
 package com.atlassian.jira.testkit.client;
 
 
+import com.atlassian.jira.testkit.client.restclient.AnalyticsClient;
 import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
-import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient2;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
 
 /**
@@ -66,6 +66,7 @@ public class Backdoor
     private final WhatsNewControl whatsNewControl;
     private final AuditingControl auditingControl;
     private final IssueSecuritySchemesControl issueSecuritySchemes;
+    private final AnalyticsClient analyticsClient;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -113,6 +114,7 @@ public class Backdoor
         this.priorityControl = new PriorityControl(environmentData);
         this.auditingControl = new AuditingControl(environmentData);
         this.fieldConfigurationSchemes = new FieldConfigurationSchemesControl(environmentData);
+        this.analyticsClient = new AnalyticsClient(environmentData);
     }
 
     public ScreensControl screens()
@@ -379,6 +381,8 @@ public class Backdoor
     {
         return auditingControl;
     }
+
+    public AnalyticsClient analytics() { return analyticsClient; }
 
     public FieldConfigurationSchemesControl fieldConfigurationSchemes()
     {

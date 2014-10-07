@@ -41,6 +41,7 @@ public class User
     public String emailAddress;
     public Expando<Group> groups;
     public String timeZone;
+    public String locale;
 
     public User timeZone(String timeZone)
     {
@@ -99,6 +100,12 @@ public class User
     public User emailAddress(String emailAddress)
     {
         this.emailAddress = emailAddress;
+        return this;
+    }
+
+    public User locale(String locale)
+    {
+        this.locale = locale;
         return this;
     }
 

@@ -9,15 +9,13 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.context.GlobalIssueContext;
 import com.atlassian.jira.issue.context.JiraContextNode;
-import com.atlassian.jira.issue.context.manager.JiraContextTreeManager;
 import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
-import com.atlassian.jira.issue.customfields.CustomFieldUtils;
 import com.atlassian.jira.issue.customfields.config.item.SettableOptionsConfigItem;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
@@ -73,13 +71,11 @@ public class CustomFieldsBackdoor
 {
     private final CustomFieldManager customFieldManager;
     private final ConstantsManager manager;
-    private final JiraContextTreeManager treeManager;
 
     public CustomFieldsBackdoor(CustomFieldManager customFieldManager, ConstantsManager manager)
     {
         this.customFieldManager = customFieldManager;
         this.manager = manager;
-        this.treeManager = ComponentAccessor.getComponent(JiraContextTreeManager.class);
     }
 
     @POST
@@ -113,7 +109,7 @@ public class CustomFieldsBackdoor
             }
         }
         // global context
-        final List<JiraContextNode> contexts = CustomFieldUtils.buildJiraIssueContexts(true, null, null, treeManager);
+        final List<JiraContextNode> contexts = Collections.singletonList(GlobalIssueContext.getInstance());
         final List<IssueType> allTypes = Collections.singletonList(null);
         try
         {
