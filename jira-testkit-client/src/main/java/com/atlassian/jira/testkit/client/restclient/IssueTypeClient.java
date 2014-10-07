@@ -9,14 +9,19 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 import java.util.List;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Client for issue type.
@@ -58,6 +63,43 @@ public class IssueTypeClient extends RestApiClient<IssueTypeClient>
         return issueTypeWithID(issueTypeID).get(IssueType.class);
     }
 
+    public List<IssueType> getAlternatives(final String issueTypeId)
+    {
+        return issueTypeWithID(issueTypeId).path("alternatives").get(new GenericType<List<IssueType>>() {});
+    }
+
+    public IssueType post(IssueTypeCreateBean issueTypeCreateBean)
+    {
+        return issueTypes().post(IssueType.class, issueTypeCreateBean);
+    }
+
+    public IssueType update(final String issueTypeId, IssueTypeUpdateBean issueTypeUpdateBean)
+    {
+        return issueTypeWithID(issueTypeId).type(MediaType.APPLICATION_JSON_TYPE).put(IssueType.class, issueTypeUpdateBean);
+    }
+
+    public void delete(final String issueTypeId, final Option<String> alternativeIssueTypeId)
+    {
+        final WebResource webResource = issueTypeWithID(issueTypeId);
+        alternativeIssueTypeId.fold(new Supplier<Void>()
+        {
+            @Override
+            public Void get()
+            {
+                webResource.delete();
+                return null;
+            }
+        }, new Function<String, Void>()
+        {
+            @Override
+            public Void apply(final String alternativeId)
+            {
+                webResource.queryParam("alternativeIssueTypeId", alternativeId).delete();
+                return null;
+            }
+        });
+    }
+
     /**
      * GETs the issue type with the given id, returning a Response.
      *
@@ -81,9 +123,9 @@ public class IssueTypeClient extends RestApiClient<IssueTypeClient>
      *
      * @return a WebResource
      */
-    private WebResource issueTypes()
+    private WebResource.Builder issueTypes()
     {
-        return createResource().path("issuetype");
+        return createResource().path("issuetype").type(MediaType.APPLICATION_JSON_TYPE);
     }
 
     /**
