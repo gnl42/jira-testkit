@@ -27,6 +27,7 @@ public class IssueType
     public boolean subtask;
     public String description;
     public String iconUrl;
+    public Long avatarId;
 
     public IssueType self(final String self)
     {
@@ -61,6 +62,12 @@ public class IssueType
     public IssueType iconUrl(final String iconUrl)
     {
         this.iconUrl = iconUrl;
+        return this;
+    }
+
+    public IssueType avatarId(final Long avatarId)
+    {
+        this.avatarId = avatarId;
         return this;
     }
 
