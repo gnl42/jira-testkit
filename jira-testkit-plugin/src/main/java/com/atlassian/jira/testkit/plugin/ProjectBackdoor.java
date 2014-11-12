@@ -22,6 +22,8 @@ import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.AssigneeTypes;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectAssigneeTypes;
+import com.atlassian.jira.project.ProjectCategory;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.util.UserUtil;
@@ -58,12 +60,14 @@ public class ProjectBackdoor
     private final NotificationSchemeManager notificationSchemeManager;
     private final IssueSecuritySchemeManager issueSecuritySchemeManager;
     private final FieldLayoutManager fieldLayoutManager;
+    private final ProjectManager projectManager;
 
     public ProjectBackdoor(ProjectService projectService, PermissionSchemeManager permissionSchemeManager,
             UserUtil userUtil, IssueTypeSchemeManager issueTypeSchemeManager,
             IssueTypeScreenSchemeManager issueTypeScreenSchemeManager,
             NotificationSchemeManager notificationSchemeManager,
-            IssueSecuritySchemeManager issueSecuritySchemeManager, final FieldLayoutManager fieldLayoutManager)
+            IssueSecuritySchemeManager issueSecuritySchemeManager, final FieldLayoutManager fieldLayoutManager,
+            final ProjectManager projectManager)
     {
         this.projectService = projectService;
         this.permissionSchemeManager = permissionSchemeManager;
@@ -73,6 +77,7 @@ public class ProjectBackdoor
         this.notificationSchemeManager = notificationSchemeManager;
         this.issueSecuritySchemeManager = issueSecuritySchemeManager;
         this.fieldLayoutManager = fieldLayoutManager;
+        this.projectManager = projectManager;
     }
 
     /**
@@ -202,6 +207,20 @@ public class ProjectBackdoor
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         fieldLayoutManager.removeSchemeAssociation(project, schemeId);
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("projectCategory/set")
+    public Response setProjectCategory(@QueryParam ("project") long projectId,
+            @QueryParam ("projectCategoryId") Long projectCategoryId)
+    {
+        User admin = getUserWithAdminPermission();
+        Project project = projectService.getProjectById(admin, projectId).getProject();
+
+        final ProjectCategory projectCategory = projectManager.getProjectCategoryObject(projectCategoryId);
+        projectManager.setProjectCategory(project, projectCategory);
 
         return Response.ok().build();
     }

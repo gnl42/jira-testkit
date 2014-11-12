@@ -120,6 +120,20 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
                 .queryParam("scheme", "" + schemeId));
     }
 
+    /**
+     * Sets project category for the given project.
+     *
+     * @param projectId id of the project.
+     * @param projectCategoryId id of the project category.
+     */
+    public void setProjectCategory(long projectId, long projectCategoryId)
+    {
+        get(createResource().path("project/projectCategory/set")
+                .queryParam("project", "" + projectId)
+                .queryParam("projectCategoryId", "" + projectCategoryId));
+
+    }
+
     public void setIssueTypeScreenScheme(long projectId, long issueTypeScreenSchemeId)
     {
         get(createResource().path("project/issueTypeScreenScheme/set")
