@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Client for the user resource.
@@ -94,6 +95,34 @@ public class UserClient extends RestApiClient<UserClient>
     {
         WebResource resource = getPickerResource(query, maxResults);
         return resource.get(UserPickerResults.class);
+    }
+
+    public UserBean updateEmail(String userName, String newEmail)
+    {
+        return updateUser(userName, UserBean.builder().setEmailAddress(newEmail).build());
+    }
+
+    public UserBean updateDisplayName(String userName, String displayName)
+    {
+        return updateUser(userName, UserBean.builder().setDisplayName(displayName).build());
+    }
+
+    public UserBean updatePassword(String userName, String password)
+    {
+        return updateUser(userName, UserBean.builder().setPassword(password).build());
+    }
+
+    public UserBean updateName(String userName, String newName)
+    {
+        return updateUser(userName, UserBean.builder().setName(newName).build());
+    }
+
+    private UserBean updateUser(final String userName, final UserBean updateBean)
+    {
+        return createResource().path("user").queryParam("username", userName)
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .put(UserBean.class, updateBean);
     }
 
     public WebResource getSearchAssignableResource(String query, String issueKey, String startAt, String maxResults)
