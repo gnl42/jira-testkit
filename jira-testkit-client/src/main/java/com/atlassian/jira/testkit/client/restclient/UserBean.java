@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
@@ -20,4 +21,89 @@ public class UserBean
 {
     public String name;
     public String displayName;
+    public String key;
+    public String password;
+    public String emailAddress;
+    public String notification;
+
+    public UserBean() {}
+
+    public UserBean(final String name, final String displayName, final String key, final String password, final String emailAddress, final String notification)
+    {
+        this.name = name;
+        this.displayName = displayName;
+        this.key = key;
+        this.password = password;
+        this.emailAddress = emailAddress;
+        this.notification = notification;
+    }
+
+    @JsonIgnore
+    public Builder but()
+    {
+        return builder()
+                .setDisplayName(displayName)
+                .setEmailAddress(emailAddress)
+                .setKey(key)
+                .setName(name)
+                .setNotification(notification)
+                .setPassword(password);
+    }
+
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+
+        private String name;
+        private String displayName;
+        private String key;
+        private String password;
+        private String emailAddress;
+        private String notification;
+
+        public Builder setName(final String name)
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setDisplayName(final String displayName)
+        {
+            this.displayName = displayName;
+            return this;
+        }
+
+        public Builder setKey(final String key)
+        {
+            this.key = key;
+            return this;
+        }
+
+        public Builder setPassword(final String password)
+        {
+            this.password = password;
+            return this;
+        }
+
+        public Builder setEmailAddress(final String emailAddress)
+        {
+            this.emailAddress = emailAddress;
+            return this;
+        }
+
+        public Builder setNotification(final String notification)
+        {
+            this.notification = notification;
+            return this;
+        }
+
+        public UserBean build()
+        {
+            return new UserBean(name, displayName, key, password, emailAddress, notification);
+        }
+    }
 }
