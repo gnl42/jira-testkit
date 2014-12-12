@@ -157,7 +157,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     {
         get(createResource().path("permissionSchemes/entity/remove")
                 .queryParam("schemeId", schemeId.toString())
-                .queryParam("permission", "" + permission)
+                .queryParam("permission", permission.toString())
                 .queryParam("type", "group"));
     }
 
