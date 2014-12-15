@@ -148,9 +148,24 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         replacePermissions(schemeId, permission, "group", groupName);
     }
 
+    /**
+     * Adds the given permission to the anonymous group ("anyone").
+     */
     public void addEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {
         addPermission(schemeId, permission, "group");
+    }
+
+    /**
+     * Removes only the given permission from the anonymous group ("anyone"). Other groups with this permission
+     * will not be removed.
+     */
+    public void removeEveryonePermission(Long schemeId, ProjectPermissionKey permission)
+    {
+        get(createResource().path("permissionSchemes/entity/remove")
+                .queryParam("schemeId", schemeId.toString())
+                .queryParam("permission", permission.toString())
+                .queryParam("type", "group"));
     }
 
     private void addPermission(long schemeId, int permission, String type, String parameter)
