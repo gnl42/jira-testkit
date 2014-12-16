@@ -10,7 +10,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class CorrectlyUpdatedProjectMatcher extends TypeSafeMatcher<Project>
 {
@@ -42,13 +41,19 @@ public class CorrectlyUpdatedProjectMatcher extends TypeSafeMatcher<Project>
         for (Map.Entry<ProjectUpdateField, String> entry : expectedFields.entrySet())
         {
             String projectValue = entry.getKey().getFrom(project, backdoor);
-            if (!Objects.equals(projectValue, entry.getValue()))
+            if (!nullSafeEquals(projectValue, entry.getValue()))
             {
                 description = "Field '" + entry.getKey().jsonFieldName() + "' of project should be '" + entry.getValue() + "' but was '" + projectValue + "'";
                 return false;
             }
         }
         return true;
+    }
+
+    /** Added to make this artifact java6-compatible. */
+    private static final boolean nullSafeEquals(Object a, Object b)
+    {
+        return (a == b) || (a != null && a.equals(b));
     }
 
     @Override
