@@ -97,32 +97,32 @@ public class UserClient extends RestApiClient<UserClient>
         return resource.get(UserPickerResults.class);
     }
 
-    public UserBean updateEmail(String userName, String newEmail)
+    public UserUpdateBean updateEmail(String userName, String newEmail)
     {
-        return updateUser(userName, UserBean.builder().setEmailAddress(newEmail).build());
+        return updateUser(userName, UserUpdateBean.builder().setEmailAddress(newEmail).build());
     }
 
-    public UserBean updateDisplayName(String userName, String displayName)
+    public UserUpdateBean updateDisplayName(String userName, String displayName)
     {
-        return updateUser(userName, UserBean.builder().setDisplayName(displayName).build());
+        return updateUser(userName, UserUpdateBean.builder().setDisplayName(displayName).build());
     }
 
-    public UserBean updatePassword(String userName, String password)
+    public UserUpdateBean updatePassword(String userName, String password)
     {
-        return updateUser(userName, UserBean.builder().setPassword(password).build());
+        return updateUser(userName, UserUpdateBean.builder().setPassword(password).build());
     }
 
-    public UserBean updateName(String userName, String newName)
+    public UserUpdateBean updateName(String userName, String newName)
     {
-        return updateUser(userName, UserBean.builder().setName(newName).build());
+        return updateUser(userName, UserUpdateBean.builder().setName(newName).build());
     }
 
-    private UserBean updateUser(final String userName, final UserBean updateBean)
+    private UserUpdateBean updateUser(final String userName, final UserUpdateBean updateBean)
     {
         return createResource().path("user").queryParam("username", userName)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .put(UserBean.class, updateBean);
+                .put(UserUpdateBean.class, updateBean);
     }
 
     public WebResource getSearchAssignableResource(String query, String issueKey, String startAt, String maxResults)
