@@ -72,6 +72,7 @@ public class SystemPropertyBackdoor
 
         log.info("Unsetting system property '{}'", propertyName);
         System.getProperties().remove(propertyName);
+        JiraSystemProperties.resetReferences();
     }
 
     private void validateNotBlank(String propertyName)
