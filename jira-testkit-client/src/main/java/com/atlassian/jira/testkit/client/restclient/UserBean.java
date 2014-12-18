@@ -11,12 +11,14 @@ package com.atlassian.jira.testkit.client.restclient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  *
  * @since v5.0
  */
 @JsonIgnoreProperties( ignoreUnknown = true )
+@JsonSerialize(include= JsonSerialize.Inclusion.NON_NULL)
 public class UserBean
 {
     public String name;
