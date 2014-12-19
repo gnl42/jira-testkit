@@ -9,6 +9,10 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.sun.jersey.api.client.WebResource;
+
+import javax.ws.rs.core.MediaType;
+
 /**
  * TODO: Document this class / interface here
  *
@@ -30,4 +34,9 @@ public class AttachmentsControl extends BackdoorControl<AttachmentsControl> {
     public String getAttachmentPath() {
         return get(createResource().path("attachments").path("attachmentPath"));
     }
+
+	public void setAttachmentPath(final String newPath) {
+		final WebResource resource = createResource().path("attachments").path("attachmentPath");
+		resource.entity(newPath, MediaType.TEXT_PLAIN_TYPE).post();
+	}
 }
