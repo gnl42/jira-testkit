@@ -67,6 +67,7 @@ public class Backdoor
     private final AuditingControl auditingControl;
     private final IssueSecuritySchemesControl issueSecuritySchemes;
     private final AnalyticsClient analyticsClient;
+    private final UserHistoryControl userHistoryControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -115,6 +116,7 @@ public class Backdoor
         this.auditingControl = new AuditingControl(environmentData);
         this.fieldConfigurationSchemes = new FieldConfigurationSchemesControl(environmentData);
         this.analyticsClient = new AnalyticsClient(environmentData);
+        this.userHistoryControl = new UserHistoryControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -383,6 +385,11 @@ public class Backdoor
     }
 
     public AnalyticsClient analytics() { return analyticsClient; }
+
+    public UserHistoryControl userHistory()
+    {
+        return userHistoryControl;
+    }
 
     public FieldConfigurationSchemesControl fieldConfigurationSchemes()
     {
