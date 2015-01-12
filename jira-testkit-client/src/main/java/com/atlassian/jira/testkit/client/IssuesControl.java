@@ -19,6 +19,8 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.rest.api.issue.IssueFields;
 import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
 import com.atlassian.jira.util.collect.MapBuilder;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import java.util.Collections;
@@ -43,10 +45,12 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
     private IssueClient issueClient;
     private CommentClient commentClient;
+    private final IssueTypeControl issueTypeControl;
 
-    public IssuesControl(JIRAEnvironmentData environmentData)
+    public IssuesControl(JIRAEnvironmentData environmentData, IssueTypeControl issueTypeControl)
     {
         super(environmentData);
+        this.issueTypeControl = issueTypeControl;
         issueClient = new IssueClient(environmentData);
         commentClient = new CommentClient(environmentData);
     }
@@ -58,15 +62,28 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
     public IssueCreateResponse createSubtask(String projectId, String parentKey, String summary)
     {
+        final IssueTypeControl.IssueType issueType = Iterables.find(issueTypeControl.getIssueTypes(), hasName("Sub-task"));
         IssueFields fields = new IssueFields();
         fields.project(withId("" + projectId)); // 10000
         fields.parent(withKey(parentKey));
-        fields.issueType(withId("5"));   // Sub-task
+        fields.issueType(withId(issueType.getId()));   // Sub-task
         fields.priority(withId("1"));   // Blocker
         fields.summary(summary);
 
         IssueUpdateRequest issue = new IssueUpdateRequest();
         return issueClient.create(issue.fields(fields));
+    }
+
+    private Predicate<IssueTypeControl.IssueType> hasName(final String anObject)
+    {
+        return new Predicate<IssueTypeControl.IssueType>()
+        {
+            @Override
+            public boolean apply(final IssueTypeControl.IssueType input)
+            {
+                return input.getName().equals(anObject);
+            }
+        };
     }
 
     public IssueCreateResponse createIssue(String projectKey, String summary)

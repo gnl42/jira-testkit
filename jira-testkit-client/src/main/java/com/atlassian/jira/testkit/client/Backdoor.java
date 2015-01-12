@@ -72,7 +72,6 @@ public class Backdoor
     {
         this.plugins = new PluginsControl(environmentData);
         this.usersAndGroups = new UsersAndGroupsControl(environmentData);
-        this.issues = new IssuesControl(environmentData);
         this.i18n = new I18nControl(environmentData);
         this.darkFeatures = new DarkFeaturesControl(environmentData);
         this.permissions = new PermissionsControl(environmentData);
@@ -89,6 +88,7 @@ public class Backdoor
         this.services = new ServicesControl(environmentData);
         this.fieldConfigurationControl = new FieldConfigurationControl(environmentData);
         this.issueTypeControl = new IssueTypeControl(environmentData);
+        this.issues = new IssuesControl(environmentData, issueTypeControl);
         this.subtaskCotnrol = new SubtaskControl(environmentData);
         this.webSudoControl = new WebSudoControl(environmentData);
         this.issueLinkingControl = new IssueLinkingControl(environmentData);
