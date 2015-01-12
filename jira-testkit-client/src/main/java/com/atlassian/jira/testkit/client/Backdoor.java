@@ -43,7 +43,7 @@ public class Backdoor
     private final StatusControl statusControl;
     private final ResolutionControl resolutionControl;
     private final PriorityControl priorityControl;
-    private final SubtaskControl subtaskCotnrol;
+    private final SubtaskControl subtaskControl;
     private final IssueLinkingControl issueLinkingControl;
     private final ScreensControl screensControl;
     private final ProjectRoleClient projectRoleClient;
@@ -90,7 +90,7 @@ public class Backdoor
         this.fieldConfigurationControl = new FieldConfigurationControl(environmentData);
         this.issueTypeControl = new IssueTypeControl(environmentData);
         this.issues = new IssuesControl(environmentData, issueTypeControl);
-        this.subtaskCotnrol = new SubtaskControl(environmentData);
+        this.subtaskControl = new SubtaskControl(environmentData);
         this.webSudoControl = new WebSudoControl(environmentData);
         this.issueLinkingControl = new IssueLinkingControl(environmentData);
         this.dashboardControl = new DashboardControl(environmentData);
@@ -242,7 +242,7 @@ public class Backdoor
 
     public SubtaskControl subtask()
     {
-        return subtaskCotnrol;
+        return subtaskControl;
     }
 
     public WebSudoControl websudo()
