@@ -137,8 +137,6 @@ public class CustomFieldsBackdoor
             return Response.status(Response.Status.BAD_REQUEST).entity("Custom field with id " + customFieldId + " does not exist").build();
         }
 
-        customField.setName(field.name);
-        customField.setDescription(field.description);
         if (field.type != null)
         {
             return Response.status(Response.Status.BAD_REQUEST).entity("Type cannot be changed").build();
@@ -164,9 +162,8 @@ public class CustomFieldsBackdoor
                         + " not found for type '" + field.type + "'").build();
             }
         }
-        customField.setCustomFieldSearcher(searcher);
 
-        customFieldManager.updateCustomField(customField);
+        customFieldManager.updateCustomField(customField.getIdAsLong(), field.name, field.description, searcher);
         return Response.ok().build();
     }
 
