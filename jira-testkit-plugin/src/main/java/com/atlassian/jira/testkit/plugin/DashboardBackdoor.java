@@ -9,18 +9,9 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.bc.favourites.FavouritesService;
-import com.atlassian.jira.bc.portal.PortalPageService;
-import com.atlassian.jira.portal.PortalPage;
-import com.atlassian.jira.portal.PortletConfiguration;
-import com.atlassian.jira.portal.PortletConfigurationManager;
-import com.atlassian.jira.user.util.UserUtil;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonAutoDetect;
+import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,9 +21,25 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 
-import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.gadgets.dashboard.Layout;
+import com.atlassian.jira.bc.JiraServiceContext;
+import com.atlassian.jira.bc.JiraServiceContextImpl;
+import com.atlassian.jira.bc.favourites.FavouritesService;
+import com.atlassian.jira.bc.portal.PortalPageService;
+import com.atlassian.jira.portal.PortalPage;
+import com.atlassian.jira.portal.PortletConfiguration;
+import com.atlassian.jira.portal.PortletConfigurationManager;
+import com.atlassian.jira.sharing.SharedEntity;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserUtil;
+import com.atlassian.jira.util.SimpleErrorCollection;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * @since v5.0.3
@@ -87,6 +94,82 @@ public class DashboardBackdoor
 			portletConfigurationManager.delete(pc);
 		}
 		return Response.ok().cacheControl(never()).build();
+	}
+	
+	/**
+	 * Creates a dashboard for the given user.
+	 * 
+	 * @param username
+	 *            user for which to create the dashboard.
+	 * @param name
+	 *            Name of the dashboard. This is shown in the drop down
+	 *            containing all visible dashboards and in the dashboard
+	 *            management view.
+	 * @param description
+	 *            Description of the dashboard.
+	 * @param global
+	 *            If <code>true</code> a public dashboard viewable by all is
+	 *            created, otherwise the new dashboard will be private.
+	 * @param layoutString
+	 *            A layout to choose for the new dashboard. Valid values are the
+	 *            names of the {@link Layout} enumerations.
+	 * @param favorite
+	 *            If <code>true</code> the new dashboard will be added to the
+	 *            favorite list.
+	 * @return The information about the new dashboard.
+	 */
+	@GET
+	@Path("add")
+	public Response createNewDashboard(@QueryParam("username") String username,
+			@QueryParam("name") String name,
+			@QueryParam("description") String description,
+			@QueryParam("global") boolean global,
+			@QueryParam("layout") String layoutString,
+			@QueryParam("favorite") boolean favorite) {
+		ApplicationUser user = userUtil.getUserByName(username);
+		SimpleErrorCollection errorCollection = new SimpleErrorCollection();
+		JiraServiceContext context = new JiraServiceContextImpl(user,
+				errorCollection);
+
+		PortalPage.Builder builder = PortalPage.name(name).owner(user);
+
+		if (description != null) {
+			builder.description(description);
+		}
+
+		if (layoutString != null) {
+			try {
+				Layout layout = Layout.valueOf(layoutString);
+				builder.layout(layout);
+			} catch (RuntimeException e) {
+				return Response
+						.status(Response.Status.BAD_REQUEST)
+						.cacheControl(never())
+						.entity("'" + layoutString
+								+ "' is not a valid layout name.").build();
+			}
+		}
+
+		SharedEntity.SharePermissions permissions;
+		if (global) {
+			permissions = SharedEntity.SharePermissions.GLOBAL;
+		} else {
+			permissions = SharedEntity.SharePermissions.PRIVATE;
+		}
+		builder.permissions(permissions);
+
+		PortalPage portal = portalPageService.createPortalPage(context,
+				builder.build());
+
+		if (favorite) {
+			favouritesService.addFavourite(context, portal);
+		}
+
+		return Response
+				.ok()
+				.cacheControl(never())
+				.entity(new PortalPageBean(portal, favouritesService
+						.isFavourite(user, portal))).build();
 	}
 
     private Iterable<PortalPageBean> asBeans(final User user, Iterable<? extends PortalPage> portalPages)
