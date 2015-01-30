@@ -16,6 +16,7 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
@@ -56,6 +57,17 @@ public class StatusClient extends RestApiClient<StatusClient>
     public List<Status> get() throws UniformInterfaceException
     {
         return status().get(new GenericType<List<Status>>(){});
+    }
+
+    /**
+     * Move a status
+     */
+    public void moveStatus(String idOrName, MoveStatus moveStatus)
+    {
+        statusWithID(idOrName)
+                .path("move")
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .post(moveStatus);
     }
 
     /**
