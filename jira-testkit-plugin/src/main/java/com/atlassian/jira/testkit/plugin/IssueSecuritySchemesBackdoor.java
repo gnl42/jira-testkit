@@ -9,18 +9,17 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.jira.issue.security.IssueSecurityLevel;
+import com.atlassian.jira.issue.security.IssueSecurityLevelManager;
 import com.atlassian.jira.issue.security.IssueSecuritySchemeManager;
 import com.atlassian.jira.scheme.Scheme;
+import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
+import org.ofbiz.core.entity.GenericValue;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -35,11 +34,13 @@ import javax.ws.rs.core.Response;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class IssueSecuritySchemesBackdoor
 {
-    private IssueSecuritySchemeManager schemeManager;
+    private final IssueSecuritySchemeManager schemeManager;
+    private final IssueSecurityLevelManager levelManager;
 
-    public IssueSecuritySchemesBackdoor(IssueSecuritySchemeManager schemeManager)
+    public IssueSecuritySchemesBackdoor(IssueSecuritySchemeManager schemeManager, IssueSecurityLevelManager levelManager)
     {
         this.schemeManager = schemeManager;
+        this.levelManager = levelManager;
     }
 
     @GET
@@ -64,6 +65,31 @@ public class IssueSecuritySchemesBackdoor
         {
             throw new RuntimeException(e);
         }
+        return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
+    @POST
+    @Path("{schemeId}")
+    public Response addSecurityLevel(@PathParam ("schemeId") int id, @QueryParam("name") String name, @QueryParam("description") String description)
+    {
+        IssueSecurityLevel issueSecurityLevel = levelManager.createIssueSecurityLevel(id, name, description);
+
+        return Response.ok().entity(issueSecurityLevel.getId()).cacheControl(CacheControl.never()).build();
+    }
+
+    @POST
+    @Path("{schemeId}/{securityLevelId}")
+    public Response addUserToSecurityLevel(@PathParam("schemeId") long schemeId, @PathParam ("securityLevelId") long securityLevelId, @QueryParam("userKey") String userKey) throws GenericEntityException {
+        //SingleUser
+        String type = "user";
+        String parameter = userKey;
+
+        SchemeEntity entity = new SchemeEntity(type, parameter, securityLevelId);
+        GenericValue scheme = schemeManager.getScheme(schemeId);
+        schemeManager.createSchemeEntity(scheme, entity);
+
+        levelManager.clearUsersLevels();
+
         return Response.ok().cacheControl(CacheControl.never()).build();
     }
 }
