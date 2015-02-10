@@ -81,9 +81,9 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     /**
      * The user to log in as.
      */
-    private String loginAs = "admin";
+    protected String loginAs = "admin";
 
-    private String loginPassword = loginAs;
+    protected String loginPassword = loginAs;
 
     private final Set<ClientResponse> responses = Sets.newHashSet();
 
@@ -215,7 +215,7 @@ g     */
      *
      * @return a Client
      */
-    private Client client()
+    protected final Client client()
     {
         return client.get();
     }
