@@ -10,7 +10,7 @@
 package com.atlassian.jira.testkit.client;
 
 /**
- * Use this class from func/selenium/page-object tests that need to manipulate Notification Schemes.
+ * Use this class from func/selenium/page-object tests that need to manipulate Issue Security Schemes.
  *
  * See com.atlassian.jira.testkit.plugin.IssueSecuritySchemesBackdoor in jira-testkit-plugin for backend.
  *
@@ -37,5 +37,16 @@ public class IssueSecuritySchemesControl extends BackdoorControl<IssueSecuritySc
     public void deleteScheme(long schemeId)
     {
         createResource().path("issueSecuritySchemes").path(String.valueOf(schemeId)).delete();
+    }
+
+    public Long addSecurityLevel(long schemeId, String name, String description)
+    {
+        return Long.parseLong(createResource().path("issueSecuritySchemes").path(String.valueOf(schemeId))
+                .queryParam("name", name).queryParam("description", description).post(String.class));
+    }
+
+    public void addUserToSecurityLevel(long schemeId, long levelId, String userKey)
+    {
+        createResource().path("issueSecuritySchemes").path(String.valueOf(schemeId)).path(String.valueOf(levelId)).queryParam("userKey", userKey).post();
     }
 }
