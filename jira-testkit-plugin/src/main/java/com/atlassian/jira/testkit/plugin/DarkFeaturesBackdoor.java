@@ -9,9 +9,9 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.FeatureManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.GET;
@@ -36,7 +36,7 @@ public class DarkFeaturesBackdoor
     @Path("user/enable")
     public Response enableForUser(@QueryParam ("username") String username, @QueryParam ("feature") String feature)
     {
-        User user = getUserUtil().getUser(username);
+        ApplicationUser user = getUserUtil().getUserByName(username);
         getFeatureManager().enableUserDarkFeature(user, feature);
 
         return Response.ok(null).build();
@@ -47,7 +47,7 @@ public class DarkFeaturesBackdoor
     @Path("user/disable")
     public Response disableForUser(@QueryParam ("username") String username, @QueryParam ("feature") String feature)
     {
-        User user = getUserUtil().getUser(username);
+        ApplicationUser user = getUserUtil().getUserByName(username);
         getFeatureManager().disableUserDarkFeature(user, feature);
 
         return Response.ok(null).build();

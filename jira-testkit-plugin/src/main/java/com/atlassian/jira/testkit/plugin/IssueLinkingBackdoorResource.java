@@ -16,6 +16,7 @@ import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeDestroyer;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Iterables;
@@ -90,7 +91,7 @@ public class IssueLinkingBackdoorResource
 	@Path("delete")
     public Response deleteLink(@QueryParam ("name") String name)
     {
-        final User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+        final ApplicationUser sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
         for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name))
         {
             issueLinkTypeDestroyer.removeIssueLinkType(issueLink.getId(), null, sysadmin);

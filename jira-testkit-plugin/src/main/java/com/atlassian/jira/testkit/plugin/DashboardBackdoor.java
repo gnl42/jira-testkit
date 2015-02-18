@@ -9,22 +9,6 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
-
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.gadgets.dashboard.Layout;
 import com.atlassian.jira.bc.JiraServiceContext;
 import com.atlassian.jira.bc.JiraServiceContextImpl;
@@ -40,6 +24,19 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+
+import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
 /**
  * @since v5.0.3
@@ -74,7 +71,7 @@ public class DashboardBackdoor
                     .entity("No user passed.").build();
         }
         
-        User user = userUtil.getUser(username);
+        ApplicationUser user = userUtil.getUserByName(username);
         if (user == null)
         {
             return Response.status(Response.Status.BAD_REQUEST).cacheControl(never())
@@ -172,7 +169,7 @@ public class DashboardBackdoor
 						.isFavourite(user, portal))).build();
 	}
 
-    private Iterable<PortalPageBean> asBeans(final User user, Iterable<? extends PortalPage> portalPages)
+    private Iterable<PortalPageBean> asBeans(final ApplicationUser user, Iterable<? extends PortalPage> portalPages)
     {
         return Iterables.transform(portalPages, new Function<PortalPage, PortalPageBean>()
         {

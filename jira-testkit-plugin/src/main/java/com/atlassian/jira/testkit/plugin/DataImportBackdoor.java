@@ -17,6 +17,7 @@ import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.task.TaskProgressSink;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.BuildUtilsInfo;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -70,7 +71,7 @@ public class DataImportBackdoor
                 .setQuickImport(quickImport)
                 .build();
 
-        User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+        ApplicationUser sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
         DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
         DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
         if (!importResult.isValid())

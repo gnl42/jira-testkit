@@ -26,6 +26,7 @@ import com.atlassian.jira.project.ProjectCategory;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -122,7 +123,7 @@ public class ProjectBackdoor
     @Path("{projectKey}")
     public Response delete(@PathParam("projectKey") String key)
     {
-        final User adminUser = getUserWithAdminPermission();
+        final ApplicationUser adminUser = getUserWithAdminPermission();
         final ProjectService.DeleteProjectValidationResult deleteProjectValidationResult = projectService.validateDeleteProject(adminUser, key);
         if (!deleteProjectValidationResult.isValid())
         {
@@ -137,7 +138,7 @@ public class ProjectBackdoor
     public Response setPermissionScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") long schemeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
         Scheme scheme = permissionSchemeManager.getSchemeObject(schemeId);
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
@@ -152,7 +153,7 @@ public class ProjectBackdoor
     public Response setNotificationScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") Long schemeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         notificationSchemeManager.removeSchemesFromProject(project);
@@ -171,7 +172,7 @@ public class ProjectBackdoor
     public Response setIssueSecurityScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") Long schemeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         issueSecuritySchemeManager.removeSchemesFromProject(project);
@@ -190,7 +191,7 @@ public class ProjectBackdoor
     public Response addFieldConfigurationScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") Long schemeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         fieldLayoutManager.addSchemeAssociation(project, schemeId);
@@ -203,7 +204,7 @@ public class ProjectBackdoor
     public Response deleteFieldConfigurationScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") Long schemeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         fieldLayoutManager.removeSchemeAssociation(project, schemeId);
@@ -216,7 +217,7 @@ public class ProjectBackdoor
     public Response setProjectCategory(@QueryParam ("project") long projectId,
             @QueryParam ("projectCategoryId") Long projectCategoryId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
         Project project = projectService.getProjectById(admin, projectId).getProject();
 
         final ProjectCategory projectCategory = projectManager.getProjectCategoryObject(projectCategoryId);
@@ -225,14 +226,14 @@ public class ProjectBackdoor
         return Response.ok().build();
     }
 
-    private User getUserWithAdminPermission() {return userUtil.getUser("admin");}
+    private ApplicationUser getUserWithAdminPermission() {return userUtil.getUser("admin");}
 
     @GET
     @Path("defaultIssueType/set")
     public Response setDefaultIssueType(@QueryParam ("project") long projectId,
             @QueryParam ("issueTypeId") String issueTypeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
 
         Project project = projectService.getProjectById(admin, projectId).getProject();
         final FieldConfigScheme issueTypeScheme = issueTypeSchemeManager.getConfigScheme(project);
@@ -246,7 +247,7 @@ public class ProjectBackdoor
     public Response setIssueTypeScreenScheme(@QueryParam ("project") long projectId,
             @QueryParam ("issueTypeScreenScheme") long issueTypeScreenSchemeId)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
 
         Project project = projectService.getProjectById(admin, projectId).getProject();
         IssueTypeScreenScheme issueTypeScreenScheme = issueTypeScreenSchemeManager.getIssueTypeScreenScheme(issueTypeScreenSchemeId);
@@ -261,8 +262,8 @@ public class ProjectBackdoor
     public Response setAutomaticAssignee(@QueryParam ("project") long projectId,
             @QueryParam ("username") final String username)
     {
-        User admin = getUserWithAdminPermission();
-        User newProjectLead = userUtil.getUser(username);
+        ApplicationUser admin = getUserWithAdminPermission();
+        ApplicationUser newProjectLead = userUtil.getUser(username);
 
         Project project = projectService.getProjectById(admin, projectId).getProject();
         ProjectService.UpdateProjectValidationResult result = projectService.validateUpdateProject(admin,
@@ -285,7 +286,7 @@ public class ProjectBackdoor
     public Response setAutomaticAssignee(@QueryParam ("project") long projectId,
             @QueryParam ("setToProjectLead") final boolean setToProjectLead)
     {
-        User admin = getUserWithAdminPermission();
+        ApplicationUser admin = getUserWithAdminPermission();
 
         long assignee = ProjectAssigneeTypes.PROJECT_LEAD;
         if (!setToProjectLead)
@@ -314,7 +315,7 @@ public class ProjectBackdoor
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response deleteProject(@QueryParam ("key") String key)
 	{
-		User admin = userUtil.getUser("admin");
+		ApplicationUser admin = userUtil.getUser("admin");
 		Project project = projectService.getProjectByKey(admin, key).getProject();
 		if (project != null) {
 			ErrorCollection errorCollection = new EmptyErrorCollection();

@@ -9,7 +9,6 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.JiraServiceContext;
 import com.atlassian.jira.bc.JiraServiceContextImpl;
 import com.atlassian.jira.bc.favourites.FavouritesService;
@@ -18,6 +17,7 @@ import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchRequest;
 import com.atlassian.jira.sharing.SharePermissionUtils;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
@@ -70,7 +70,7 @@ public class SearchRequestBackdoor
     public Response createFilter(SearchRequestBean searchBean) throws SearchException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
-        User searcher = userUtil.getUser(searchBean.username);
+        ApplicationUser searcher = userUtil.getUserByName(searchBean.username);
         JiraServiceContext ctx = new JiraServiceContextImpl(searcher, errorCollection);
 
         SearchService.ParseResult parseResult = searchService.parseQuery(searcher, searchBean.searchJql);
@@ -112,7 +112,7 @@ public class SearchRequestBackdoor
                     .entity("No user passed.").build();
         }
 
-        User user = userUtil.getUser(username);
+        ApplicationUser user = userUtil.getUserByName(username);
         if (user == null)
         {
             return Response.status(Response.Status.BAD_REQUEST).cacheControl(never())
@@ -123,7 +123,7 @@ public class SearchRequestBackdoor
                 .entity(asBeans(user, searchRequestService.getOwnedFilters(user))).build();
     }
 
-    private Iterable<SearchRequestBean> asBeans(final User user, Iterable<? extends SearchRequest> requests)
+    private Iterable<SearchRequestBean> asBeans(final ApplicationUser user, Iterable<? extends SearchRequest> requests)
     {
         return Iterables.transform(requests, new Function<SearchRequest, SearchRequestBean>()
         {

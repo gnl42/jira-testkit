@@ -64,7 +64,7 @@ public class UserHistoryBackdoor
     @Path("jqlquery/add")
     public Response addJQLQuery(@QueryParam ("user") String userName, @QueryParam ("query") String query)
     {
-        final User user = ApplicationUsers.toDirectoryUser(userManager.getUserByName(userName));
+        final ApplicationUser user = userManager.getUserByName(userName);
         userQueryHistoryManager.addQueryToHistory(user, query);
         return Response.ok(null).build();
     }

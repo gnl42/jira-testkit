@@ -171,7 +171,8 @@ public class UserDTO
             public User getDirectoryUser()
             {
                 // Sadly, ApplicationUser and User share all these properties
-                return new User() {
+                return new User()
+                {
 
                     @Override
                     public long getDirectoryId()
