@@ -183,7 +183,7 @@ public class WorkflowSchemesBackdoor
         }
         else
         {
-            final ApplicationUser user = ApplicationUsers.from(context.getLoggedInUser());
+            final ApplicationUser user = context.getLoggedInUser();
             final DraftWorkflowScheme draftForParent = workflowSchemeManager.createDraftOf(user, workflowSchemeObj);
             return Response.ok(dataFactory.toData(draftForParent)).cacheControl(never()).build();
         }
@@ -206,7 +206,7 @@ public class WorkflowSchemesBackdoor
                 return fourOhfour();
             }
 
-            final ApplicationUser user = ApplicationUsers.from(context.getLoggedInUser());
+            final ApplicationUser user = context.getLoggedInUser();
             DraftWorkflowScheme draftWorkflowScheme
                     = workflowSchemeManager.updateDraftWorkflowScheme(user, dataFactory.draftFromData(data, draftForParent));
 
