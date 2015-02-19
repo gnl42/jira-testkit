@@ -7,6 +7,8 @@ import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,7 +22,7 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
         super(environmentData);
     }
 
-    public Response<List<PermissionSchemeBean>> getSchemes()
+    public Response<PermissionSchemeListBean> getSchemes()
     {
         return toResponse(new Method()
         {
@@ -29,7 +31,7 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
             {
                 return resource().get(ClientResponse.class);
             }
-        }, new GenericType<List<PermissionSchemeBean>>() {});
+        }, new GenericType<PermissionSchemeListBean>() {});
     }
 
     public Response<PermissionSchemeBean> createScheme(final PermissionSchemeBean bean)
@@ -82,7 +84,7 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
         });
     }
 
-    public Response<List<PermissionGrantBean>> getPermissions(final Long schemeId)
+    public Response<PermissionGrantListBean> getPermissions(final Long schemeId)
     {
         return toResponse(new Method()
         {
@@ -91,7 +93,7 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
             {
                 return resource().path(schemeId.toString()).path("permission").get(ClientResponse.class);
             }
-        }, new GenericType<List<PermissionGrantBean>>() {});
+        }, new GenericType<PermissionGrantListBean>() {});
     }
 
     public Response<PermissionGrantBean> createPermission(final Long schemeId, final PermissionGrantBean bean)
@@ -174,4 +176,17 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
         return createResource().path("project").path(projectKeyOrId).path("permissionscheme");
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PermissionGrantListBean
+    {
+        @JsonProperty
+        public List<PermissionGrantBean> permissions;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PermissionSchemeListBean
+    {
+        @JsonProperty
+        public List<PermissionSchemeBean> permissionSchemes;
+    }
 }
