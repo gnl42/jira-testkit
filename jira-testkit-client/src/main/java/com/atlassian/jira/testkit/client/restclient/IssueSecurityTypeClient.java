@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.beans.IssueSecurityType;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.ClientResponse;
