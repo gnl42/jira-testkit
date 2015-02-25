@@ -4,6 +4,7 @@ import com.atlassian.jira.testkit.beans.PermissionSchemeBean;
 import com.atlassian.jira.testkit.beans.PermissionGrantBean;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
@@ -161,7 +162,7 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
             @Override
             public ClientResponse call()
             {
-                return projectResource(projectKeyOrId).type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, new PermissionSchemeBean().setId(schemeId));
+                return projectResource(projectKeyOrId).type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, ImmutableMap.of("id", schemeId));
             }
         }, PermissionSchemeBean.class);
     }
