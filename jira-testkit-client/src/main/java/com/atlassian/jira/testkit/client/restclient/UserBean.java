@@ -21,6 +21,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include= JsonSerialize.Inclusion.NON_NULL)
 public class UserBean
 {
+    public String self;
     public String name;
     public String displayName;
     public String key;
@@ -107,5 +108,40 @@ public class UserBean
         {
             return new UserBean(name, displayName, key, password, emailAddress, notification);
         }
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public String getKey()
+    {
+        return key;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public String getEmailAddress()
+    {
+        return emailAddress;
+    }
+
+    public String getNotification()
+    {
+        return notification;
+    }
+
+    public String getSelf()
+    {
+        return self;
     }
 }
