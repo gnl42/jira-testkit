@@ -4,6 +4,7 @@ import com.atlassian.jira.testkit.beans.PermissionSchemeBean;
 import com.atlassian.jira.testkit.beans.PermissionGrantBean;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
@@ -144,9 +145,36 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
         });
     }
 
+    public Response<PermissionSchemeBean> getAssignedScheme(final String projectKeyOrId)
+    {
+        return toResponse(new Method() {
+            @Override
+            public ClientResponse call()
+            {
+                return projectResource(projectKeyOrId).get(ClientResponse.class);
+            }
+        }, PermissionSchemeBean.class);
+    }
+
+    public Response<PermissionSchemeBean> assignScheme(final String projectKeyOrId, final Long schemeId)
+    {
+        return toResponse(new Method() {
+            @Override
+            public ClientResponse call()
+            {
+                return projectResource(projectKeyOrId).type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, ImmutableMap.of("id", schemeId));
+            }
+        }, PermissionSchemeBean.class);
+    }
+
     private WebResource resource()
     {
         return createResource().path("permissionscheme");
+    }
+
+    private WebResource projectResource(String projectKeyOrId)
+    {
+        return createResource().path("project").path(projectKeyOrId).path("permissionscheme");
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
