@@ -16,7 +16,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import com.atlassian.jira.workflow.DraftWorkflowScheme;
 import com.atlassian.jira.workflow.WorkflowScheme;
