@@ -10,6 +10,7 @@
 package com.atlassian.jira.testkit.client.restclient;
 
 import com.atlassian.jira.rest.api.issue.JsonTypeBean;
+import com.atlassian.jira.testkit.beans.IssueSecurityType;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.builder.EqualsBuilder;

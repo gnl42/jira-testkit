@@ -58,6 +58,12 @@ public final class PermissionSchemeBean
         return permissions;
     }
 
+    public PermissionSchemeBean setId(final Long id)
+    {
+        this.id = id;
+        return this;
+    }
+
     public PermissionSchemeBean setName(final String name)
     {
         this.name = name;

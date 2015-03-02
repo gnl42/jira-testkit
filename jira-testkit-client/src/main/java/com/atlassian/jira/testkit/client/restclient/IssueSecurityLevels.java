@@ -1,5 +1,7 @@
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.beans.IssueSecurityType;
+
 import java.util.List;
 
 public class IssueSecurityLevels {
