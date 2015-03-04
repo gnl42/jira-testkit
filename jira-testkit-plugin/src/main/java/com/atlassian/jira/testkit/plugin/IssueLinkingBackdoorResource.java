@@ -12,7 +12,6 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
-import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.link.IssueLinkType;
 import com.atlassian.jira.issue.link.IssueLinkTypeDestroyer;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
@@ -20,12 +19,7 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Iterables;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -90,13 +84,9 @@ public class IssueLinkingBackdoorResource
 	@Path("delete")
 	public Response deleteLink(@QueryParam ("name") String name) {
 		final User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
-		try {
-			for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
-				issueLinkTypeDestroyer.removeIssueLinkType(issueLink.getId(), null, sysadmin);
-			}
-		} catch (RemoveException e) {
-			throw new RuntimeException(e);
-		}
+        for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
+            issueLinkTypeDestroyer.removeIssueLinkType(issueLink.getId(), null, sysadmin);
+        }
 		return Response.ok(null).build();
 	}
 }
