@@ -20,8 +20,6 @@ public class InitialiseSystemPropertiesImpl implements InitialiseSystemPropertie
     @Override
     public void start() throws Exception
     {
-        //disable the what's new dialog to ensure that
-        System.setProperty("atlassian.dev.jira.whatsnew.show", "false");
         System.setProperty("atlassian.disable.issue.collector", "true");
     }
 }

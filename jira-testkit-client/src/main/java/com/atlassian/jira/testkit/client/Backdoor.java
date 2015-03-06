@@ -63,7 +63,6 @@ public class Backdoor
     private final IndexingControl indexingControl;
     private final ApplicationLinkControl applicationLinkControl;
     private final RawRestApiControl rawRestApiControl;
-    private final WhatsNewControl whatsNewControl;
     private final AuditingControl auditingControl;
     private final IssueSecuritySchemesControl issueSecuritySchemes;
     private final AnalyticsClient analyticsClient;
@@ -110,7 +109,6 @@ public class Backdoor
         this.indexingControl = new IndexingControl(environmentData);
         this.applicationLinkControl = new ApplicationLinkControl(environmentData);
         this.rawRestApiControl = new RawRestApiControl(environmentData);
-        this.whatsNewControl = new WhatsNewControl(environmentData);
         this.statusControl = new StatusControl(environmentData);
         this.resolutionControl = new ResolutionControl(environmentData);
         this.priorityControl = new PriorityControl(environmentData);
@@ -374,11 +372,6 @@ public class Backdoor
     public RawRestApiControl rawRestApiControl()
     {
         return rawRestApiControl;
-    }
-
-    public WhatsNewControl whatsNew()
-    {
-        return whatsNewControl;
     }
 
     public AuditingControl auditing()
