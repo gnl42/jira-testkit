@@ -11,6 +11,8 @@ public class NotificationBean
     @JsonProperty
     private String notificationType;
     @JsonProperty
+    private String parameter;
+    @JsonProperty
     private UserBean user;
     @JsonProperty
     private Group group;
@@ -25,10 +27,11 @@ public class NotificationBean
     {
     }
 
-    public NotificationBean(final Long id, final String notificationType, final UserBean user, final Group group, final Field field, final String emailAddress, final ProjectRole projectRole)
+    public NotificationBean(final Long id, final String notificationType, final String parameter, final UserBean user, final Group group, final Field field, final String emailAddress, final ProjectRole projectRole)
     {
         this.id = id;
         this.notificationType = notificationType;
+        this.parameter = parameter;
         this.user = user;
         this.group = group;
         this.field = field;
@@ -69,5 +72,10 @@ public class NotificationBean
     public ProjectRole getProjectRole()
     {
         return projectRole;
+    }
+
+    public String getParameter()
+    {
+        return parameter;
     }
 }
