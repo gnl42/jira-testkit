@@ -70,6 +70,16 @@ public class Group
         return new Group(name, self);
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public URI getSelf()
+    {
+        return self;
+    }
+
     @Override
     public int hashCode()
     {
