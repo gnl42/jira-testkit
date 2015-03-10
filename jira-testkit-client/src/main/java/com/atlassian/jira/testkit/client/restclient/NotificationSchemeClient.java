@@ -18,7 +18,7 @@ public class NotificationSchemeClient extends RestApiClient<NotificationSchemeCl
                 .path(notificationSchemeId.toString());
         if (expand != null)
         {
-            webResource.queryParam("expand", expand);
+            webResource = webResource.queryParam("expand", expand);
         }
         return webResource.get(NotificationSchemeBean.class);
     }
