@@ -83,6 +83,25 @@ public class NotificationSchemesControl extends BackdoorControl<NotificationSche
         removeNotification(schemeId, eventTypeId, NotificationType.SINGLE_USER.dbCode(), userName);
     }
 
+    public void addEmailNotification(long schemeId, long eventTypeId, String email)
+    {
+        addNotification(schemeId, eventTypeId, NotificationType.SINGLE_EMAIL_ADDRESS.dbCode(), email);
+    }
+
+    public void removeEmailNotification(long schemeId, long eventTypeId, String email)
+    {
+        removeNotification(schemeId, eventTypeId, NotificationType.SINGLE_EMAIL_ADDRESS.dbCode(), email);
+    }
+
+    public void addUserCustomField(long schemeId, long eventTypeId, String customFieldId)
+    {
+        addNotification(schemeId, eventTypeId, NotificationType.USER_CUSTOM_FIELD_VALUE.dbCode(), customFieldId);
+    }
+
+    public void removeUserCustomField(long schemeId, long eventTypeId, String customFieldId)
+    {
+        removeNotification(schemeId, eventTypeId, NotificationType.USER_CUSTOM_FIELD_VALUE.dbCode(), customFieldId);
+    }
     /**
      * Removes any matching notification scheme entities for the given notification and adds an entity for the passed group.
      */

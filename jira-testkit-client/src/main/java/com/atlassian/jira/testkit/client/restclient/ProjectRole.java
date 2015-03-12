@@ -53,5 +53,55 @@ public class ProjectRole
         public String type;
         public String name;
         public String avatarUrl;
+
+        public Long getId()
+        {
+            return id;
+        }
+
+        public String getDisplayName()
+        {
+            return displayName;
+        }
+
+        public String getType()
+        {
+            return type;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public String getAvatarUrl()
+        {
+            return avatarUrl;
+        }
+    }
+
+    public String getSelf()
+    {
+        return self;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public List<Actor> getActors()
+    {
+        return actors;
     }
 }
