@@ -9,7 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.bc.project.ProjectCreationData;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
@@ -27,6 +27,7 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -62,14 +63,14 @@ public class ProjectBackdoor
     private final IssueSecuritySchemeManager issueSecuritySchemeManager;
     private final FieldLayoutManager fieldLayoutManager;
     private final ProjectManager projectManager;
+    private final UserManager userManager;
 
     public ProjectBackdoor(ProjectService projectService, PermissionSchemeManager permissionSchemeManager,
             UserUtil userUtil, IssueTypeSchemeManager issueTypeSchemeManager,
             IssueTypeScreenSchemeManager issueTypeScreenSchemeManager,
             NotificationSchemeManager notificationSchemeManager,
-            IssueSecuritySchemeManager issueSecuritySchemeManager, final FieldLayoutManager fieldLayoutManager,
-            final ProjectManager projectManager)
-    {
+            IssueSecuritySchemeManager issueSecuritySchemeManager, FieldLayoutManager fieldLayoutManager,
+            ProjectManager projectManager, UserManager userManager) {
         this.projectService = projectService;
         this.permissionSchemeManager = permissionSchemeManager;
         this.userUtil = userUtil;
@@ -79,6 +80,7 @@ public class ProjectBackdoor
         this.issueSecuritySchemeManager = issueSecuritySchemeManager;
         this.fieldLayoutManager = fieldLayoutManager;
         this.projectManager = projectManager;
+        this.userManager = userManager;
     }
 
     /**
@@ -95,13 +97,22 @@ public class ProjectBackdoor
     @Path("add")
     public Response addProject(@QueryParam ("name") String name,
                                @QueryParam ("key") String key,
-                               @QueryParam ("lead") String lead)
+                               @QueryParam ("lead") String lead,
+                               @QueryParam ("type") String projectType)
     {
         // Create the project
         ErrorCollection errorCollection = new EmptyErrorCollection();
         ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(
-                getUserWithAdminPermission(), name, key, "This project is awesome", lead, null,
-                AssigneeTypes.PROJECT_LEAD, null);
+                getUserWithAdminPermission(),
+                new ProjectCreationData.Builder()
+                    .withName(name)
+                    .withKey(key)
+                    .withDescription("This project is awesome")
+                    .withLead(userManager.getUserByName(lead))
+                    .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
+                    // TODO: Add the project type to the builder once we have validation in place
+                    .build()
+        );
         if (!result.isValid())
         {
             log.error(String.format("Unable to create a project '%s': %s", name, result.getErrorCollection().toString()));
