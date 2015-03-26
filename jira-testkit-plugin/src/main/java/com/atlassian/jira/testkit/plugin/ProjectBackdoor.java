@@ -110,7 +110,7 @@ public class ProjectBackdoor
                     .withDescription("This project is awesome")
                     .withLead(userManager.getUserByName(lead))
                     .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
-                    // TODO: Add the project type to the builder once we have validation in place
+                    .withType(projectType)
                     .build()
         );
         if (!result.isValid())
