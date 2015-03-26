@@ -83,6 +83,12 @@ public class GeneralConfigurationControl extends BackdoorControl<GeneralConfigur
                 .queryParam("value", Boolean.toString(isOn)));
     }
 
+    public void useGravatars(boolean allow)
+    {
+        createResource().path("gravatarSettings/allowGravatars")
+                .post(Boolean.valueOf(allow));
+    }
+
     private void setAllowUnassignedIssues(boolean flag)
     {
         get(createResource().path("applicationProperties/option/set")
