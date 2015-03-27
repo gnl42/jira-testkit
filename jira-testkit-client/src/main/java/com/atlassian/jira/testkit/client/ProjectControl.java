@@ -247,7 +247,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     public void updateProjectType(Long projectId, ProjectTypeKey newProjectType)
     {
         createResource().path("project/type").path(String.valueOf(projectId))
-                .queryParam("newProjectType", newProjectType.getKey())
+                .queryParam("newType", newProjectType.getKey())
                 .put();
     }
 
