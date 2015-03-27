@@ -239,6 +239,18 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
         return new ProjectTypeKey(type);
     }
 
+    /**
+     * Updates the type of a project.
+     * @param projectId The identifier of the project
+     * @param newProjectType The new project type
+     */
+    public void updateProjectType(Long projectId, ProjectTypeKey newProjectType)
+    {
+        createResource().path("project/type").path(String.valueOf(projectId))
+                .queryParam("newProjectType", newProjectType.getKey())
+                .put();
+    }
+
     private WebResource createProjectSchemesResource(String projectIdOrKey)
     {
         return createResource().path("project").path(projectIdOrKey).path("schemes");
