@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.project.type.ProjectTypeKey;
 import com.atlassian.jira.testkit.beans.ProjectSchemesBean;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.beans.EntityList;
@@ -225,6 +226,17 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     public ProjectSchemesBean getSchemes(String projectIdOrKey)
     {
         return createProjectSchemesResource(projectIdOrKey).get(ProjectSchemesBean.class);
+    }
+
+    /**
+     * Gets the type key of a project, given its identifier.
+     * @param projectId The identifier of the project
+     * @return The project type key
+     */
+    public ProjectTypeKey getProjectType(Long projectId)
+    {
+        final String type = createResource().path("project/type").path(String.valueOf(projectId)).get(String.class);
+        return new ProjectTypeKey(type);
     }
 
     private WebResource createProjectSchemesResource(String projectIdOrKey)

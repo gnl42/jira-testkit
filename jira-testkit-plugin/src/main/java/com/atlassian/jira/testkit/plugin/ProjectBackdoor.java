@@ -337,4 +337,15 @@ public class ProjectBackdoor
 		return Response.ok(false).build();
 	}
 
+    @GET
+    @Path("type/{projectId}")
+    public Response getProjectType(@PathParam ("projectId") long projectId)
+    {
+        Project project = projectManager.getProjectObj(projectId);
+        if (project == null)
+        {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(project.getProjectTypeKey().getKey()).build();
+    }
 }
