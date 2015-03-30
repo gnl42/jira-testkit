@@ -11,25 +11,23 @@ package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.IssueTypeManager;
+import com.atlassian.jira.config.LocaleManager;
 import com.atlassian.jira.config.SubTaskManager;
+import com.atlassian.jira.issue.IssueConstant;
 import com.atlassian.jira.testkit.plugin.util.Errors;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.util.SimpleErrorCollection;
+import com.atlassian.jira.web.action.admin.translation.TranslationManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 import static org.apache.commons.lang.StringUtils.trimToNull;
@@ -43,16 +41,27 @@ import static org.apache.commons.lang.StringUtils.trimToNull;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class IssueTypeBackdoorResource
 {
+    private final static Map<String, String> TRANSLATION_PREFIXES = new ImmutableMap.Builder<String, String>()
+            .put(ConstantsManager.ISSUE_TYPE_CONSTANT_TYPE, "jira.translation.issuetype")
+            .put(ConstantsManager.PRIORITY_CONSTANT_TYPE, "jira.translation.priority")
+            .put(ConstantsManager.RESOLUTION_CONSTANT_TYPE, "jira.translation.resolution")
+            .put(ConstantsManager.STATUS_CONSTANT_TYPE, "jira.translation.status")
+            .build();
+
     private final static String SUBTASK = SubTaskManager.SUB_TASK_ISSUE_TYPE_STYLE; 
     private final static String TASK = ""; 
     
     private final ConstantsManager constantsManager;
     private final IssueTypeManager issueTypeManager;
+    private final TranslationManager translationManager;
+    private final LocaleManager localeManager;
     
-    public IssueTypeBackdoorResource(ConstantsManager constantsManager, IssueTypeManager issueTypeManager)
+    public IssueTypeBackdoorResource(ConstantsManager constantsManager, IssueTypeManager issueTypeManager, TranslationManager translationManager, LocaleManager localeManager)
     {
         this.constantsManager = constantsManager;
         this.issueTypeManager = issueTypeManager;
+        this.translationManager = translationManager;
+        this.localeManager = localeManager;
     }
 
     @GET
@@ -66,7 +75,7 @@ public class IssueTypeBackdoorResource
         }
         return Response.ok(issueTypeBeans).cacheControl(never()).build();
     }
-    
+
     @POST
     public Response createIssueType(IssueTypeBean bean)
     {
@@ -91,6 +100,33 @@ public class IssueTypeBackdoorResource
             }
             return Response.ok(new IssueTypeBean(type)).cacheControl(never()).build();
         }
+    }
+
+    @PUT
+    @Path ("/translateConstants")
+    public Response translateConstants(IssueConstantTranslationBean issueConstantBean)
+    {
+        if (!TRANSLATION_PREFIXES.containsKey(issueConstantBean.constantType))
+        {
+            return Response.status(Response.Status.BAD_REQUEST).cacheControl(never()).build();
+        }
+
+        if (StringUtils.isBlank(issueConstantBean.name) || StringUtils.isBlank(issueConstantBean.description))
+        {
+            return Response.status(Response.Status.BAD_REQUEST).cacheControl(never()).build();
+        }
+
+        final Locale locale = localeManager.getLocale(issueConstantBean.locale);
+        final IssueConstant issueConstant = constantsManager.getIssueConstantByName(issueConstantBean.constantType, issueConstantBean.constantName);
+
+        if (locale == null || issueConstant == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).cacheControl(never()).build();
+        }
+
+        translationManager.setIssueConstantTranslation(issueConstant, TRANSLATION_PREFIXES.get(issueConstantBean.constantType), locale, issueConstantBean.name, issueConstantBean.description);
+
+        return Response.ok().build();
     }
 
     @DELETE
@@ -129,6 +165,28 @@ public class IssueTypeBackdoorResource
             iconUrl = trimToNull(type.getIconUrl());
             description = trimToNull(type.getDescription());
             subtask = type.isSubTask();
+        }
+    }
+
+    public static class IssueConstantTranslationBean
+    {
+        @JsonProperty
+        private String constantName;
+
+        @JsonProperty
+        private String locale;
+
+        @JsonProperty
+        private String name;
+
+        @JsonProperty
+        private String description;
+
+        @JsonProperty
+        private String constantType;
+
+        public IssueConstantTranslationBean()
+        {
         }
     }
 }
