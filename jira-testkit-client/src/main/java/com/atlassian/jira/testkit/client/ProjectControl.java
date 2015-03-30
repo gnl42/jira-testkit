@@ -34,17 +34,15 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      * Choose a project name that will not clash with operational links on the page
      * such as "View Projects" or "Add".
      *
+     * The projects created by this method are of the business type.
+     *
      * @param name the name of the project.
      * @param key  the project key.
      * @param lead the username of the project lead.
      */
     public long addProject(String name, String key, String lead)
     {
-        final String s = createResource().path("project/add")
-                .queryParam("name", name)
-                .queryParam("key", key)
-                .queryParam("lead", lead).get(String.class);
-        return Long.parseLong(s);
+        return addProject(name, key, lead, "business");
     }
 
     /**
@@ -235,7 +233,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      */
     public ProjectTypeKey getProjectType(Long projectId)
     {
-        final String type = createResource().path("project/type").path(String.valueOf(projectId)).get(String.class);
+        final String type = createResource().path("project").path(String.valueOf(projectId)).path("type").get(String.class);
         return new ProjectTypeKey(type);
     }
 
@@ -246,9 +244,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      */
     public void updateProjectType(Long projectId, ProjectTypeKey newProjectType)
     {
-        createResource().path("project/type").path(String.valueOf(projectId))
-                .queryParam("newType", newProjectType.getKey())
-                .put();
+        createResource().path("project").path(String.valueOf(projectId)).path("type").path(newProjectType.getKey()).put();
     }
 
     private WebResource createProjectSchemesResource(String projectIdOrKey)

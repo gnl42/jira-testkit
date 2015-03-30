@@ -340,7 +340,7 @@ public class ProjectBackdoor
 	}
 
     @GET
-    @Path("type/{projectId}")
+    @Path("{projectId}/type")
     public Response getProjectType(@PathParam ("projectId") long projectId)
     {
         Project project = projectManager.getProjectObj(projectId);
@@ -352,8 +352,8 @@ public class ProjectBackdoor
     }
 
     @PUT
-    @Path("type/{projectId}")
-    public Response updateProjectType(@PathParam ("projectId") long projectId, @QueryParam ("newType") String newProjectType)
+    @Path("{projectId}/type/{newType}")
+    public Response updateProjectType(@PathParam ("projectId") long projectId, @PathParam ("newType") String newProjectType)
     {
         Project project = projectManager.getProjectObj(projectId);
         if (project == null)
