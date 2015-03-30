@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.project.type.ProjectTypeKey;
 import com.atlassian.jira.testkit.beans.ProjectSchemesBean;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.beans.EntityList;
@@ -33,16 +34,32 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      * Choose a project name that will not clash with operational links on the page
      * such as "View Projects" or "Add".
      *
+     * The projects created by this method are of the business type.
+     *
      * @param name the name of the project.
      * @param key  the project key.
      * @param lead the username of the project lead.
      */
     public long addProject(String name, String key, String lead)
     {
+        return addProject(name, key, lead, "business");
+    }
+
+    /**
+     * Adds a project in the same way as {@link #addProject(String, String, String)}, but allows to specify the project type.
+     * @param name the name of the project.
+     * @param key  the project key.
+     * @param lead the username of the project lead.
+     * @param projectType the project type.
+     */
+    public long addProject(String name, String key, String lead, String projectType)
+    {
         final String s = createResource().path("project/add")
                 .queryParam("name", name)
                 .queryParam("key", key)
-                .queryParam("lead", lead).get(String.class);
+                .queryParam("lead", lead)
+                .queryParam("type", projectType)
+                .get(String.class);
         return Long.parseLong(s);
     }
 
@@ -207,6 +224,27 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     public ProjectSchemesBean getSchemes(String projectIdOrKey)
     {
         return createProjectSchemesResource(projectIdOrKey).get(ProjectSchemesBean.class);
+    }
+
+    /**
+     * Gets the type key of a project, given its identifier.
+     * @param projectId The identifier of the project
+     * @return The project type key
+     */
+    public ProjectTypeKey getProjectType(Long projectId)
+    {
+        final String type = createResource().path("project").path(String.valueOf(projectId)).path("type").get(String.class);
+        return new ProjectTypeKey(type);
+    }
+
+    /**
+     * Updates the type of a project.
+     * @param projectId The identifier of the project
+     * @param newProjectType The new project type
+     */
+    public void updateProjectType(Long projectId, ProjectTypeKey newProjectType)
+    {
+        createResource().path("project").path(String.valueOf(projectId)).path("type").path(newProjectType.getKey()).put();
     }
 
     private WebResource createProjectSchemesResource(String projectIdOrKey)

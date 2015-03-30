@@ -24,6 +24,7 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectAssigneeTypes;
 import com.atlassian.jira.project.ProjectCategory;
 import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.project.type.ProjectTypeKey;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.ApplicationUser;
@@ -35,6 +36,7 @@ import org.apache.log4j.Logger;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -110,7 +112,7 @@ public class ProjectBackdoor
                     .withDescription("This project is awesome")
                     .withLead(userManager.getUserByName(lead))
                     .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
-                    // TODO: Add the project type to the builder once we have validation in place
+                    .withType(projectType)
                     .build()
         );
         if (!result.isValid())
@@ -337,4 +339,28 @@ public class ProjectBackdoor
 		return Response.ok(false).build();
 	}
 
+    @GET
+    @Path("{projectId}/type")
+    public Response getProjectType(@PathParam ("projectId") long projectId)
+    {
+        Project project = projectManager.getProjectObj(projectId);
+        if (project == null)
+        {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(project.getProjectTypeKey().getKey()).build();
+    }
+
+    @PUT
+    @Path("{projectId}/type/{newType}")
+    public Response updateProjectType(@PathParam ("projectId") long projectId, @PathParam ("newType") String newProjectType)
+    {
+        Project project = projectManager.getProjectObj(projectId);
+        if (project == null)
+        {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        projectService.updateProjectType(getUserWithAdminPermission(), project, new ProjectTypeKey(newProjectType));
+        return Response.ok().build();
+    }
 }
