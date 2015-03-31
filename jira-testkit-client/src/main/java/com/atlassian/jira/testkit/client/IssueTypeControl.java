@@ -57,6 +57,11 @@ public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
         createIssueTypeResource().path(valueOf(id)).delete();
     }
 
+    public void translateIssueConstants(IssueConstantTranslation issueConstantTranslation)
+    {
+        createIssueTypeResource().path("translateConstants").put(issueConstantTranslation);
+    }
+
     private WebResource createIssueTypeResource()
     {
         return createResource().path("issueType");
@@ -131,6 +136,78 @@ public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
         public void setSubtask(boolean subtask)
         {
             this.subtask = subtask;
+        }
+    }
+
+    public static class IssueConstantTranslation
+    {
+        private String constantName;
+        private String locale;
+        private String name;
+        private String description;
+        private String constantType;
+
+        public IssueConstantTranslation()
+        {
+        }
+
+        public IssueConstantTranslation(String constantName, String locale, String name, String description, String constantType)
+        {
+            this.constantName = constantName;
+            this.locale = locale;
+            this.name = name;
+            this.description = description;
+            this.constantType = constantType;
+        }
+
+        public String getConstantName()
+        {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName)
+        {
+            this.constantName = constantName;
+        }
+
+        public String getLocale()
+        {
+            return locale;
+        }
+
+        public void setLocale(String locale)
+        {
+            this.locale = locale;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public void setName(String name)
+        {
+            this.name = name;
+        }
+
+        public String getDescription()
+        {
+            return description;
+        }
+
+        public void setDescription(String description)
+        {
+            this.description = description;
+        }
+
+        public String getConstantType()
+        {
+            return constantType;
+        }
+
+        public void setConstantType(String constantType)
+        {
+            this.constantType = constantType;
         }
     }
 }
