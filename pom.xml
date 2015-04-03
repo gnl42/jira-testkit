@@ -36,7 +36,7 @@
 
 	<properties>
         <activeobjects.version>0.19.9</activeobjects.version>
-        <amps.version>4.2.18</amps.version>
+        <amps.version>5.0.16</amps.version>
         <applinks.version>3.9.0</applinks.version>
         <atlassian.core.version>4.6.2</atlassian.core.version>
         <clover.version>3.0.2</clover.version>
