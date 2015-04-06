@@ -17,14 +17,14 @@ public class ProjectTypeControl extends BackdoorControl<ProjectTypeControl>
         return createApplicationResource().get(ProjectTypeBean.LIST_TYPE);
     }
 
-    public ProjectTypeBean getByKey(String key)
+    public ProjectTypeBean getByKey(String projectTypeKey)
     {
-        return createApplicationResource(key).get(ProjectTypeBean.class);
+        return createApplicationResource(projectTypeKey).get(ProjectTypeBean.class);
     }
 
-    private WebResource createApplicationResource(final String key)
+    private WebResource createApplicationResource(final String projectTypeKey)
     {
-        return createApplicationResource().path(key);
+        return createApplicationResource().path(projectTypeKey);
     }
 
     private WebResource createApplicationResource()

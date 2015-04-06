@@ -66,10 +66,10 @@ public class ProjectTypeBackdoor
 
     @GET
     @Path("{key}")
-    public Response getByKey(@PathParam ("key") final String key)
+    public Response getByKey(@PathParam ("key") final String projectTypeKey)
     {
         return projectTypeManager
-                .getByKey(new ProjectTypeKey(key))
+                .getByKey(new ProjectTypeKey(projectTypeKey))
                 .map(ProjectTypeBean.TO_BEAN)
                 .map(FOUND)
                 .getOrElse(NOT_FOUND);
