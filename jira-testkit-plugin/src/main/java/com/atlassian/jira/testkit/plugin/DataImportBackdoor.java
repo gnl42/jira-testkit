@@ -70,21 +70,36 @@ public class DataImportBackdoor
                 .setQuickImport(quickImport)
                 .build();
 
-        User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
-        DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
-        DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
-        if (!importResult.isValid())
+        // JDEV-32171: Make sure the webapp class loader is the one in effect when we access DataImportService.
+        // This is to ensure that the same classloader is used for normal (non testkit) upgrades task run and
+        // when testkit upgrade tasks run. This plugin triggers an upgrade task that uses an extensible service impl
+        // that is only available in system classpath.
+        final Thread thd = Thread.currentThread();
+        final ClassLoader originalClassLoader = thd.getContextClassLoader();
+        final ClassLoader webappClassLoader = ComponentAccessor.class.getClassLoader();
+        try
         {
-            // Something went wrong. Die!
-            throw new IllegalStateException("Restore failed!: " + importResult.getSpecificErrorMessage());
-        }
+            thd.setContextClassLoader(webappClassLoader);
+            User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+            DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
+            DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
+            if (!importResult.isValid())
+            {
+                // Something went wrong. Die!
+                throw new IllegalStateException("Restore failed!: " + importResult.getSpecificErrorMessage());
+            }
 
-        if (StringUtils.isNotBlank(importBean.baseUrl))
+            if (StringUtils.isNotBlank(importBean.baseUrl))
+            {
+                applicationProperties.setString(APKeys.JIRA_BASEURL, importBean.baseUrl);
+            }
+
+            return Response.ok(null).build();
+        }
+        finally
         {
-            applicationProperties.setString(APKeys.JIRA_BASEURL, importBean.baseUrl);
+            thd.setContextClassLoader(originalClassLoader);
         }
-
-        return Response.ok(null).build();
     }
 
     @GET
