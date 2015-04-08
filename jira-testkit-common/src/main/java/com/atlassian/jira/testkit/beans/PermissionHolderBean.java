@@ -1,5 +1,8 @@
 package com.atlassian.jira.testkit.beans;
 
+import com.atlassian.jira.testkit.client.restclient.Group;
+import com.atlassian.jira.testkit.client.restclient.ProjectRole;
+import com.atlassian.jira.testkit.client.restclient.UserBean;
 import com.google.common.base.Objects;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -9,6 +12,15 @@ public final class PermissionHolderBean
     private String type;
     @JsonProperty
     private String parameter;
+
+    @JsonProperty
+    private UserBean user;
+    @JsonProperty
+    private Group group;
+    @JsonProperty
+    private Field field;
+    @JsonProperty
+    private ProjectRole projectRole;
 
     public String getType()
     {
@@ -32,6 +44,26 @@ public final class PermissionHolderBean
         return this;
     }
 
+    public UserBean getUser()
+    {
+        return user;
+    }
+
+    public Group getGroup()
+    {
+        return group;
+    }
+
+    public Field getField()
+    {
+        return field;
+    }
+
+    public ProjectRole getProjectRole()
+    {
+        return projectRole;
+    }
+
     @Override
     public String toString()
     {
@@ -44,8 +76,8 @@ public final class PermissionHolderBean
     @Override
     public boolean equals(Object o)
     {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
 
         PermissionHolderBean that = (PermissionHolderBean) o;
 
