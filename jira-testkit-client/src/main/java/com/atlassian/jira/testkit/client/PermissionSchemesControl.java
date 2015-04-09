@@ -156,6 +156,16 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         addPermission(schemeId, permission, "group");
     }
 
+    public void addUserCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
+    {
+        addPermission(schemeId, permission, "userCF", fieldId);
+    }
+
+    public void addGroupCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
+    {
+        addPermission(schemeId, permission, "groupCF", fieldId);
+    }
+
     /**
      * Removes only the given permission from the anonymous group ("anyone"). Other groups with this permission
      * will not be removed.

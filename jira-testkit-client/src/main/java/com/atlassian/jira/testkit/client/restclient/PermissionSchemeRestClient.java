@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 public final class PermissionSchemeRestClient extends RestApiClient<PermissionSchemeRestClient>
 {
     public enum Expand {
-        user, group, projectRole, field, all
+        permissions, user, group, projectRole, field, all
     }
 
     public PermissionSchemeRestClient(final JIRAEnvironmentData environmentData)
@@ -40,14 +40,14 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
         }, new GenericType<PermissionSchemeListBean>() {});
     }
 
-    public Response<PermissionSchemeBean> createScheme(final PermissionSchemeBean bean)
+    public Response<PermissionSchemeBean> createScheme(final PermissionSchemeBean bean, final Expand... expands)
     {
         return toResponse(new Method()
         {
             @Override
             public ClientResponse call()
             {
-                return resource().type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, bean);
+                return expandQuery(resource(), expands).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, bean);
             }
         }, PermissionSchemeBean.class);
     }
@@ -64,15 +64,15 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
         }, PermissionSchemeBean.class);
     }
 
-    public Response<PermissionSchemeBean> updateScheme(final Long id, final PermissionSchemeBean updateBean)
+    public Response<PermissionSchemeBean> updateScheme(final Long id, final PermissionSchemeBean updateBean, final Expand... expands)
     {
         return toResponse(new Method()
         {
             @Override
             public ClientResponse call()
             {
-                return resource()
-                        .path(id.toString())
+                return expandQuery(resource()
+                        .path(id.toString()), expands)
                         .type(MediaType.APPLICATION_JSON_TYPE)
                         .put(ClientResponse.class, updateBean);
             }
