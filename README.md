@@ -77,7 +77,10 @@ your integration tests that run against JIRA 5.0, JIRA 5.1, and JIRA 5.2, with
 no additional modifications.
 
 
-
   [amps]: https://developer.atlassian.com/display/DOCS/Atlassian+Plugin+SDK+Documentation
   [jiraapi]: https://developer.atlassian.com/static/javadoc/jira/5.0/reference/packages.html
   [promise]: https://developer.atlassian.com/display/JIRADEV/Java+API+Policy+for+JIRA
+
+# Development
+
+* The CI build is [on JBAC](https://jira-bamboo.internal.atlassian.com/browse/JT)
