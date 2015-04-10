@@ -15,7 +15,7 @@ import com.sun.jersey.api.client.WebResource;
 
 /**
  * 
- * See {@link com.atlassian.jira.testkit.plugin.PluginBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.PluginBackdoor</code> in jira-testkit-plugin for backend.
  * 
  *  @since 5.0
  */
@@ -29,8 +29,9 @@ public class PluginsControl extends BackdoorControl<PluginsControl>
 
     /**
      * Get the plugins state.
-     * @param pluginKey
-     * @return state.
+     * 
+     * @param pluginKey the plugin key
+     * @return state
      */
     public String getPluginState(final String pluginKey)
     {
@@ -67,14 +68,14 @@ public class PluginsControl extends BackdoorControl<PluginsControl>
         get(resource);
     }
 
-	public void setPluginLicense(String pluginKey, String license) throws JSONException {
-		pluginKey += "-key";
-		final JSONObject licenseDetails = new JSONObject();
-		licenseDetails.put("rawLicense", license);
+    public void setPluginLicense(String pluginKey, String license) throws JSONException {
+        pluginKey += "-key";
+        final JSONObject licenseDetails = new JSONObject();
+        licenseDetails.put("rawLicense", license);
 
-		createResourceForPath("plugins").
-				path(pluginKey + "/license").
-				accept("application/vnd.atl.plugins+json").
-				type("application/vnd.atl.plugins+json").put(licenseDetails.toString());
-	}
+        createResourceForPath("plugins").
+                path(pluginKey + "/license").
+                accept("application/vnd.atl.plugins+json").
+                type("application/vnd.atl.plugins+json").put(licenseDetails.toString());
+    }
 }

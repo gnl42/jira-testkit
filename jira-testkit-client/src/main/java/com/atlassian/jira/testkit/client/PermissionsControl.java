@@ -9,15 +9,15 @@
 
 package com.atlassian.jira.testkit.client;
 
-import java.util.List;
-
 import com.sun.jersey.api.client.GenericType;
+
+import java.util.List;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Permissions, including global permissions
  * and permission schemes.
  *
- * See {@link com.atlassian.jira.testkit.plugin.PermissionsBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.PermissionsBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

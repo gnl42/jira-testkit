@@ -102,8 +102,13 @@ public class NotificationSchemesControl extends BackdoorControl<NotificationSche
     {
         removeNotification(schemeId, eventTypeId, NotificationType.USER_CUSTOM_FIELD_VALUE.dbCode(), customFieldId);
     }
+
     /**
      * Removes any matching notification scheme entities for the given notification and adds an entity for the passed group.
+     *
+     * @param schemeId the scheme ID
+     * @param eventTypeId the event type ID
+     * @param groupName the group name
      */
     public void replaceGroupNotifications(long schemeId, long eventTypeId, String groupName)
     {

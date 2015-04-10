@@ -146,6 +146,12 @@ public class NotificationSchemesBackdoor
 
     /**
      * Removes all matching entities for the given notification and type, and adds the entity with the given parameter.
+     *
+     * @param schemeId the scheme ID
+     * @param notification the notification
+     * @param type the type
+     * @param parameter the parameter
+     * @return an empty 200 response
      */
     @GET
     @AnonymousAllowed

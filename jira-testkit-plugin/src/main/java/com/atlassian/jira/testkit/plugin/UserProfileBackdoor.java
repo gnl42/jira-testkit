@@ -85,6 +85,13 @@ public class UserProfileBackdoor
     }
 
     /**
+     * Sets a user preference.
+     *
+     * @param username the username
+     * @param name the name of the preference
+     * @param type the data type of the preference, e.g. "boolean" or "long"
+     * @param value the preference value
+     * @throws AtlassianCoreException if there was a problem setting the preference
      * @since 6.0.19
      */
     @PUT
@@ -110,6 +117,12 @@ public class UserProfileBackdoor
     }
 
     /**
+     * Gets a user preference.
+     *
+     * @param username the username
+     * @param name the preference name
+     * @param type the preference data type
+     * @return the preference value
      * @since 6.0.28
      */
     @GET
@@ -136,6 +149,11 @@ public class UserProfileBackdoor
     }
 
     /**
+     * Removes a user preference.
+     *
+     * @param username the username
+     * @param name the preference name
+     * @throws AtlassianCoreException if there was a problem removing the preference
      * @since 6.0.19
      */
     @DELETE

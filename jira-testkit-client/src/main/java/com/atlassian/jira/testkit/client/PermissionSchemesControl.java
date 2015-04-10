@@ -17,7 +17,7 @@ import java.lang.String;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Permission Schemes.
  *
- * See com.atlassian.jira.testkit.plugin.PermissionSchemesBackdoor in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.PermissionSchemesBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
@@ -30,6 +30,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     /**
      * Makes a copy of the Default Permission Scheme and returns the id of the new scheme.
+     *
      * @param schemeName the name of the new scheme
      * @return {Long} the schemeId of the created scheme
      */
@@ -41,6 +42,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     /**
      * Makes a copy of the Default Permission Scheme and returns the id of the new scheme.
+     *
      * @param schemeName the name of the new scheme
      * @param description can be null
      * @return {Long} the schemeId of the created scheme
@@ -57,8 +59,14 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
+     * Adds a group permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param groupName the group name
      * @deprecated Use {@link PermissionSchemesControl#addGroupPermission(Long, ProjectPermissionKey, String)} instead
      */
+    @Deprecated
     public void addGroupPermission(Long schemeId, int permission, String groupName)
     {
         addPermission(schemeId, permission, "group", groupName);
@@ -70,8 +78,14 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
+     * Removes a group permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param groupName the group name
      * @deprecated Use {@link PermissionSchemesControl#removeGroupPermission(long, ProjectPermissionKey, String)} instead
      */
+    @Deprecated
     public void removeGroupPermission(long schemeId, int permission, String groupName)
     {
         removePermission(schemeId, permission, "group", groupName);
@@ -83,8 +97,14 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
+     * Adds a project role permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param projectRoleId the project role ID
      * @deprecated Use {@link PermissionSchemesControl#addProjectRolePermission(long, ProjectPermissionKey, long)} instead
      */
+    @Deprecated
     public void addProjectRolePermission(long schemeId, int permission, long projectRoleId)
     {
         addPermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
@@ -96,8 +116,14 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
+     * Removes a project role permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param projectRoleId the project role ID
      * @deprecated Use {@link PermissionSchemesControl#removeProjectRolePermission(long, ProjectPermissionKey, long)} instead
      */
+    @Deprecated
     public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId)
     {
         removePermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
@@ -109,8 +135,14 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
+     * Adds a user permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param userName the username
      * @deprecated Use {@link PermissionSchemesControl#addUserPermission(long, ProjectPermissionKey, String)} instead
      */
+    @Deprecated
     public void addUserPermission(long schemeId, int permission, String userName)
     {
         addPermission(schemeId, permission, "user", userName);
@@ -122,8 +154,14 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
+     * Removes a user permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param userName the username
      * @deprecated Use {@link PermissionSchemesControl#removeUserPermission(long, ProjectPermissionKey, String)} instead
      */
+    @Deprecated
     public void removeUserPermission(long schemeId, int permission, String userName)
     {
         removePermission(schemeId, permission, "user", userName);
@@ -136,6 +174,10 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     /**
      * Removes any matching permission scheme entities for the given permission and adds an entity for the passed group.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param groupName the group name
      * @deprecated Use {@link PermissionSchemesControl#replaceGroupPermissions(long, ProjectPermissionKey, String)} instead
      */
     public void replaceGroupPermissions(long schemeId, int permission, String groupName)
@@ -150,6 +192,9 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
 
     /**
      * Adds the given permission to the anonymous group ("anyone").
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission to add
      */
     public void addEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {
@@ -159,6 +204,9 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     /**
      * Removes only the given permission from the anonymous group ("anyone"). Other groups with this permission
      * will not be removed.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission to remove
      */
     public void removeEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {

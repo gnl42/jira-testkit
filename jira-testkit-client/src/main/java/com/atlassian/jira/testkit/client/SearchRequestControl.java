@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate SearchRequests.
  *
- * See {@link com.atlassian.jira.testkit.plugin.SearchRequestBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.SearchRequestBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

@@ -33,6 +33,8 @@ public class AnnotatedDescription
      * Checks whether the underlying description has given <tt>annotation</tt> - itself or on its parent suite
      * (only if this description is a test).
      *
+     * @param annotation the annotation to find
+     * @param <A> the annotation type
      * @return <code>true</code> if this description is annotated with given annotation (test method or class)
      */
     public <A extends Annotation> boolean hasAnnotation(Class<A> annotation)
@@ -44,8 +46,8 @@ public class AnnotatedDescription
      * Gets annotation of given type for this description, or <code>null</code> if this description is not annotated
      * with <tt>annotation</tt>. Looks up both test method and test class (if applicable).
      *
-     * @param annotation annotation to find
-     * @param <A> annotation type
+     * @param annotation the annotation to find
+     * @param <A> the annotation type
      * @return annotation instance for this description, or <code>null</code> if not found
      */
     public <A extends Annotation> A getAnnotation(Class<A> annotation)

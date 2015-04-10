@@ -18,7 +18,7 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Projects.
  *
- * See {@link com.atlassian.jira.testkit.plugin.ProjectBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.ProjectBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
@@ -36,9 +36,10 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      *
      * The projects created by this method are of the business type.
      *
-     * @param name the name of the project.
-     * @param key  the project key.
-     * @param lead the username of the project lead.
+     * @param name the name of the project
+     * @param key  the project key
+     * @param lead the username of the project lead
+     * @return the project ID
      */
     public long addProject(String name, String key, String lead)
     {
@@ -47,10 +48,12 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
 
     /**
      * Adds a project in the same way as {@link #addProject(String, String, String)}, but allows to specify the project type.
-     * @param name the name of the project.
-     * @param key  the project key.
-     * @param lead the username of the project lead.
-     * @param projectType the project type.
+     *
+     * @param name the name of the project
+     * @param key  the project key
+     * @param lead the username of the project lead
+     * @param projectType the project type
+     * @return the project ID
      */
     public long addProject(String name, String key, String lead, String projectType)
     {
@@ -71,8 +74,8 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     /**
      * Sets the permission scheme for the given Project to be the given Scheme.
      *
-     * @param projectId the id of the project.
-     * @param schemeId  the id of the Permission Scheme.
+     * @param projectId the id of the project
+     * @param schemeId  the id of the Permission Scheme
      */
     public void setPermissionScheme(long projectId, long schemeId)
     {
@@ -84,8 +87,8 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     /**
      * Sets the notification scheme for the given Project to be the given Scheme.
      *
-     * @param projectId the id of the project.
-     * @param schemeId  the id of the scheme.
+     * @param projectId the id of the project
+     * @param schemeId  the id of the scheme
      */
     public void setNotificationScheme(long projectId, Long schemeId)
     {
@@ -99,8 +102,8 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     /**
      * Sets the notification scheme for the given Project to be the given Scheme.
      *
-     * @param projectId the id of the project.
-     * @param schemeId  the id of the scheme.
+     * @param projectId the id of the project
+     * @param schemeId  the id of the scheme
      */
     public void setIssueSecurityScheme(long projectId, Long schemeId)
     {
@@ -114,8 +117,8 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     /**
      * Sets the field configuration scheme for the given Project to be the given Scheme.
      *
-     * @param projectId the id of the project.
-     * @param schemeId  the id of the scheme.
+     * @param projectId the id of the project
+     * @param schemeId  the id of the scheme
      */
     public void addFieldConfigurationScheme(long projectId, long schemeId)
     {
@@ -127,8 +130,8 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     /**
      * Sets the field configuration scheme for the given Project to be the given Scheme.
      *
-     * @param projectId the id of the project.
-     * @param schemeId  the id of the scheme.
+     * @param projectId the id of the project
+     * @param schemeId  the id of the scheme
      */
     public void removeFieldConfigurationScheme(long projectId, long schemeId)
     {
@@ -140,8 +143,8 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     /**
      * Sets project category for the given project.
      *
-     * @param projectId id of the project.
-     * @param projectCategoryId id of the project category.
+     * @param projectId id of the project
+     * @param projectCategoryId id of the project category
      */
     public void setProjectCategory(long projectId, long projectCategoryId)
     {
@@ -194,8 +197,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      * @param projectId the id of the project
      * @param setToProjectLead if true, the assignee will be set to the project lead. If false, it will attempt to
      * set to Unassigned.
-     * 
-     * @see {@link com.atlassian.jira.bc.project.ProjectService.UpdateProjectValidationResult}
+     * @see com.atlassian.jira.bc.project.ProjectService.UpdateProjectValidationResult
      */
     public void setProjectDefaultAssignee(long projectId, boolean setToProjectLead)
     {
@@ -207,8 +209,9 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     }
 
     /**
-     * Retrieves the schemes for the specified project
-     * @param projectId the ID of the project. Must not be null.
+     * Retrieves the schemes for the specified project.
+     *
+     * @param projectId The ID of the project. Must not be null.
      * @return the schemes for the specified project
      */
     public ProjectSchemesBean getSchemes(Long projectId)
@@ -217,8 +220,9 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     }
 
     /**
-     * Retrieves the schemes for the specified project
-     * @param projectIdOrKey the ID or key of the project. Must not be null.
+     * Retrieves the schemes for the specified project.
+     *
+     * @param projectIdOrKey The ID or key of the project. Must not be null.
      * @return the schemes for the specified project
      */
     public ProjectSchemesBean getSchemes(String projectIdOrKey)
@@ -228,6 +232,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
 
     /**
      * Gets the type key of a project, given its identifier.
+     *
      * @param projectId The identifier of the project
      * @return The project type key
      */
@@ -239,6 +244,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
 
     /**
      * Updates the type of a project.
+     *
      * @param projectId The identifier of the project
      * @param newProjectType The new project type
      */
@@ -256,5 +262,4 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     {
         return createResource().path("applinks").path("entitylinks").queryParam("projectId", Long.toString(projectId)).get(EntityList.class);
     }
-
 }

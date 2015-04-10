@@ -16,6 +16,8 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,13 +26,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Use this backdoor to manipulate Services as part of setup for tests.
- * <p/>
- * This class should only be called by the {@link com.atlassian.jira.testkit.client.ServicesControl}.
+ *
+ * This class should only be called by the <code>com.atlassian.jira.testkit.client.ServicesControl</code>.
  *
  * @since v5.0
  */
