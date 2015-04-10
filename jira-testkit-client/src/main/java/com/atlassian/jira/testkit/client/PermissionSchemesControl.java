@@ -180,6 +180,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      * @param groupName the group name
      * @deprecated Use {@link PermissionSchemesControl#replaceGroupPermissions(long, ProjectPermissionKey, String)} instead
      */
+    @Deprecated
     public void replaceGroupPermissions(long schemeId, int permission, String groupName)
     {
         replacePermissions(schemeId, permission, "group", groupName);
