@@ -86,7 +86,7 @@ no additional modifications.
 This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs will contain a stacktrace about "unsupported major.minor version 52.0".
 
 ## Continuous Integration ##
-* There is a Bamboo [CI plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TC) on JBAC (only accessible within Atlassian). Create feature branches from this plan.
+* There is a Bamboo [CI plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TC) on JBAC (only accessible within Atlassian). Create any feature branches from this plan.
 
 ## Releasing ##
 * Releasing is via another [Bamboo plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TR) on JBAC. This plan has branches for each supported JIRA version. Do not create feature branches of this plan.
