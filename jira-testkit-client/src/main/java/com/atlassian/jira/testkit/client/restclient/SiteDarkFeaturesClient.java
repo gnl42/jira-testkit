@@ -66,9 +66,10 @@ public class SiteDarkFeaturesClient extends RestApiClient<SiteDarkFeaturesClient
     }
 
     /**
-     * GETs the feature key
+     * GETs the dark feature with the given key.
      *
-     * @param featureKey feature key
+     * @param featureKey the feature key
+     * @return the dark feature
      * @throws com.sun.jersey.api.client.UniformInterfaceException if there's a problem enabling the dark feature
      */
     public DarkFeature get(String featureKey) throws UniformInterfaceException

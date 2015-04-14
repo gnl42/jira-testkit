@@ -284,6 +284,7 @@ public class IssueClient extends RestApiClient<IssueClient>
      * @param projectIds the list of projects to filter on
      * @param projectKeys the list of projects to filter on
      * @param issueTypeIds the list of issue types to filter on
+     * @param issueTypeNames the issue type names
      * @param expand what to expand
      * @return an IssueCreateMeta
      */
@@ -301,6 +302,7 @@ public class IssueClient extends RestApiClient<IssueClient>
      * @param projectIds the list of projects to filter on
      * @param projectKeys the list of projects to filter on
      * @param issueTypeIds the list of issue types to filter on
+     * @param issueTypeNames the issue type names
      * @param expand what to expand
      * @return a Response
      */
@@ -325,6 +327,7 @@ public class IssueClient extends RestApiClient<IssueClient>
      * @param projectIds the list of projects to filter on
      * @param projectKeys the list of projects to filter on
      * @param issueTypeIds the list of issue types to filter on
+     * @param issueTypeNames the issue type names
      * @param expand what to expand
      * @return a WebResource
      */
@@ -345,11 +348,12 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Create a remote link.
      *
-     * @param issueKey
-     * @param remoteIssueLink
+     * @param issueKey the issue key
+     * @param remoteIssueLink the remote issue link
      * @return a RemoteIssueLinkCreateOrUpdateResponse
      */
-    public RemoteIssueLinkCreateOrUpdateResponse createOrUpdateRemoteIssueLink(final String issueKey, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
+    public RemoteIssueLinkCreateOrUpdateResponse createOrUpdateRemoteIssueLink(
+            final String issueKey, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
     {
         try
         {
@@ -366,11 +370,12 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Create a remote link, and return a Response. This is useful for checking error conditions.
      *
-     * @param issueKey
-     * @param remoteIssueLink
+     * @param issueKey the issue key
+     * @param remoteIssueLink the remote issue link
      * @return a Response
      */
-    public Response createOrUpdateRemoteIssueLinkAndGetResponse(final String issueKey, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
+    public Response createOrUpdateRemoteIssueLinkAndGetResponse(
+            final String issueKey, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
     {
         return toResponse(new Method()
         {
@@ -387,11 +392,12 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Create a remote link, and return a ClientResponse.
      *
-     * @param issueKey
-     * @param remoteIssueLink
+     * @param issueKey the issue key
+     * @param remoteIssueLink the remote issue link
      * @return a Response
      */
-    public ClientResponse createOrUpdateRemoteIssueLinkAndGetClientResponse(final String issueKey, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
+    public ClientResponse createOrUpdateRemoteIssueLinkAndGetClientResponse(
+            final String issueKey, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
     {
         return createResource().path(issueKey).path("remotelink")
                         .type(APPLICATION_JSON_TYPE)
@@ -401,11 +407,13 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Update a remote link, and return a Response. This is useful for checking error conditions.
      *
-     * @param issueKey
-     * @param remoteIssueLink
+     * @param issueKey the issue key
+     * @param linkId the link ID
+     * @param remoteIssueLink the remote issue link
      * @return a Response
      */
-    public Response updateRemoteIssueLink(final String issueKey, final String linkId, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
+    public Response updateRemoteIssueLink(
+            final String issueKey, final String linkId, final RemoteIssueLinkCreateOrUpdateRequest remoteIssueLink)
     {
         return toResponse(new Method()
         {
@@ -423,8 +431,8 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Delete a remote link, and return a Response.
      *
-     * @param issueKey
-     * @param remoteIssueLinkId
+     * @param issueKey the issue key
+     * @param remoteIssueLinkId the remote issue link
      * @return a Response
      */
     public Response deleteRemoteIssueLink(final String issueKey, final String remoteIssueLinkId)
@@ -444,8 +452,8 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Delete a remote link by global id, and return a Response.
      *
-     * @param issueKey
-     * @param globalId
+     * @param issueKey the issue key
+     * @param globalId the global ID
      * @return a Response
      */
     public Response deleteRemoteIssueLinkByGlobalId(final String issueKey, final String globalId)
@@ -464,8 +472,8 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Returns a remote link.
      *
-     * @param issueKey
-     * @param remoteIssueLinkId
+     * @param issueKey the issue key
+     * @param remoteIssueLinkId the remote issue link ID
      * @return a RemoteIssueLink
      */
     public RemoteIssueLink getRemoteIssueLink(final String issueKey, final String remoteIssueLinkId)
@@ -476,7 +484,7 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Returns the remote links for an issue.
      *
-     * @param issueKey
+     * @param issueKey the issue key
      * @return a List of RemoteIssueLinks
      */
     public List<RemoteIssueLink> getRemoteIssueLinks(final String issueKey)
@@ -487,8 +495,8 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Returns the remote link for an issue with the given globalId.
      *
-     * @param issueKey
-     * @param globalId
+     * @param issueKey the issue key
+     * @param globalId the global ID
      * @return a RemoteIssueLink
      */
     public RemoteIssueLink getRemoteIssueLinkByGlobalId(final String issueKey, final String globalId)
@@ -502,8 +510,8 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Gets a remote link, returning a Response.
      *
-     * @param issueKey
-     * @param remoteIssueLinkId
+     * @param issueKey the issue key
+     * @param remoteIssueLinkId the remote issue link ID
      * @return a Response
      */
     public Response getRemoteIssueLinkResponse(final String issueKey, final String remoteIssueLinkId)
@@ -521,7 +529,7 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Gets the remote links for an issue, returning a Response.
      *
-     * @param issueKey
+     * @param issueKey the issue key
      * @return a Response
      */
     public Response getRemoteIssueLinksResponse(final String issueKey)
@@ -544,7 +552,7 @@ public class IssueClient extends RestApiClient<IssueClient>
     /**
      * Returns WebResource, containing remote link info.
      *
-     * @param issueKey
+     * @param issueKey the issue key
      * @param remoteIssueLinkId the id of the remote link, if null get all links
      * @return a WebResource
      */

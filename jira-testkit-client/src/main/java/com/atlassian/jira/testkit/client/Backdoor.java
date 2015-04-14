@@ -271,6 +271,7 @@ public class Backdoor
      * Deprecated way, does not work well across different environments.
      *
      * @param xmlFileName xml file name
+     * @param license the licence
      * @deprecated use {@link #restoreDataFromResource(String, String)} instead
      * @see DataImportControl#restoreData(String,String)
      */
@@ -284,7 +285,8 @@ public class Backdoor
     /**
      * Restore data from classpath resource.
      *
-      * @param resourcePath name of the resource
+     * @param resourcePath name of the resource
+     * @param license the licence
      * @see DataImportControl#restoreDataFromResource(String,String)
      */
     public void restoreDataFromResource(String resourcePath, String license)

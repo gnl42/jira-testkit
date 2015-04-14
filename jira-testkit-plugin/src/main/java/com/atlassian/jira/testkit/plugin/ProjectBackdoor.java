@@ -47,7 +47,7 @@ import javax.ws.rs.core.Response;
 /**
  * Use this backdoor to manipulate Projects as part of setup for tests.
  *
- * This class should only be called by the testkit-client..
+ * This class should only be called by the testkit-client.
  *
  * @since v5.0
  */
@@ -90,9 +90,10 @@ public class ProjectBackdoor
      * Choose a project name that will not clash with operational links on the page
      * such as "View Projects" or "Add".
      *
-     * @param name the name of the project.
-     * @param key  the project key.
-     * @param lead the username of the project lead.
+     * @param name the name of the project
+     * @param key  the project key
+     * @param lead the username of the project lead
+     * @param projectType the project type
      * @return an OK response
      */
     @GET

@@ -38,6 +38,7 @@ public class WorklogClient extends RestApiClient<WorklogClient>
     /**
      * GETs the work log with the given id, returning a Response object.
      *
+     * @param issueKey the issue key
      * @return a Response
      */
     public WorklogWithPaginationBean getAll(final String issueKey)
@@ -48,6 +49,7 @@ public class WorklogClient extends RestApiClient<WorklogClient>
     /**
      * GETs the work log with the given id.
      *
+     * @param issueKey the issue key
      * @param worklogID a String containing the work log id
      * @return a Worklog
      * @throws UniformInterfaceException if there is a problem getting the work log
@@ -60,6 +62,7 @@ public class WorklogClient extends RestApiClient<WorklogClient>
     /**
      * GETs the work log with the given id, returning a Response object.
      *
+     * @param issueKey the issue key
      * @param worklogID a String containing the work log id
      * @return a Response
      */

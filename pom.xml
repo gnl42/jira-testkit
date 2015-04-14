@@ -1,22 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>com.atlassian.pom</groupId>
-		<artifactId>public-pom</artifactId>
-		<version>3.0.6</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.6</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.atlassian.jira.tests</groupId>
-	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>7.0.24-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>JIRA TestKit</name>
+    <groupId>com.atlassian.jira.tests</groupId>
+    <artifactId>jira-testkit-plugin-parent</artifactId>
+    <version>7.0.24-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>JIRA TestKit</name>
 
-	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</developerConnection>
-		<url>http://bitbucket.org/atlassian/jira-testkit</url>
-	  <tag>jira-testkit-plugin-parent-7.0.21</tag>
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</developerConnection>
+        <url>http://bitbucket.org/atlassian/jira-testkit</url>
+      <tag>jira-testkit-plugin-parent-7.0.21</tag>
     </scm>
 
     <licenses>
@@ -27,14 +27,14 @@
         </license>
     </licenses>
 
-	<modules>
-		<module>jira-testkit-plugin</module>
-		<module>jira-testkit-client</module>
+    <modules>
+        <module>jira-testkit-plugin</module>
+        <module>jira-testkit-client</module>
         <module>jira-testkit-common</module>
         <module>jira-testkit-testresources</module>
-	</modules>
+    </modules>
 
-	<properties>
+    <properties>
         <activeobjects.version>0.19.9</activeobjects.version>
         <amps.version>5.0.16</amps.version>
         <applinks.version>3.9.0</applinks.version>
@@ -63,73 +63,73 @@
         <rest.version>2.7.1</rest.version>
         <sal.version>2.7.1</sal.version>
         <spring.version>2.5.6.SEC01</spring.version>
-	</properties>
+    </properties>
 
-	<profiles>
-		<profile>
-			<id>jar-with-dependencies</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.2</version>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
-						<executions>
-							<execution>
-								<id>build-jar-with-dependencies</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+            <id>jar-with-dependencies</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.2</version>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build-jar-with-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skip>${maven.test.unit.skip}</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<maxmem>512m</maxmem>
-					<source>${jdkLevel}</source>
-					<target>${jdkLevel}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-jira-plugin</artifactId>
-				<version>${amps.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<productVersion>${jira.amps.version}</productVersion>
-					<productDataVersion>${jira.data.version}</productDataVersion>
-					<jvmArgs>-Xmx768m -XX:MaxPermSize=300m -XX:CompileCommand=exclude,org/apache/velocity/runtime/directive/Foreach,render</jvmArgs>
-					<!-- In JIRA 5.0 GH will not be bundled, so we'll have to install it to JIRA, using following syntax -->
-					<!--pluginArtifacts>
-															 <pluginArtifact>
-																 <groupId>com.atlassian.activeobjects</groupId>
-																 <artifactId>activeobjects-plugin</artifactId>
-																 <version>${ao.version}</version>
-															 </pluginArtifact>
-														 </pluginArtifacts-->
-				</configuration>
-			</plugin>
-		</plugins>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>${maven.test.unit.skip}</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <maxmem>512m</maxmem>
+                    <source>${jdkLevel}</source>
+                    <target>${jdkLevel}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-jira-plugin</artifactId>
+                <version>${amps.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <productVersion>${jira.amps.version}</productVersion>
+                    <productDataVersion>${jira.data.version}</productDataVersion>
+                    <jvmArgs>-Xmx768m -XX:MaxPermSize=300m -XX:CompileCommand=exclude,org/apache/velocity/runtime/directive/Foreach,render</jvmArgs>
+                    <!-- In JIRA 5.0 GH will not be bundled, so we'll have to install it to JIRA, using following syntax -->
+                    <!--pluginArtifacts>
+                                                             <pluginArtifact>
+                                                                 <groupId>com.atlassian.activeobjects</groupId>
+                                                                 <artifactId>activeobjects-plugin</artifactId>
+                                                                 <version>${ao.version}</version>
+                                                             </pluginArtifact>
+                                                         </pluginArtifacts-->
+                </configuration>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -151,56 +151,56 @@
         </pluginManagement>
     </build>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.1</version>
-				<scope>compile</scope>
-			</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.1</version>
+                <scope>compile</scope>
+            </dependency>
             <!-- PROVIDED -->
-			<dependency>
-				<groupId>com.atlassian.jira</groupId>
-				<artifactId>jira-api</artifactId>
-				<scope>provided</scope>
-				<version>${jira.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.jira</groupId>
-				<artifactId>jira-func-tests</artifactId>
-				<scope>provided</scope>
-				<version>${jira.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>2.3</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.jira</groupId>
-				<artifactId>atlassian-jira-pageobjects</artifactId>
-				<version>${jira.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>rhino</groupId>
-				<artifactId>js</artifactId>
-				<version>1.7R2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.applinks</groupId>
-				<artifactId>applinks-api</artifactId>
-				<version>${applinks.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.functest</groupId>
-				<artifactId>functest-plugin</artifactId>
-				<version>${fp.version}</version>
-				<scope>provided</scope>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-api</artifactId>
+                <scope>provided</scope>
+                <version>${jira.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-func-tests</artifactId>
+                <scope>provided</scope>
+                <version>${jira.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.3</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>atlassian-jira-pageobjects</artifactId>
+                <version>${jira.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>rhino</groupId>
+                <artifactId>js</artifactId>
+                <version>1.7R2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.applinks</groupId>
+                <artifactId>applinks-api</artifactId>
+                <version>${applinks.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.functest</groupId>
+                <artifactId>functest-plugin</artifactId>
+                <version>${fp.version}</version>
+                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <!-- Because we already have the core and library -->
@@ -208,43 +208,43 @@
                         <artifactId>hamcrest-all</artifactId>
                     </exclusion>
                 </exclusions>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${log4j.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>javax.ws.rs</groupId>
-				<artifactId>jsr311-api</artifactId>
-				<scope>provided</scope>
-				<version>${jsr311.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.plugins.rest</groupId>
-				<artifactId>atlassian-rest-common</artifactId>
-				<scope>provided</scope>
-				<version>${rest.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.atlassian.activeobjects</groupId>
-				<artifactId>activeobjects-plugin</artifactId>
-				<scope>provided</scope>
-				<version>${activeobjects.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.google.collections</groupId>
-						<artifactId>google-collections</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<scope>provided</scope>
-			</dependency>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <scope>provided</scope>
+                <version>${jsr311.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins.rest</groupId>
+                <artifactId>atlassian-rest-common</artifactId>
+                <scope>provided</scope>
+                <version>${rest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.activeobjects</groupId>
+                <artifactId>activeobjects-plugin</artifactId>
+                <scope>provided</scope>
+                <version>${activeobjects.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.collections</groupId>
+                        <artifactId>google-collections</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
@@ -279,5 +279,5 @@
                 <scope>test</scope>
             </dependency>
         </dependencies>
-	</dependencyManagement>
+    </dependencyManagement>
 </project>

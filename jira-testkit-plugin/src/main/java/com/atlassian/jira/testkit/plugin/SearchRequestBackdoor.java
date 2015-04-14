@@ -42,7 +42,7 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 /**
  * Use this backdoor to manipulate SearchRequests as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.testkit.client.SearchRequestControl}.
+ * This class should only be called by the <code>com.atlassian.jira.testkit.client.SearchRequestControl</code>.
  *
  * @since v5.0
  */

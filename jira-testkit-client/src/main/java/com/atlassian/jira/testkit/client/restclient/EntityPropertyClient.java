@@ -27,7 +27,8 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
     /**
      * Constructs an entity property client for JIRA instance.
      *
-     * @param environmentData The JIRA environmental data.
+     * @param environmentData the JIRA environmental data
+     * @param propertyName the property name
      */
     public EntityPropertyClient(final JIRAEnvironmentData environmentData, String propertyName)
     {
@@ -37,6 +38,7 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 
     /**
      * Gets the properties keys for the entity with given id or key.
+     *
      * @param entityKeyOrId key or id of an entity.
      * @return list of entity properties keys.
      */
@@ -46,9 +48,11 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
     }
 
     /**
+     * Returns the property for the given entity and property key.
+     *
      * @param entitykeyOrId key or id of an entity.
      * @param propertyKey key of the property to return.
-     * @return returns the property for the particular entity and property key.
+     * @return see above
      */
     public EntityProperty get(String entitykeyOrId, String propertyKey)
     {
@@ -57,6 +61,7 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 
     /**
      * Sets the value of the property with given key, associated with a given entity.
+     *
      * @param entityKeyOrId key or id of an entity.
      * @param propertyKey key of the property.
      * @param value value of the property.
@@ -68,6 +73,7 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 
     /**
      * Removes the value of the property with given key, associated with a given entity.
+     *
      * @param entityKeyOrId key or id of an entity.
      * @param propertyKey key of the property to remove.
      */
@@ -91,5 +97,4 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
         final WebResource webResource = createResource().path(propertyName).path(entityKeyOrId.getOrElse("")).path("properties");
         return webResource.path(propertyKey.getOrElse(""));
     }
-
 }

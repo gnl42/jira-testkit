@@ -9,7 +9,6 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.dataimport.DataImportParams;
 import com.atlassian.jira.bc.dataimport.DataImportService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -34,7 +33,6 @@ import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to import data. It's even faster than the UI!
- * <p/>
  *
  * @since v5.0
  */

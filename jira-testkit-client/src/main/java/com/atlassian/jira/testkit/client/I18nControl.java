@@ -10,7 +10,7 @@
 package com.atlassian.jira.testkit.client;
 
 /**
- * See {@link com.atlassian.jira.testkit.plugin.I18nBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.I18nBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

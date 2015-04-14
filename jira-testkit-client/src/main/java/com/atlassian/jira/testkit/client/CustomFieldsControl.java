@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Custom fields.
  *
- * See {@link com.atlassian.jira.testkit.plugin.CustomFieldsBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.CustomFieldsBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  * @author esusatyo
@@ -37,6 +37,8 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
      * @param description the name of the custom field
      * @param type the type of the custom field
      * @param searcherKey the searcher key of the custom field
+     * @return the response ID
+     * @see CustomFieldResponse#id
      */
     public String createCustomField(String name, String description, String type, String searcherKey)
     {
@@ -79,7 +81,9 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     }
 
     /**
-     * List custom fields registered in the system
+     * List the non-config custom fields registered in the system.
+     *
+     * @return see above
      */
     public List<CustomFieldResponse> getCustomFields()
     {
@@ -88,6 +92,9 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
 
     /**
      * List custom fields registered in the system
+     *
+     * @param config whether to get config fields
+     * @return see above
      */
     public List<CustomFieldResponse> getCustomFields(boolean config)
     {

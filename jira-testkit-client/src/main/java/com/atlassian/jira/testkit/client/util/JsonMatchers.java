@@ -44,14 +44,9 @@ public final class JsonMatchers
         /**
          * After asserting that the field actually exists, check the field's value.
          *
-         * <p>
-         *     Example:
+         * For example:
          *
-         *     <pre>
-         *         assertThat(json, hasField("version.id").equalTo(42));
-         *     </pre>
-         *
-         * </p>
+         * <pre>assertThat(json, hasField("version.id").equalTo(42));</pre>
          *
          * @param value expected value
          * @return a matcher
@@ -96,8 +91,6 @@ public final class JsonMatchers
             {
                 return none();
             }
-
-
         }
 
         public void describeTo(Description description)

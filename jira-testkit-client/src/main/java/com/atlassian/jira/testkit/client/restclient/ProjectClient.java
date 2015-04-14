@@ -170,7 +170,8 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     /**
      * GETs a list of current user recent projects, possibly expanding one or more fields.
      *
-     * @param expand a comma separated list of fields to expand.
+     * @param expand a comma separated list of fields to expand
+     * @param count the number of recent projects to get
      * @return a list of projects.
      * @since 7.0
      */
@@ -182,6 +183,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     /**
      * GETs a list of current user recent projects.
      *
+     * @param count the number of recent projects to get
      * @return a list of projects.
      * @since 7.0
      */
