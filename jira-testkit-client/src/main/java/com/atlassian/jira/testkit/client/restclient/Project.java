@@ -33,6 +33,7 @@ public class Project
     public String id;
     public String key;
     public String description;
+    public String projectTypeKey;
     public User lead;
     public String name;
     public List<Component> components;
@@ -146,6 +147,12 @@ public class Project
 		this.projectCategory = projectCategory;
 		return this;
 	}
+
+    public Project projectTypeKey(String projectTypeKey)
+    {
+        this.projectTypeKey = projectTypeKey;
+        return this;
+    }
 
     @Override
     public int hashCode()
