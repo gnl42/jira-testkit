@@ -18,7 +18,7 @@ public final class PermissionHolderBean
     @JsonProperty
     private Group group;
     @JsonProperty
-    private Field field;
+    private FieldBean field;
     @JsonProperty
     private ProjectRole projectRole;
 
@@ -54,7 +54,7 @@ public final class PermissionHolderBean
         return group;
     }
 
-    public Field getField()
+    public FieldBean getField()
     {
         return field;
     }
