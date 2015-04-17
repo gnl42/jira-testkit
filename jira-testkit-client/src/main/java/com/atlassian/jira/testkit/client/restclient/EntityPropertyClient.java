@@ -4,16 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.atlassian.jira.util.json.JSONObject;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.List;
 
 /**
  * Client for entity property resource.
@@ -22,18 +13,18 @@ import java.util.List;
  */
 public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 {
-    private final String propertyName;
+    protected final String entityName;
 
     /**
      * Constructs an entity property client for JIRA instance.
      *
      * @param environmentData the JIRA environmental data
-     * @param propertyName the property name
+     * @param entityName the property name
      */
-    public EntityPropertyClient(final JIRAEnvironmentData environmentData, String propertyName)
+    public EntityPropertyClient(final JIRAEnvironmentData environmentData, String entityName)
     {
         super(environmentData);
-        this.propertyName = propertyName;
+        this.entityName = entityName;
     }
 
     /**
@@ -92,9 +83,9 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
         return resource(Option.<String>some(entityKeyOrId), Option.some(propertyKey));
     }
 
-    private WebResource resource(final Option<String> entityKeyOrId, final Option<String> propertyKey)
+    protected WebResource resource(final Option<String> entityKeyOrId, final Option<String> propertyKey)
     {
-        final WebResource webResource = createResource().path(propertyName).path(entityKeyOrId.getOrElse("")).path("properties");
+        final WebResource webResource = createResource().path(entityName).path(entityKeyOrId.getOrElse("")).path("properties");
         return webResource.path(propertyKey.getOrElse(""));
     }
 }
