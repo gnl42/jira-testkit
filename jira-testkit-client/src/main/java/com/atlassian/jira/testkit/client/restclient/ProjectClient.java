@@ -135,6 +135,18 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
+     * Updates the type of a project.
+     *
+     * @param keyOrId key or id of project to update
+     * @param newProjectTypeKey The key of the new project type
+     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     */
+    public ClientResponse updateProjectType(String keyOrId, String newProjectTypeKey)
+    {
+        return projectWithKey(keyOrId).path("type").path(newProjectTypeKey).put(ClientResponse.class);
+    }
+
+    /**
      * Deletes a specified project
      *
      * @param keyOrId key or id of project to delete
