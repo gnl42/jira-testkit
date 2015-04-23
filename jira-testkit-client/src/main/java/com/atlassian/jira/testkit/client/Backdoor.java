@@ -60,7 +60,6 @@ public class Backdoor
     private final UserProfileControl userProfile;
     private final UsersAndGroupsControl usersAndGroups;
     private final WebSudoControl webSudoControl;
-    private final WhatsNewControl whatsNewControl;
     private final WorkflowSchemesControl workflowSchemesControl;
     private final WorkflowsControl workflowsControl;
 
@@ -98,12 +97,12 @@ public class Backdoor
         this.project = new ProjectControl(environmentData);
         this.projectRoleClient = new ProjectRoleClient(environmentData);
         this.rawRestApiControl = new RawRestApiControl(environmentData);
+        this.statusControl = new StatusControl(environmentData);
         this.resolutionControl = new ResolutionControl(environmentData);
         this.screensControl = new ScreensControl(environmentData);
         this.searchClient = new SearchClient(environmentData);
         this.searchRequests = new SearchRequestControl(environmentData);
         this.services = new ServicesControl(environmentData);
-        this.statusControl = new StatusControl(environmentData);
         this.subtaskControl = new SubtaskControl(environmentData);
         this.systemProperties = new SystemPropertiesControl(environmentData);
         this.timeTrackingControl = new TimeTrackingControl(environmentData);
@@ -111,7 +110,6 @@ public class Backdoor
         this.userProfile = new UserProfileControl(environmentData);
         this.usersAndGroups = new UsersAndGroupsControl(environmentData);
         this.webSudoControl = new WebSudoControl(environmentData);
-        this.whatsNewControl = new WhatsNewControl(environmentData);
         this.workflowSchemesControl = new WorkflowSchemesControl(environmentData);
         this.workflowsControl = new WorkflowsControl(environmentData);
     }
@@ -372,11 +370,6 @@ public class Backdoor
     public RawRestApiControl rawRestApiControl()
     {
         return rawRestApiControl;
-    }
-
-    public WhatsNewControl whatsNew()
-    {
-        return whatsNewControl;
     }
 
     public AuditingControl auditing()
