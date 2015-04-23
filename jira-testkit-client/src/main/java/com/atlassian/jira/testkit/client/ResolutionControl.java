@@ -20,8 +20,7 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Some helper methods for Statuses.
  *
- * See {@link com.atlassian.jira.testkit.plugin.ResolutionBackdoor} in jira-testkit-plugin for backend.
- *
+ * See <code>com.atlassian.jira.testkit.plugin.ResolutionBackdoor</code> in jira-testkit-plugin for backend.
  */
 public class ResolutionControl extends BackdoorControl<ResolutionControl>
 {

@@ -19,7 +19,7 @@ import static java.lang.String.valueOf;
 /**
  * Some helper methods for IssueTypes.
  *
- * See {@link com.atlassian.jira.testkit.plugin.IssueTypeBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.IssueTypeBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

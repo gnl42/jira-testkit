@@ -20,8 +20,7 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Some helper methods for Statuses.
  *
- * See {@link com.atlassian.jira.testkit.plugin.PriorityBackdoor} in jira-testkit-plugin for backend.
- *
+ * See <code>com.atlassian.jira.testkit.plugin.PriorityBackdoor</code> in jira-testkit-plugin for backend.
  */
 public class PriorityControl extends BackdoorControl<PriorityControl>
 {
@@ -54,7 +53,6 @@ public class PriorityControl extends BackdoorControl<PriorityControl>
         
         return createPriorityResource().put(Priority.class, priority);
     }
-
 
     public List<Priority> getPriorities()
     {

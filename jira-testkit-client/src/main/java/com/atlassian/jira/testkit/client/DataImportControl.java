@@ -42,7 +42,7 @@ import static com.google.common.collect.Iterables.transform;
 /**
  * Use this class from func/selenium/page-object tests that need to import data. Which is all of them.
  *
- * See {@link com.atlassian.jira.testkit.plugin.DataImportBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.DataImportBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
@@ -143,7 +143,9 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     }
 
     /**
-     * Restores the instance with the default XML file. A commercial license is used.
+     * Restores the instance with the default XML file, using the given license.
+     *
+     * @param license the licence to use
      */
     public void restoreBlankInstance(String license)
     {
@@ -178,9 +180,9 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         return TESTKIT_BLANKPROJECTS_XML + SUPPORTED_BUILD_NUMBERS.get().get(index) + ".xml";
     }
 
-
     /**
      * Restores the instance with the specified XML file. A time bomb license is used.
+     *
      * @param xmlFileName the name of the file to import
      * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
      * about the working directory the test process is running in. Use {@link #restoreDataFromResource(String, String)}
@@ -191,8 +193,10 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     {
         restoreData(xmlFileName, TimeBombLicence.LICENCE_FOR_TESTING);
     }
+
     /**
      * Restores the instance with the specified XML file. A commercial license is used.
+     *
      * @param xmlFileName the name of the file to import
      * @param license JIRA licence key
      * @deprecated this method relies on JIRAEnvironmentData to get the file to restore and thus makes assumptions
@@ -235,17 +239,16 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     }
 
     /**
-     * <p/>
      * Restores the instance with the specified XML resource on the classpath (as it should to stay independent from
      * the filesystem). A commercial license is used.
      *
-     * <p/>
      * This will also try to match a resource with prefix 'xml/'. This is to keep compatibility with the old way
      * of restoring that searched in the 'xml' directory by default. That means that if your classpath resource
      * that you want to restore is in an 'xml' package, this method will work even if you just provide the bare
      * resource name.
      *
      * @param resourcePath path to the class path resource containing the file to restore
+     * @param license the licence
      */
     public void restoreDataFromResource(String resourcePath, String license)
     {

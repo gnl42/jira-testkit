@@ -68,12 +68,13 @@ public abstract class BackdoorControl<T extends BackdoorControl<T>> extends Rest
 
     /**
      * Convenience method that simply calls {@code WebResource.get(String.class)} on the passed-in WebResource.
-     * <p/>
+     *
      * <em>This method is often used for mutative operations</em> which should really be using a POST instead, but doing
      * a GET is much more convenient since you can do it right from your browser when testing a backdoor and this is
      * only testing code so it's OK.
      *
      * @param webResource the WebResource to perform the GET on
+     * @return the requested resource
      */
     protected final String get(final WebResource webResource)
     {

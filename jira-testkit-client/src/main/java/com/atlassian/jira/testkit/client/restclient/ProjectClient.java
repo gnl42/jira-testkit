@@ -135,6 +135,18 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
+     * Updates the type of a project.
+     *
+     * @param keyOrId key or id of project to update
+     * @param newProjectTypeKey The key of the new project type
+     * @return a {@link com.sun.jersey.api.client.ClientResponse} object
+     */
+    public ClientResponse updateProjectType(String keyOrId, String newProjectTypeKey)
+    {
+        return projectWithKey(keyOrId).path("type").path(newProjectTypeKey).put(ClientResponse.class);
+    }
+
+    /**
      * Deletes a specified project
      *
      * @param keyOrId key or id of project to delete
@@ -170,7 +182,8 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     /**
      * GETs a list of current user recent projects, possibly expanding one or more fields.
      *
-     * @param expand a comma separated list of fields to expand.
+     * @param expand a comma separated list of fields to expand
+     * @param count the number of recent projects to get
      * @return a list of projects.
      * @since 7.0
      */
@@ -182,6 +195,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     /**
      * GETs a list of current user recent projects.
      *
+     * @param count the number of recent projects to get
      * @return a list of projects.
      * @since 7.0
      */

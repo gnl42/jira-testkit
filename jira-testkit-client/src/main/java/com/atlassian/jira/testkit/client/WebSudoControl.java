@@ -14,7 +14,7 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Simple control for Web Sudo.
  *
- * See {@link com.atlassian.jira.testkit.plugin.WebSudoBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.WebSudoBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

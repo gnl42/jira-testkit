@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Mail Servers.
  *
- * See {@link com.atlassian.jira.testkit.plugin.MailServersBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.MailServersBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

@@ -14,7 +14,7 @@ import com.atlassian.jira.testkit.client.model.JiraMode;
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate General Configuration.
  *
- * See {@link com.atlassian.jira.testkit.plugin.ApplicationPropertiesBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.ApplicationPropertiesBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.1
  */
@@ -81,6 +81,12 @@ public class GeneralConfigurationControl extends BackdoorControl<GeneralConfigur
         get(createResource().path("applicationProperties/option/set")
                 .queryParam("key", "jira.option.captcha.on.signup")
                 .queryParam("value", Boolean.toString(isOn)));
+    }
+
+    public void useGravatars(boolean allow)
+    {
+        createResource().path("gravatarSettings/allowGravatars")
+                .post(Boolean.valueOf(allow));
     }
 
     private void setAllowUnassignedIssues(boolean flag)

@@ -20,11 +20,8 @@ import java.io.PrintStream;
  * We need to write output to a PrintStream that we know goes to file.  Maven 1, in its infinite wisdom, holds test
  * output including System.out calls in memory.  If all hell breaks loose, the extra generated output (such as exceptions
  * and so on) will be kept in memory and LOST if the process runs out of memory.
- * <p/>
- * We need to put it in a file in this case AS we go so its available for debugging reasons.
- * <p/>
- * So dont write <b>System.out.println()</b> but rather <b>FuncTestOut.out.println()<b/>;
- * <p/>
+ * We need to put it in a file in this case as we go, so it's available for debugging purposes.
+ * So instead of using <code>System.out.println();</code>, use <code>FuncTestOut.out.println();</code>.
  *
  * @since v4.0
  */
@@ -35,12 +32,12 @@ public class FuncTestOut
      * called JiraFuncTests.out.log
      */
     public final static PrintStream out = new PrintStream(new EnvironmentDetectingPrintStream("JiraFuncTests.out.log", System.out));
+
     /**
      * This {@link java.io.PrintStream} is tee'ed to write to {@link System#err} and to a Maven aware output filec
      * called JiraFuncTests.out.log
      */
     public final static PrintStream err = new PrintStream(new EnvironmentDetectingPrintStream("JiraFuncTests.err.log", System.err));
-
 
     /**
      * This will log to a StringBuffer first if need be and replace the new lines with "indent + newline"
@@ -89,8 +86,8 @@ public class FuncTestOut
         * SOMETHING TO THINK ABOUT
          *
          * If Maven continues its mmemory hungry System.out memory caching then maybe
-         * we will want to stop writing to it.  Just to teach it a lesson.  But we want
-         * to while in IDEA.
+         * we will want to stop writing to it, just to teach it a lesson. But we want
+         * to while we're in IDEA.
          */
 
         @Override
@@ -134,7 +131,7 @@ public class FuncTestOut
         }
 
         /**
-         * At least have a go at trying to close the file
+         * At least have a go at trying to close the file.
          *
          * @throws Throwable according to method signature
          */

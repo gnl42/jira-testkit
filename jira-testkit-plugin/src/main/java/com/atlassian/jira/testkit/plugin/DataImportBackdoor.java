@@ -9,7 +9,6 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.dataimport.DataImportParams;
 import com.atlassian.jira.bc.dataimport.DataImportService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -17,6 +16,7 @@ import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.task.TaskProgressSink;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.BuildUtilsInfo;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -33,7 +33,6 @@ import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to import data. It's even faster than the UI!
- * <p/>
  *
  * @since v5.0
  */
@@ -70,21 +69,36 @@ public class DataImportBackdoor
                 .setQuickImport(quickImport)
                 .build();
 
-        User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
-        DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
-        DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
-        if (!importResult.isValid())
+        // JDEV-32171: Make sure the webapp class loader is the one in effect when we access DataImportService.
+        // This is to ensure that the same classloader is used for normal (non testkit) upgrades task run and
+        // when testkit upgrade tasks run. This plugin triggers an upgrade task that uses an extensible service impl
+        // that is only available in system classpath.
+        final Thread thd = Thread.currentThread();
+        final ClassLoader originalClassLoader = thd.getContextClassLoader();
+        final ClassLoader webappClassLoader = ComponentAccessor.class.getClassLoader();
+        try
         {
-            // Something went wrong. Die!
-            throw new IllegalStateException("Restore failed!: " + importResult.getSpecificErrorMessage());
-        }
+            thd.setContextClassLoader(webappClassLoader);
+            ApplicationUser sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+            DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
+            DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
+            if (!importResult.isValid())
+            {
+                // Something went wrong. Die!
+                throw new IllegalStateException("Restore failed!: " + importResult.getSpecificErrorMessage());
+            }
 
-        if (StringUtils.isNotBlank(importBean.baseUrl))
+            if (StringUtils.isNotBlank(importBean.baseUrl))
+            {
+                applicationProperties.setString(APKeys.JIRA_BASEURL, importBean.baseUrl);
+            }
+
+            return Response.ok(null).build();
+        }
+        finally
         {
-            applicationProperties.setString(APKeys.JIRA_BASEURL, importBean.baseUrl);
+            thd.setContextClassLoader(originalClassLoader);
         }
-
-        return Response.ok(null).build();
     }
 
     @GET

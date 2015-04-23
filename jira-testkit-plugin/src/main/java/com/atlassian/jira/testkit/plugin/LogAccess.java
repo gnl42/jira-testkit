@@ -29,9 +29,8 @@ public class LogAccess
     private static final Logger log = Logger.getLogger(LogAccess.class);
 
     /**
-     * This can be called to cause an error log message to be placed in the JIRA log
-     * <p/>
-     * invoked like this "/jira/rest/testkit-test/1.0/log/error?msg=hi"
+     * Causes an error log message to be placed in the JIRA log.
+     * It's invoked using a URL like <code>/jira/rest/testkit-test/1.0/log/error?msg=hi</code>
      *
      * @param msg the message to go into the application log
      * @return nothing meaningful but GET requires it
@@ -45,10 +44,9 @@ public class LogAccess
         return Response.ok(null).build();
     }
 
-	/**
-     * This can be called to cause an info log message to be placed in the JIRA log
-     * <p/>
-	 * invoked like this "/jira/rest/testkit-test/1.0/log/info?msg=hi"
+    /**
+     * Causes an info log message to be placed in the JIRA log.
+     * It's invoked using a URL like <code>/jira/rest/testkit-test/1.0/log/info?msg=hi</code>
      *
      * @param msg the message to go into the application log
      * @return nothing meaningful but GET requires it

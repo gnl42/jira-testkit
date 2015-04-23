@@ -36,7 +36,7 @@ import javax.ws.rs.core.Response;
 /**
  * Use this backdoor to manipulate Mail Servers as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.testkit.client.MailServersControl}.
+ * This class should only be called by the <code>com.atlassian.jira.testkit.client.MailServersControl</code>.
  *
  * @since v5.0
  */

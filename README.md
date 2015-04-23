@@ -77,7 +77,16 @@ your integration tests that run against JIRA 5.0, JIRA 5.1, and JIRA 5.2, with
 no additional modifications.
 
 
-
   [amps]: https://developer.atlassian.com/display/DOCS/Atlassian+Plugin+SDK+Documentation
   [jiraapi]: https://developer.atlassian.com/static/javadoc/jira/5.0/reference/packages.html
   [promise]: https://developer.atlassian.com/display/JIRADEV/Java+API+Policy+for+JIRA
+
+# Development
+
+This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs will contain a stacktrace about "unsupported major.minor version 52.0".
+
+## Continuous Integration ##
+* There is a Bamboo [CI plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TC) on JBAC (only accessible within Atlassian). Create any feature branches from this plan.
+
+## Releasing ##
+* Releasing is via another [Bamboo plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TR) on JBAC. This plan has branches for each supported JIRA version. Do not create feature branches of this plan.

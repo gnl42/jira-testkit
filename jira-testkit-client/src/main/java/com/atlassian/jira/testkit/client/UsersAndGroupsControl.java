@@ -24,7 +24,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
  * Use this class from func/selenium/page-object tests that need to manipulate Users and
  * Groups.
  *
- * See com.atlassian.jira.testkit.plugin.UsersAndGroupsBackdoor in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.UsersAndGroupsBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
@@ -92,6 +92,7 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
      * @param usernamePrefix prefix before each new username, e.g. "testuser" becomes "testuser0"
      * @param displayNamePrefix prefix before each new username, e.g. "Test User " becomes "Test User 0"
      * @param numberOfNewUsers number of users to add
+     * @return this control
      */
     public UsersAndGroupsControl addUsers(String usernamePrefix, String displayNamePrefix, int numberOfNewUsers)
     {
@@ -130,17 +131,17 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         get(createResource().path("user").path("delete").queryParam("userName", username));
     }
 
-	public boolean userExists(String username)
-	{
+    public boolean userExists(String username)
+    {
         return createResource().path("user").path("exists").queryParam("userName", username).get(Boolean.class);
     }
 
-	public boolean isUserInGroup(String username, String groupName)
-	{
+    public boolean isUserInGroup(String username, String groupName)
+    {
         return createResource().path("group").path("includes").queryParam("userName", username).queryParam("groupName", groupName).get(Boolean.class);
     }
 
-	public void addUserToGroup(String username, String groupName)
+    public void addUserToGroup(String username, String groupName)
     {
         get(createResource().path("user").path("addToGroup").queryParam("userName", username).queryParam("groupName", groupName));
     }
@@ -155,11 +156,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         get(createResource().path("group").path("add").queryParam("groupName", groupName));
     }
 
-	public UsersAndGroupsControl deleteGroup(String groupName)
-	{
-		get(createResource().path("group").path("delete").queryParam("groupName", groupName));
-		return this;
-	}
+    public UsersAndGroupsControl deleteGroup(String groupName)
+    {
+        get(createResource().path("group").path("delete").queryParam("groupName", groupName));
+        return this;
+    }
 
     public UsersAndGroupsControl resetLoginCount(String username)
     {

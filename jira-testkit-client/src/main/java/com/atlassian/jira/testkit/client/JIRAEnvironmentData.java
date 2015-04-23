@@ -70,7 +70,11 @@ public interface JIRAEnvironmentData
 
     boolean isSingleNamedTest();
 
-    /** Run a specifically named test instead of the normal suite */
+    /**
+     * Run a specifically named test instead of the normal suite.
+     *
+     * @return see above
+     */
     Class<? extends TestCase> getSingleTestClass();
 
     /**
