@@ -56,14 +56,6 @@ public class Backdoor
     private final SubtaskControl subtaskControl;
     private final SystemPropertiesControl systemProperties;
     private final TimeTrackingControl timeTrackingControl;
-    private final LicenseControl licenseControl;
-    private final LogControl logControl;
-    private final IndexingControl indexingControl;
-    private final ApplicationLinkControl applicationLinkControl;
-    private final RawRestApiControl rawRestApiControl;
-    private final AuditingControl auditingControl;
-    private final IssueSecuritySchemesControl issueSecuritySchemes;
-    private final AnalyticsClient analyticsClient;
     private final UserHistoryControl userHistoryControl;
     private final UserProfileControl userProfile;
     private final UsersAndGroupsControl usersAndGroups;
@@ -111,7 +103,6 @@ public class Backdoor
         this.searchClient = new SearchClient(environmentData);
         this.searchRequests = new SearchRequestControl(environmentData);
         this.services = new ServicesControl(environmentData);
-        this.statusControl = new StatusControl(environmentData);
         this.subtaskControl = new SubtaskControl(environmentData);
         this.systemProperties = new SystemPropertiesControl(environmentData);
         this.timeTrackingControl = new TimeTrackingControl(environmentData);
