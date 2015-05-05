@@ -71,6 +71,8 @@ public class ProjectBackdoor
                                @QueryParam ("key") String key,
                                @QueryParam ("lead") String lead)
     {
+        ApplicationUser admin = userUtil.getUserByName("admin");
+
         // Create the project
         ErrorCollection errorCollection = new EmptyErrorCollection();
         ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
@@ -81,8 +83,7 @@ public class ProjectBackdoor
                 .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
                 .build();
         
-        ProjectServiceBridge projectServiceBridge = null;
-        ProjectService.CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(null, projectCreationData);
+        ProjectService.CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
         Project project = projectService.createProject(result);
 
         // Add the schemes
