@@ -23,5 +23,8 @@
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
     <component interface="com.atlassian.jira.testkit.plugin.EventWatcherImpl" key="eventWatcher"
                name="atlassian-event listing" class="com.atlassian.jira.testkit.plugin.EventWatcherImpl"/>
-
+    <component key="userUtilBridgeFactory" class="com.atlassian.jira.compatibility.factory.user.UserUtilBridgeFactory"/>
+    <component key="projectServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.project.ProjectServiceBridgeFactory"/>
+    <component key="dataImportServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.dataimport.DataImportServiceBridgeFactory"/>
+    <component key="searchServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.search.SearchServiceBridgeFactory"/>
 </atlassian-plugin>

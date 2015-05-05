@@ -6,9 +6,11 @@ import com.atlassian.jira.bc.JiraServiceContextImpl;
 import com.atlassian.jira.bc.favourites.FavouritesService;
 import com.atlassian.jira.bc.filter.SearchRequestService;
 import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.compatibility.bridge.search.SearchServiceBridge;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchRequest;
 import com.atlassian.jira.sharing.SharePermissionUtils;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
@@ -45,15 +47,15 @@ public class SearchRequestBackdoor
 {
     private UserUtil userUtil;
     private SearchRequestService searchRequestService;
-    private SearchService searchService;
+    private SearchServiceBridge searchServiceBridge;
     private final FavouritesService favouritesService;
 
     public SearchRequestBackdoor(SearchRequestService searchRequestService, UserUtil userUtil,
-            SearchService searchService, FavouritesService favouritesService)
+            SearchServiceBridge searchServiceBridge, FavouritesService favouritesService)
     {
         this.userUtil = userUtil;
         this.searchRequestService = searchRequestService;
-        this.searchService = searchService;
+        this.searchServiceBridge = searchServiceBridge;
         this.favouritesService = favouritesService;
     }
 
@@ -61,10 +63,10 @@ public class SearchRequestBackdoor
     public Response createFilter(SearchRequestBean searchBean) throws SearchException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
-        User searcher = userUtil.getUser(searchBean.username);
+        ApplicationUser searcher = userUtil.getUserByName(searchBean.username);
         JiraServiceContext ctx = new JiraServiceContextImpl(searcher, errorCollection);
 
-        SearchService.ParseResult parseResult = searchService.parseQuery(searcher, searchBean.searchJql);
+        SearchService.ParseResult parseResult = searchServiceBridge.parseQuery(searcher, searchBean.searchJql);
         if (!parseResult.isValid())
         {
             throw new IllegalArgumentException("This JQL you have give me, it is not so good.");

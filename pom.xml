@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>5.0.34-jira6</version>
+	<version>5.0.34-comp70-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>JIRA TestKit</name>
 
@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<jira.version>6.0</jira.version>
+		<jira.version>7.0-SNAPSHOT</jira.version>
 		<jira.rest.version>6.0</jira.rest.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
@@ -50,6 +50,7 @@
 		<jackson.version>1.9.1</jackson.version>
 		<hallelujah.version>3.1-alpha-4</hallelujah.version>
 		<jdkLevel>1.6</jdkLevel>
+		<jira.cross.compatibility.lib.version>0.35-SNAPSHOT</jira.cross.compatibility.lib.version>
 	</properties>
 
 	<profiles>
@@ -220,7 +221,12 @@
 				<version>${junit.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
+			<dependency>
+				<groupId>com.atlassian.jira.compat</groupId>
+				<artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
+				<version>${jira.cross.compatibility.lib.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- COMPILE -->
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>

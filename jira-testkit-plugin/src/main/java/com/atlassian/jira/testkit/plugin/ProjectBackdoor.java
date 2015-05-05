@@ -2,6 +2,8 @@ package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.project.ProjectService;
+import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
+import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
@@ -11,6 +13,7 @@ import com.atlassian.jira.project.AssigneeTypes;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectAssigneeTypes;
 import com.atlassian.jira.scheme.Scheme;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -33,16 +36,18 @@ import javax.ws.rs.core.Response;
 public class ProjectBackdoor
 {
     private final ProjectService projectService;
+    private final ProjectServiceBridge projectServiceBridge;
     private final PermissionSchemeManager permissionSchemeManager;
     private final UserUtil userUtil;
     private final IssueTypeSchemeManager issueTypeSchemeManager;
     private final IssueTypeScreenSchemeManager issueTypeScreenSchemeManager;
 
-    public ProjectBackdoor(ProjectService projectService, PermissionSchemeManager permissionSchemeManager,
+    public ProjectBackdoor(ProjectService projectService, ProjectServiceBridge projectServiceBridge, PermissionSchemeManager permissionSchemeManager,
             UserUtil userUtil, IssueTypeSchemeManager issueTypeSchemeManager,
             IssueTypeScreenSchemeManager issueTypeScreenSchemeManager)
     {
         this.projectService = projectService;
+        this.projectServiceBridge = projectServiceBridge;
         this.permissionSchemeManager = permissionSchemeManager;
         this.userUtil = userUtil;
         this.issueTypeSchemeManager = issueTypeSchemeManager;
@@ -68,9 +73,16 @@ public class ProjectBackdoor
     {
         // Create the project
         ErrorCollection errorCollection = new EmptyErrorCollection();
-        ProjectService.CreateProjectValidationResult result = new ProjectService.CreateProjectValidationResult(
-                errorCollection, name, key, "This project is awesome", lead, null, AssigneeTypes.PROJECT_LEAD,
-                null);
+        ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
+                .withName(name)
+                .withKey(key)
+                .withLead(userUtil.getUserByName(lead))
+                .withDescription("This project is awesome")
+                .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
+                .build();
+        
+        ProjectServiceBridge projectServiceBridge = null;
+        ProjectService.CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(null, projectCreationData);
         Project project = projectService.createProject(result);
 
         // Add the schemes
@@ -88,9 +100,9 @@ public class ProjectBackdoor
     public Response setPermissionScheme(@QueryParam ("project") long projectId,
             @QueryParam ("scheme") long schemeId)
     {
-        User admin = userUtil.getUser("admin");
+        ApplicationUser admin = userUtil.getUserByName("admin");
         Scheme scheme = permissionSchemeManager.getSchemeObject(schemeId);
-        Project project = projectService.getProjectById(admin, projectId).getProject();
+        Project project = projectServiceBridge.getProjectById(admin, projectId).getProject();
 
         permissionSchemeManager.removeSchemesFromProject(project);
         permissionSchemeManager.addSchemeToProject(project, scheme);
@@ -189,12 +201,12 @@ public class ProjectBackdoor
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response deleteProject(@QueryParam ("key") String key)
 	{
-		User admin = userUtil.getUser("admin");
+		ApplicationUser admin = userUtil.getUserByName("admin");
 		Project project = projectService.getProjectByKey(admin, key).getProject();
 		if (project != null) {
 			ErrorCollection errorCollection = new EmptyErrorCollection();
 			ProjectService.DeleteProjectValidationResult result = new ProjectService.DeleteProjectValidationResult(errorCollection, project);
-			ProjectService.DeleteProjectResult projectResult = projectService.deleteProject(admin, result);
+			ProjectService.DeleteProjectResult projectResult = projectServiceBridge.deleteProject(admin, result);
 			return Response.ok(projectResult.isValid()).build();
 		}
 		return Response.ok(false).build();
