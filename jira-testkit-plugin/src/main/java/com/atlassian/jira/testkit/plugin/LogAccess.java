@@ -21,7 +21,7 @@ public class LogAccess
 
     /**
      * This can be called to cause an error log message to be placed in the JIRA log
-     * <p/>
+     *
      * invoked like this "/jira/rest/testkit-test/1.0/log/error?msg=hi"
      *
      * @param msg the message to go into the application log
@@ -38,7 +38,7 @@ public class LogAccess
 
 	/**
      * This can be called to cause an info log message to be placed in the JIRA log
-     * <p/>
+     *
 	 * invoked like this "/jira/rest/testkit-test/1.0/log/info?msg=hi"
      *
      * @param msg the message to go into the application log

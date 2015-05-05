@@ -19,8 +19,8 @@ import java.util.Map;
 
 /**
  * Use this backdoor to manipulate Services as part of setup for tests.
- * <p/>
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.ServicesControl}.
+ *
+ * This class should only be called by the {com.atlassian.jira.functest.framework.backdoor.ServicesControl}.
  *
  * @since v5.0
  */

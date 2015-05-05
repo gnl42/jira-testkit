@@ -19,7 +19,7 @@ import java.util.List;
  * Use this backdoor to manipulate Permission Schemes as part of setup for tests.
  *
  * This class should only be called by the
- * {@link com.atlassian.jira.functest.framework.backdoor.PermissionSchemesControl}.
+ * {com.atlassian.jira.functest.framework.backdoor.PermissionSchemesControl}.
  *
  * @since v5.0
  */
@@ -108,9 +108,8 @@ public class PermissionSchemesBackdoor
         return Response.ok(null).build();
     }
 
-    /**
-     * Removes all matching entities for the given permission and type, and adds the entity with the given parameter.
-     */
+
+     // Removes all matching entities for the given permission and type, and adds the entity with the given parameter.
     @GET
     @AnonymousAllowed
     @Path("entity/replace")

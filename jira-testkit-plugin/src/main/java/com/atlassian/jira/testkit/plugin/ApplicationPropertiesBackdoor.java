@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 /**
  * Use this backdoor to manipulate ApplicationProperties as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.ApplicationPropertiesControl}.
+ * This class should only be called by the {com.atlassian.jira.testkit.client.ApplicationPropertiesControl}.
  *
  * @since v5.0
  */

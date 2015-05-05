@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 /**
  * Use this backdoor to manipulate User Profiles as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.UserProfileControl}.
+ * This class should only be called by the {com.atlassian.jira.functest.framework.backdoor.UserProfileControl}.
  *
  * @since v5.0
  */

@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 /**
  * Use this backdoor to manipulate Projects as part of setup for tests.
  *
- * This class should only be called by the {@link com.atlassian.jira.functest.framework.backdoor.ProjectControl}.
+ * This class should only be called by the {com.atlassian.jira.functest.framework.backdoor.ProjectControl}.
  *
  * @since v5.0
  */
