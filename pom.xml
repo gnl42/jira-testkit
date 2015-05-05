@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<jira.version>7.0-SNAPSHOT</jira.version>
+		<jira.version>6.0</jira.version>
 		<jira.rest.version>6.0</jira.rest.version>
 		<applinks.version>3.9.0</applinks.version>
 		<fp.version>0.3</fp.version>
