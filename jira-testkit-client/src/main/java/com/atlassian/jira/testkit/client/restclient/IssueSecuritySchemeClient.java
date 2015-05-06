@@ -7,17 +7,21 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
-public class IssueSecuritySchemeClient extends RestApiClient<IssueSecuritySchemeClient>{
+public class IssueSecuritySchemeClient extends RestApiClient<IssueSecuritySchemeClient>
+{
 
-    public IssueSecuritySchemeClient(JIRAEnvironmentData environmentData) {
+    public IssueSecuritySchemeClient(JIRAEnvironmentData environmentData)
+    {
         super(environmentData);
     }
 
     public Response<IssueSecuritySchemes> getAllSecuritySchemes() throws UniformInterfaceException
     {
-        return toResponse(new Method() {
+        return toResponse(new Method()
+        {
             @Override
-            public ClientResponse call() {
+            public ClientResponse call()
+            {
                 return resource().get(ClientResponse.class);
             }
         }, IssueSecuritySchemes.class);
@@ -25,10 +29,29 @@ public class IssueSecuritySchemeClient extends RestApiClient<IssueSecurityScheme
 
     public Response<IssueSecuritySchemeBean> get(final long schemeId) throws UniformInterfaceException
     {
-        return toResponse(new Method() {
+        return toResponse(new Method()
+        {
             @Override
-            public ClientResponse call() {
+            public ClientResponse call()
+            {
                 return issueSecuritySchemeWithID(schemeId).get(ClientResponse.class);
+            }
+        }, IssueSecuritySchemeBean.class);
+    }
+
+    public Response<IssueSecuritySchemeBean> getForProject(final String projectIdOrKey)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource()
+                        .path("project")
+                        .path(projectIdOrKey)
+                        .path("issuesecuritylevelscheme")
+                        .get(ClientResponse.class);
+
             }
         }, IssueSecuritySchemeBean.class);
     }
