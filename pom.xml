@@ -84,6 +84,15 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<!-- deactivate the strict html options -->
+					<additionalparam>-Xdoclint:none</additionalparam>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skip>${maven.test.unit.skip}</skip>
