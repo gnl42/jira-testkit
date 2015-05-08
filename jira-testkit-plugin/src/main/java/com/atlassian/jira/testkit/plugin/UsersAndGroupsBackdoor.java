@@ -6,6 +6,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
 import com.atlassian.crowd.exception.embedded.InvalidGroupException;
 import com.atlassian.jira.bc.security.login.LoginService;
+import com.atlassian.jira.compatibility.bridge.user.UserUtilBridge;
 import com.atlassian.jira.event.user.UserEventType;
 import com.atlassian.jira.exception.AddException;
 import com.atlassian.jira.exception.CreateException;
