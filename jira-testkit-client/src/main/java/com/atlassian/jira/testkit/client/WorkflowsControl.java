@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Hooks into the WorkflowResource within the func-test plugin.
  *
- * See <code>com.atlassian.jira.testkit.plugin.WorkflowResourceBackdoor</code> in jira-testkit-plugin for backend.
+ * See {@link com.atlassian.jira.testkit.plugin.workflows.WorkflowResourceBackdoor} in jira-testkit-plugin for backend.
  *
  * @since v5.1
  */
@@ -33,6 +33,13 @@ public class WorkflowsControl extends BackdoorControl<WorkflowsControl>
     public List<String> getWorkflows()
     {
         return createWorkflowResource().get(LIST_GENERIC_TYPE);
+    }
+
+    public void cloneWorkflow(String sourceName, String resultName)
+    {
+        createWorkflowResource().path("cloneWorkflow")
+                .queryParam("sourceName", sourceName)
+                .queryParam("resultName", resultName).post();
     }
 
     private WebResource createWorkflowResource()
