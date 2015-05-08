@@ -1,5 +1,7 @@
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.jira.compatibility.bridge.issue.customfields.CustomFieldUtilsBridge;
+import com.atlassian.jira.compatibility.bridge.issue.fields.CustomFieldManagerBridge;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.issue.CustomFieldManager;
@@ -40,11 +42,16 @@ public class CustomFieldsBackdoor
 {
     private final CustomFieldManager customFieldManager;
     private final JiraContextTreeManager treeManager;
-
-    public CustomFieldsBackdoor(CustomFieldManager customFieldManager)
+    private final CustomFieldUtilsBridge customFieldUtilsBridge;
+    private final CustomFieldManagerBridge customFieldManagerBridge;
+    
+    public CustomFieldsBackdoor(CustomFieldManager customFieldManager, CustomFieldUtilsBridge customFieldUtilsBridge, CustomFieldManagerBridge customFieldManagerBridge)
     {
         this.customFieldManager = customFieldManager;
         this.treeManager = ComponentAccessor.getComponent(JiraContextTreeManager.class);
+        this.customFieldUtilsBridge = customFieldUtilsBridge;
+        this.customFieldManagerBridge = customFieldManagerBridge;
+        
     }
 
     @POST
@@ -78,11 +85,11 @@ public class CustomFieldsBackdoor
             }
         }
         // global context
-        final List<JiraContextNode> contexts = CustomFieldUtils.buildJiraIssueContexts(true, null, null, treeManager);
+        final List<JiraContextNode> contexts = customFieldUtilsBridge.buildJiraIssueContexts(true, null);
         final List<IssueType> allTypes = Collections.singletonList(null);
         try
         {
-            CustomField result = customFieldManager.createCustomField(field.name, field.description, type, searcher, contexts, allTypes);
+            CustomField result = customFieldManagerBridge.createCustomField(field.name, field.description, type, searcher, contexts, allTypes);
             return Response.ok(new CustomFieldResponse(result.getName(), result.getId())).build();
         }
         catch (GenericEntityException e)

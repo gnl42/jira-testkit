@@ -41,14 +41,16 @@ public class UsersAndGroupsBackdoor
     private final CrowdService crowdService;
     private final LoginService loginService;
     private final UserUtil userUtil;
+    private final UserUtilBridge userUtilBridge;
     private final GroupManager groupManager;
 
-    public UsersAndGroupsBackdoor(UserUtil userUtil, CrowdService crowdService, LoginService loginService, GroupManager groupManager)
+    public UsersAndGroupsBackdoor(UserUtil userUtil, UserUtilBridge userUtilBridge, CrowdService crowdService, LoginService loginService, GroupManager groupManager)
     {
         this.crowdService = crowdService;
         this.userUtil = userUtil;
         this.loginService = loginService;
         this.groupManager = groupManager;
+        this.userUtilBridge = userUtilBridge;
     }
 
     @GET
@@ -82,11 +84,11 @@ public class UsersAndGroupsBackdoor
         {
             if (sendEmail)
             {
-                userUtil.createUserWithNotification(username, password, email, displayName, UserEventType.USER_CREATED);
+                userUtilBridge.createUserWithNotification(username, password, email, displayName, UserEventType.USER_CREATED);
             }
             else
             {
-                userUtil.createUserNoNotification(username, password, email, displayName);
+                userUtilBridge.createUserNoNotification(username, password, email, displayName);
             }
         }
         catch (PermissionException e)

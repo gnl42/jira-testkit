@@ -27,4 +27,6 @@
     <component key="projectServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.project.ProjectServiceBridgeFactory"/>
     <component key="dataImportServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.dataimport.DataImportServiceBridgeFactory"/>
     <component key="searchServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.search.SearchServiceBridgeFactory"/>
+    <component key="customFieldUtilsBridgeFactory" class="com.atlassian.jira.compatibility.factory.issue.customfields.CustomFieldUtilsBridgeFactory"/>
+    <component key="customFieldManagerBridgeFactory" class="com.atlassian.jira.compatibility.factory.issue.fields.CustomFieldManagerBridgeFactory"/>
 </atlassian-plugin>
