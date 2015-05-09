@@ -15,10 +15,13 @@ import com.atlassian.jira.testkit.client.restclient.Errors;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,7 +30,6 @@ import org.codehaus.jackson.map.DeserializationConfig;
 
 import java.util.EnumSet;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -65,6 +67,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
 
             final JerseyClientFactory clientFactory = new ApacheClientFactoryImpl(config);
             Client client = clientFactory.create();
+            client.addFilter(EagerFilter.INSTANCE);
             if (log.isDebugEnabled())
             {
                 client.addFilter(new LoggingFilter());
@@ -206,7 +209,6 @@ g     */
                     .queryParam("os_username", percentEncode(loginAs))
                     .queryParam("os_password", percentEncode(loginPassword));
         }
-
         return resource;
     }
 
@@ -233,22 +235,22 @@ g     */
         return errorResponse(clientResponse);
     }
 
-    protected <T> Response<T> toResponse(Method method, Class<T> clazz)
+    protected <R> Response<R> toResponse(Method method, Class<R> clazz)
     {
-         return toResponse(method, new GenericType<T>(clazz));
+         return toResponse(method, new GenericType<R>(clazz));
     }
 
-    protected <T> Response<T> toResponse(Method method, GenericType<T> clazz)
+    protected <R> Response<R> toResponse(Method method, GenericType<R> clazz)
     {
         ClientResponse clientResponse = registerResponse(method.call());
         if (clientResponse.getStatus() < 300)
         {
-            T object = null;
+            R object = null;
             if (clientResponse.hasEntity())
             {
                 object = clientResponse.getEntity(clazz);
             }
-            final Response<T> tResponse = new Response<T>(clientResponse.getStatus(), null, object);
+            final Response<R> tResponse = new Response<R>(clientResponse.getStatus(), null, object);
             clientResponse.close();
             return tResponse;
         }
@@ -256,7 +258,7 @@ g     */
         return errorResponse(clientResponse);
     }
 
-    protected <T> Response<T> errorResponse(ClientResponse clientResponse)
+    protected <R> Response<R> errorResponse(ClientResponse clientResponse)
     {
         Errors entity = null;
         if (clientResponse.hasEntity() && APPLICATION_JSON_TYPE.isCompatible(clientResponse.getType()))
@@ -268,7 +270,7 @@ g     */
             catch (Exception e) { log.debug("Failed to deserialise Errors from response", e); }
         }
 
-        final Response<T> response = new Response<T>(clientResponse.getStatus(), entity);
+        final Response<R> response = new Response<R>(clientResponse.getStatus(), entity);
         clientResponse.close();
         return response;
     }
@@ -291,16 +293,17 @@ g     */
         return resource.queryParam("expand", percentEncode(StringUtils.join(expands, ",")));
     }
 
-    protected ClientResponse registerResponse(ClientResponse response) {
+    protected ClientResponse registerResponse(ClientResponse response)
+    {
         responses.add(response);
         return response;
     }
 
     public void cleanUp()
     {
-        for(ClientResponse respnse : responses)
+        for(ClientResponse response : responses)
         {
-            respnse.close();
+            response.close();
         }
         responses.clear();
     }
@@ -333,8 +336,29 @@ g     */
     /**
      * Method interface to use with getResponse.
      */
-    public static interface Method
+    public interface Method
     {
         ClientResponse call();
+    }
+
+    /**
+     * The {@link ClientRequest} objects needs to either be closed or have its entity read to ensure that any
+     * HTTPClient connections are returned to the pool. Not doing this can lead to leaked connections and resource
+     * starvation. This filter avoids this problem by eagerly reading the entity of the HTTP connection and
+     * buffering it in memory.
+     */
+    private static class EagerFilter extends ClientFilter
+    {
+        private final static ClientFilter INSTANCE = new EagerFilter();
+
+        private EagerFilter() {}
+
+        @Override
+        public ClientResponse handle(final ClientRequest cr) throws ClientHandlerException
+        {
+            final ClientResponse response = getNext().handle(cr);
+            response.bufferEntity();
+            return response;
+        }
     }
 }
