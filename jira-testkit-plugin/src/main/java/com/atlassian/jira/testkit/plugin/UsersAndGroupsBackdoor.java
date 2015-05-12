@@ -13,6 +13,7 @@ import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
 import com.atlassian.jira.exception.RemoveException;
 import com.atlassian.jira.security.groups.GroupManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
@@ -127,11 +128,11 @@ public class UsersAndGroupsBackdoor
             @QueryParam ("groupName") String groupName)
     {
         Group group = crowdService.getGroup(groupName);
-        User userToAdd = userUtil.getUser(userName);
+        ApplicationUser userToAdd = userUtil.getUserByName(userName);
 
         try
         {
-            userUtil.addUserToGroup(group, userToAdd);
+            userUtilBridge.addUserToGroup(group, userToAdd);
         }
         catch (PermissionException e)
         {
@@ -155,11 +156,11 @@ public class UsersAndGroupsBackdoor
             @QueryParam ("groupName") String groupName)
     {
         Group group = crowdService.getGroup(groupName);
-        User userToRemove = userUtil.getUser(userName);
+        ApplicationUser userToRemove = userUtil.getUserByName(userName);
 
         try
         {
-            userUtil.removeUserFromGroup(group, userToRemove);
+            userUtilBridge.removeUserFromGroup(group, userToRemove);
         }
         catch (PermissionException e)
         {
