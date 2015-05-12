@@ -36,10 +36,6 @@
 					</instructions>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.twdata.maven</groupId>
-				<artifactId>maven-cli-plugin</artifactId>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
