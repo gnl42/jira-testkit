@@ -48,6 +48,7 @@ public class Backdoor
 	private final LicenseControl licenseControl;
 	private final ProjectRoleClient projectRoleClient;
 	private final LogControl logControl;
+    private final ApplicationRoleControl applicationRoleControl;
 	
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -87,6 +88,7 @@ public class Backdoor
 		this.licenseControl = new LicenseControl(environmentData);
         this.projectRoleClient = new ProjectRoleClient(environmentData);
 		this.logControl = new LogControl(environmentData);
+        this.applicationRoleControl = new ApplicationRoleControl(environmentData, darkFeatures);
     }
 
     public ScreensControl screens()
@@ -321,4 +323,9 @@ public class Backdoor
     {
 		return logControl;
 	}
+    
+    public ApplicationRoleControl applicationRoleControl() 
+    {
+        return applicationRoleControl;
+    }
 }
