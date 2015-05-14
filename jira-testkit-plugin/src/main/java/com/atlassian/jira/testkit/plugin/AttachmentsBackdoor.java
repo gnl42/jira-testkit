@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.config.util.AttachmentPathManager;
@@ -58,6 +59,7 @@ public class AttachmentsBackdoor {
 	@POST
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path("attachmentPath")
+	@XsrfProtectionExcluded // Only available during testing.
 	public void attachmentPath(final String newPath) {
 		attachmentPathManager.setCustomAttachmentPath(newPath);
 	}
