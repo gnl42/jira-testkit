@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.jira.config.properties.JiraSystemProperties;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class SystemPropertyBackdoor
 
     @POST
     @Path ("{name}")
+    @XsrfProtectionExcluded // Only available during testing.
     public String set(@PathParam ("name") final String propertyName, @QueryParam ("value") String propertyValue)
     {
         validateNotBlank(propertyName);
