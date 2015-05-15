@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.client.restclient.ApplicationLinks;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.sun.jersey.api.client.WebResource;
@@ -23,6 +24,19 @@ public class ApplicationLinkControl extends BackdoorControl<ApplicationLinkContr
         query.put("typeId", type);
 
         return createResource().header("Content-Type", "application/json").put(String.class, query.toString());
+    }
+
+    public ApplicationLinks getApplicationLinks(final String type) {
+        return createResource()
+                .path("type").path(type)
+                .header("Content-Type", "application/json")
+                .get(ApplicationLinks.class);
+    }
+
+    public ApplicationLinks getApplicationLinks() {
+        return createResource()
+                .header("Content-Type", "application/json")
+                .get(ApplicationLinks.class);
     }
 
     @Override
