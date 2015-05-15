@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.crowd.embedded.api.Directory;
@@ -392,6 +393,7 @@ public class UsersAndGroupsBackdoor
     @POST
     @AnonymousAllowed
     @Path("user/byName")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response updateUser(final UserDTO user)
     {
         if (log.isDebugEnabled())
