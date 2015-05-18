@@ -32,6 +32,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.DELETE;
@@ -93,7 +94,8 @@ public class ProjectBackdoor
      * @param name the name of the project
      * @param key  the project key
      * @param lead the username of the project lead
-     * @param projectType the project type
+     * @param projectTypeKey the project type key
+     * @param projectTemplateKey the key of the project template to be applied
      * @return an OK response
      */
     @GET
@@ -101,21 +103,21 @@ public class ProjectBackdoor
     public Response addProject(@QueryParam ("name") String name,
                                @QueryParam ("key") String key,
                                @QueryParam ("lead") String lead,
-                               @QueryParam ("type") String projectType)
+                               @QueryParam ("type") String projectTypeKey,
+                               @QueryParam ("template") String projectTemplateKey)
     {
+
+        ProjectCreationData projectCreationData = createProjectCreationData(
+                name,
+                key,
+                lead,
+                projectTypeKey,
+                projectTemplateKey
+        );
+
         // Create the project
         ErrorCollection errorCollection = new EmptyErrorCollection();
-        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(
-                getUserWithAdminPermission(),
-                new ProjectCreationData.Builder()
-                    .withName(name)
-                    .withKey(key)
-                    .withDescription("This project is awesome")
-                    .withLead(userManager.getUserByName(lead))
-                    .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
-                    .withType(projectType)
-                    .build()
-        );
+        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(getUserWithAdminPermission(), projectCreationData);
         if (!result.isValid())
         {
             log.error(String.format("Unable to create a project '%s': %s", name, result.getErrorCollection().toString()));
@@ -131,6 +133,21 @@ public class ProjectBackdoor
         projectService.updateProjectSchemes(schemesResult, project);
 
         return Response.ok(project.getId().toString()).build();
+    }
+
+    private ProjectCreationData createProjectCreationData(String name, String key, String lead, String projectTypeKey, String projectTemplateKey)
+    {
+        ProjectCreationData.Builder projectCreationData = new ProjectCreationData.Builder()
+                .withName(name)
+                .withKey(key)
+                .withDescription("This project is awesome")
+                .withLead(userManager.getUserByName(lead))
+                .withAssigneeType(AssigneeTypes.PROJECT_LEAD);
+
+        if (!StringUtils.isEmpty(projectTemplateKey)) {
+            return projectCreationData.withProjectTemplateKey(projectTemplateKey).build();
+        }
+        return projectCreationData.withType(projectTypeKey).build();
     }
 
     @DELETE

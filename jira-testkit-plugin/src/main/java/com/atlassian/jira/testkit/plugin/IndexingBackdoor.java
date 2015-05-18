@@ -10,7 +10,7 @@
 package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.issue.index.IndexException;
-import com.atlassian.jira.issue.index.IssueIndexManager;
+import com.atlassian.jira.issue.index.IssueIndexingService;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.*;
@@ -27,11 +27,11 @@ import javax.ws.rs.core.Response;
 @Consumes ({MediaType.APPLICATION_JSON})
 public class IndexingBackdoor
 {
-    private final IssueIndexManager issueIndexManager;
+    private final IssueIndexingService issueIndexingService;
 
-    public IndexingBackdoor(IssueIndexManager issueIndexManager)
+    public IndexingBackdoor(IssueIndexingService issueIndexingService)
     {
-        this.issueIndexManager = issueIndexManager;
+        this.issueIndexingService = issueIndexingService;
     }
 
     @POST
@@ -40,7 +40,7 @@ public class IndexingBackdoor
     public Response reindexAll()
     {
         try {
-            issueIndexManager.reIndexAll();
+            issueIndexingService.reIndexAll();
         } catch (IndexException e) {
             throw new RuntimeException(e);
         }
