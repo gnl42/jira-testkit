@@ -32,7 +32,7 @@ public class HasErrorMessage extends TypeSafeMatcher<Response>
      * Matches a response if it contains an error message that is equal to the given string..
      *
      * @param errorMessage a String containing the expected error message
-     * @return a Matcher<Response>
+     * @return see above
      */
     public static Matcher<Response> hasErrorMessage(String errorMessage)
     {
@@ -42,8 +42,8 @@ public class HasErrorMessage extends TypeSafeMatcher<Response>
     /**
      * Matches a response if it contains an error message that matches the given matcher.
      *
-     * @param errorMatcher a Matcher<String> that will be used for the error message
-     * @return a Matcher<Response>
+     * @param errorMatcher a Matcher that will be used for the error message
+     * @return see above
      */
     public static Matcher<Response> hasErrorMessage(Matcher<String> errorMatcher)
     {
@@ -53,7 +53,7 @@ public class HasErrorMessage extends TypeSafeMatcher<Response>
     /**
      * Creates a new HasErrorMessage matcher.
      *
-     * @param errorMessageMatcher a Matcher<String> that will be used for the error message
+     * @param errorMessageMatcher a Matcher that will be used for the error message
      */
     public HasErrorMessage(Matcher<? super String> errorMessageMatcher)
     {

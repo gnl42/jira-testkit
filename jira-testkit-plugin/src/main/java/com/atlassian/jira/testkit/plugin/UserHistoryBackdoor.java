@@ -9,11 +9,9 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jira.user.UserIssueHistoryManager;
 import com.atlassian.jira.user.UserQueryHistoryManager;
 import com.atlassian.jira.user.util.UserManager;
@@ -64,7 +62,7 @@ public class UserHistoryBackdoor
     @Path("jqlquery/add")
     public Response addJQLQuery(@QueryParam ("user") String userName, @QueryParam ("query") String query)
     {
-        final User user = ApplicationUsers.toDirectoryUser(userManager.getUserByName(userName));
+        final ApplicationUser user = userManager.getUserByName(userName);
         userQueryHistoryManager.addQueryToHistory(user, query);
         return Response.ok(null).build();
     }

@@ -32,7 +32,7 @@ public class FilterClient extends RestApiClient<FilterClient>
     /**
      * Constructs a new FilterClient for a JIRA instance.
      *
-     * @param environmentData The JIRA environment data
+     * @param environmentData the JIRA environment data
      */
     public FilterClient(JIRAEnvironmentData environmentData)
     {
@@ -43,8 +43,9 @@ public class FilterClient extends RestApiClient<FilterClient>
      * GETs the filter with the given ID.
      *
      * @param filterId a String containing a filter id
+     * @param expand the properties to expand
      * @return a Filter
-     * @throws com.sun.jersey.api.client.UniformInterfaceException if there is a problem getting the filter
+     * @throws UniformInterfaceException if there is a problem getting the filter
      */
     public Filter get(String filterId, Filter.Expand... expand) throws UniformInterfaceException
     {
@@ -98,6 +99,7 @@ public class FilterClient extends RestApiClient<FilterClient>
      * Returns a WebResource for the filter with the given ID.
      *
      * @param filterId a String containing a filter ID
+     * @param expand any expands
      * @return a WebResource
      */
     protected WebResource filterWithId(String filterId, Filter.Expand... expand)
@@ -110,11 +112,14 @@ public class FilterClient extends RestApiClient<FilterClient>
      * payload.
      *
      * @param filter a Filter object
+     * @param expand any expands
      * @return a Response
      */
     public Response<Filter> postFilterResponse(final Filter filter, final Filter.Expand... expand)
     {
-        return toResponse(new Method() { public ClientResponse call()
+        return toResponse(new Method()
+        {
+            public ClientResponse call()
             {
                 return filterResourceForPost(expand).post(ClientResponse.class, filter);
             }
@@ -126,6 +131,7 @@ public class FilterClient extends RestApiClient<FilterClient>
      * payload.
      *
      * @param filter a Filter object
+     * @param expand any expands
      * @return a Response
      */
     public Response<Filter> putFilterResponse(final Filter filter, final Filter.Expand... expand)
@@ -140,7 +146,9 @@ public class FilterClient extends RestApiClient<FilterClient>
     /**
      * Returns a WebResource.Builder that can be used to PUT a search.
      *
-     * @return a WebResource.Builder
+     * @param filterId the filter ID
+     * @param expand any expands
+     * @return see above
      */
     private WebResource.Builder filterResourceForPut(String filterId, Filter.Expand... expand)
     {
@@ -151,6 +159,7 @@ public class FilterClient extends RestApiClient<FilterClient>
     /**
      * Returns a WebResource.Builder that can be used to POST a search.
      *
+     * @param expand any expands
      * @return a WebResource.Builder
      */
     private WebResource.Builder filterResourceForPost(Filter.Expand... expand)
@@ -169,5 +178,4 @@ public class FilterClient extends RestApiClient<FilterClient>
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .put(new GenericType<Map<String, String>>(){}, scope);
     }
-
 }

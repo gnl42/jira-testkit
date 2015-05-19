@@ -9,7 +9,6 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.dataimport.DataImportParams;
 import com.atlassian.jira.bc.dataimport.DataImportService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -17,6 +16,7 @@ import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.task.TaskProgressSink;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.BuildUtilsInfo;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -33,7 +33,6 @@ import javax.ws.rs.core.Response;
 
 /**
  * Use this backdoor to import data. It's even faster than the UI!
- * <p/>
  *
  * @since v5.0
  */
@@ -80,7 +79,7 @@ public class DataImportBackdoor
         try
         {
             thd.setContextClassLoader(webappClassLoader);
-            User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
+            ApplicationUser sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
             DataImportService.ImportValidationResult result = getDataImportService().validateImport(sysadmin, params);
             DataImportService.ImportResult importResult = getDataImportService().doImport(sysadmin, result, TaskProgressSink.NULL_SINK);
             if (!importResult.isValid())

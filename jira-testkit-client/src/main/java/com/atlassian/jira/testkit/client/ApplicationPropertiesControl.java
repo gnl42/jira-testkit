@@ -13,7 +13,7 @@ package com.atlassian.jira.testkit.client;
  * Use this class from func/selenium/page-object tests that need to manipulate
  * ApplicationProperties.
  *
- * See {@link com.atlassian.jira.testkit.plugin.ApplicationPropertiesBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.ApplicationPropertiesBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */

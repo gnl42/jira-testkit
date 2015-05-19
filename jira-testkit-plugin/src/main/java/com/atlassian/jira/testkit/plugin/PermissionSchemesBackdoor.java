@@ -10,7 +10,6 @@
 package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.jira.permission.PermissionSchemeManager;
-import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
@@ -211,6 +210,12 @@ public class PermissionSchemesBackdoor
 
     /**
      * Removes all matching entities for the given permission and type, and adds the entity with the given parameter.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param type the type
+     * @param parameter the parameter
+     * @return an empty 200 response
      */
     @GET
     @AnonymousAllowed
@@ -245,6 +250,12 @@ public class PermissionSchemesBackdoor
 
     /**
      * Removes all matching entities for the given permission and type, and adds the entity with the given parameter.
+     *
+     * @param schemeId the scheme ID
+     * @param permissionKey the permission key
+     * @param type the type
+     * @param parameter the parameter
+     * @return an empty 200 response
      */
     @GET
     @AnonymousAllowed

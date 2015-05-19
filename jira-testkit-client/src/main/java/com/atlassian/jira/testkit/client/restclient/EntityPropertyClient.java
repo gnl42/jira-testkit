@@ -4,16 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.atlassian.jira.util.json.JSONObject;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.List;
 
 /**
  * Client for entity property resource.
@@ -22,21 +13,23 @@ import java.util.List;
  */
 public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 {
-    private final String propertyName;
+    protected final String entityName;
 
     /**
      * Constructs an entity property client for JIRA instance.
      *
-     * @param environmentData The JIRA environmental data.
+     * @param environmentData the JIRA environmental data
+     * @param entityName the property name
      */
-    public EntityPropertyClient(final JIRAEnvironmentData environmentData, String propertyName)
+    public EntityPropertyClient(final JIRAEnvironmentData environmentData, String entityName)
     {
         super(environmentData);
-        this.propertyName = propertyName;
+        this.entityName = entityName;
     }
 
     /**
      * Gets the properties keys for the entity with given id or key.
+     *
      * @param entityKeyOrId key or id of an entity.
      * @return list of entity properties keys.
      */
@@ -46,9 +39,11 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
     }
 
     /**
+     * Returns the property for the given entity and property key.
+     *
      * @param entitykeyOrId key or id of an entity.
      * @param propertyKey key of the property to return.
-     * @return returns the property for the particular entity and property key.
+     * @return see above
      */
     public EntityProperty get(String entitykeyOrId, String propertyKey)
     {
@@ -57,6 +52,7 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 
     /**
      * Sets the value of the property with given key, associated with a given entity.
+     *
      * @param entityKeyOrId key or id of an entity.
      * @param propertyKey key of the property.
      * @param value value of the property.
@@ -68,6 +64,7 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 
     /**
      * Removes the value of the property with given key, associated with a given entity.
+     *
      * @param entityKeyOrId key or id of an entity.
      * @param propertyKey key of the property to remove.
      */
@@ -86,10 +83,9 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
         return resource(Option.<String>some(entityKeyOrId), Option.some(propertyKey));
     }
 
-    private WebResource resource(final Option<String> entityKeyOrId, final Option<String> propertyKey)
+    protected WebResource resource(final Option<String> entityKeyOrId, final Option<String> propertyKey)
     {
-        final WebResource webResource = createResource().path(propertyName).path(entityKeyOrId.getOrElse("")).path("properties");
+        final WebResource webResource = createResource().path(entityName).path(entityKeyOrId.getOrElse("")).path("properties");
         return webResource.path(propertyKey.getOrElse(""));
     }
-
 }

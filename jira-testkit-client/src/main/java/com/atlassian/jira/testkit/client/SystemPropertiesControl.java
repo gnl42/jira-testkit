@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Allows setting and unsetting of system properties.
  *
- * See {@link com.atlassian.jira.testkit.plugin.SystemPropertyBackdoor} in jira-testkit-plugin for backend.
+ * See <code>com.atlassian.jira.testkit.plugin.SystemPropertyBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.2
  */

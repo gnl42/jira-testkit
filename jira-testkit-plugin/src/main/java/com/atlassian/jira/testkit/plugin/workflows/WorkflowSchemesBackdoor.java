@@ -16,7 +16,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.testkit.beans.WorkflowSchemeData;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import com.atlassian.jira.workflow.DraftWorkflowScheme;
 import com.atlassian.jira.workflow.WorkflowScheme;
@@ -183,7 +182,7 @@ public class WorkflowSchemesBackdoor
         }
         else
         {
-            final ApplicationUser user = ApplicationUsers.from(context.getLoggedInUser());
+            final ApplicationUser user = context.getLoggedInUser();
             final DraftWorkflowScheme draftForParent = workflowSchemeManager.createDraftOf(user, workflowSchemeObj);
             return Response.ok(dataFactory.toData(draftForParent)).cacheControl(never()).build();
         }
@@ -206,7 +205,7 @@ public class WorkflowSchemesBackdoor
                 return fourOhfour();
             }
 
-            final ApplicationUser user = ApplicationUsers.from(context.getLoggedInUser());
+            final ApplicationUser user = context.getLoggedInUser();
             DraftWorkflowScheme draftWorkflowScheme
                     = workflowSchemeManager.updateDraftWorkflowScheme(user, dataFactory.draftFromData(data, draftForParent));
 

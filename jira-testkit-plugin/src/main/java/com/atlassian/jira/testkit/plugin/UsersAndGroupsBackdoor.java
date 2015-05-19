@@ -9,20 +9,11 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.crowd.embedded.api.Directory;
 import com.atlassian.crowd.embedded.api.Group;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
 import com.atlassian.crowd.exception.embedded.InvalidGroupException;
 import com.atlassian.crowd.exception.runtime.UserNotFoundException;
@@ -42,13 +33,20 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.util.concurrent.Nullable;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.Response.Status;
 
@@ -143,8 +141,8 @@ public class UsersAndGroupsBackdoor
     @Path("user/delete")
     public Response deleteUser(@QueryParam ("userName") String username)
     {
-        User admin = userUtil.getUser("admin");     // shouldn't have to pass admin in for permissions at this level...
-        User userToRemove = userUtil.getUser(username);
+        ApplicationUser admin = userUtil.getUserByName("admin");     // shouldn't have to pass admin in for permissions at this level...
+        ApplicationUser userToRemove = userUtil.getUserByName(username);
 
         userUtil.removeUser(admin, userToRemove);
 
@@ -159,7 +157,7 @@ public class UsersAndGroupsBackdoor
             @QueryParam ("groupName") String groupName)
     {
         Group group = crowdService.getGroup(groupName);
-        User userToAdd = userUtil.getUser(userName);
+        ApplicationUser userToAdd = userUtil.getUserByName(userName);
 
         try
         {
@@ -187,7 +185,7 @@ public class UsersAndGroupsBackdoor
             @QueryParam ("groupName") String groupName)
     {
         Group group = crowdService.getGroup(groupName);
-        User userToRemove = userUtil.getUser(userName);
+        ApplicationUser userToRemove = userUtil.getUserByName(userName);
 
         try
         {
@@ -274,7 +272,7 @@ public class UsersAndGroupsBackdoor
 
                 if (group != null)
                 {
-                    User user = userUtil.getUser(username);
+                    ApplicationUser user = userUtil.getUserByName(username);
                     userUtil.addUserToGroup(group, user);
                 }
             }
@@ -303,7 +301,7 @@ public class UsersAndGroupsBackdoor
     @Path("user/resetLoginCount")
     public Response resetLoginCount(@QueryParam("user") String username)
     {
-        User user = crowdService.getUser(username);
+        ApplicationUser user = userUtil.getUserByName(username);
         loginService.resetFailedLoginCount(user);
         return Response.ok(null).build();
     }
@@ -395,6 +393,7 @@ public class UsersAndGroupsBackdoor
     @POST
     @AnonymousAllowed
     @Path("user/byName")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response updateUser(final UserDTO user)
     {
         if (log.isDebugEnabled())

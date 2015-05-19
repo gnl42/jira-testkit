@@ -1,18 +1,10 @@
-/*
- * Copyright © 2012 - 2013 Atlassian Corporation Pty Ltd.
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
- * Unless required by applicable law or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under the License.
- */
-
 package com.atlassian.jira.testkit.client;
-
 
 import com.atlassian.jira.testkit.client.restclient.AnalyticsClient;
 import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
+
+import javax.annotation.Nonnull;
 
 /**
  * Top-level of Backdoor control hierarchy. Use components of this class to
@@ -20,105 +12,106 @@ import com.atlassian.jira.testkit.client.restclient.SearchClient;
  *
  * @since v5.0
  */
+@SuppressWarnings("unused")
 public class Backdoor
 {
-    private final UsersAndGroupsControl usersAndGroups;
-    private final IssuesControl issues;
-    private final I18nControl i18n;
-    private final DarkFeaturesControl darkFeatures;
-    private final DataImportControl dataImport;
-    private final PermissionsControl permissions;
-    private final ApplicationPropertiesControl applicationProperties;
-    private final SystemPropertiesControl systemProperties;
-    private final ProjectControl project;
-    private final PermissionSchemesControl permissionSchemes;
-    private final FieldConfigurationSchemesControl fieldConfigurationSchemes;
-    private final NotificationSchemesControl notificationSchemes;
-    private final MailServersControl mailServers;
-    private final SearchRequestControl searchRequests;
-    private final UserProfileControl userProfile;
-    private final ServicesControl services;
-    private final FieldConfigurationControl fieldConfigurationControl;
-    private final IssueTypeControl issueTypeControl;
-    private final StatusControl statusControl;
-    private final ResolutionControl resolutionControl;
-    private final PriorityControl priorityControl;
-    private final SubtaskControl subtaskControl;
-    private final IssueLinkingControl issueLinkingControl;
-    private final ScreensControl screensControl;
-    private final ProjectRoleClient projectRoleClient;
-    private final WebSudoControl webSudoControl;
-    private final DashboardControl dashboardControl;
-    private final PluginsControl plugins;
-    private final GeneralConfigurationControl generalConfigurationControl;
-    private final WorkflowsControl workflowsControl;
-    private final WorkflowSchemesControl workflowSchemesControl;
     private final AdvancedSettingsControl advancedSettingsControl;
-    private final SearchClient searchClient;
-    private final CustomFieldsControl customFieldsControl;
+    private final AnalyticsClient analyticsClient;
+    private final ApplicationLinkControl applicationLinkControl;
+    private final ApplicationPropertiesControl applicationProperties;
     private final AttachmentsControl attachmentsControl;
-    private final TimeTrackingControl timeTrackingControl;
+    private final AuditingControl auditingControl;
+    private final CustomFieldsControl customFieldsControl;
+    private final DarkFeaturesControl darkFeatures;
+    private final DashboardControl dashboardControl;
+    private final DataImportControl dataImport;
+    private final EntityLinkControl entityLinkControl;
+    private final EntityPropertyControl entityPropertyControl;
+    private final FieldConfigurationControl fieldConfigurationControl;
+    private final FieldConfigurationSchemesControl fieldConfigurationSchemes;
+    private final GeneralConfigurationControl generalConfigurationControl;
+    private final I18nControl i18n;
+    private final IndexingControl indexingControl;
+    private final IssueLinkingControl issueLinkingControl;
+    private final IssuesControl issues;
+    private final IssueSecuritySchemesControl issueSecuritySchemes;
+    private final IssueTypeControl issueTypeControl;
     private final LicenseControl licenseControl;
     private final LogControl logControl;
-    private final IndexingControl indexingControl;
-    private final ApplicationLinkControl applicationLinkControl;
+    private final MailServersControl mailServers;
+    private final NotificationSchemesControl notificationSchemes;
+    private final PermissionSchemesControl permissionSchemes;
+    private final PermissionsControl permissions;
+    private final PluginsControl plugins;
+    private final PriorityControl priorityControl;
+    private final ProjectControl project;
+    private final ProjectRoleClient projectRoleClient;
     private final RawRestApiControl rawRestApiControl;
-    private final WhatsNewControl whatsNewControl;
-    private final AuditingControl auditingControl;
-    private final IssueSecuritySchemesControl issueSecuritySchemes;
-    private final AnalyticsClient analyticsClient;
+    private final ResolutionControl resolutionControl;
+    private final ScreensControl screensControl;
+    private final SearchClient searchClient;
+    private final SearchRequestControl searchRequests;
+    private final ServicesControl services;
+    private final StatusControl statusControl;
+    private final SubtaskControl subtaskControl;
+    private final SystemPropertiesControl systemProperties;
+    private final TimeTrackingControl timeTrackingControl;
     private final UserHistoryControl userHistoryControl;
-    private final EntityPropertyControl entityPropertyControl;
+    private final UserProfileControl userProfile;
+    private final UsersAndGroupsControl usersAndGroups;
+    private final WebSudoControl webSudoControl;
+    private final WorkflowSchemesControl workflowSchemesControl;
+    private final WorkflowsControl workflowsControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
-        this.plugins = new PluginsControl(environmentData);
-        this.usersAndGroups = new UsersAndGroupsControl(environmentData);
-        this.i18n = new I18nControl(environmentData);
-        this.darkFeatures = new DarkFeaturesControl(environmentData);
-        this.permissions = new PermissionsControl(environmentData);
+        this.advancedSettingsControl = new AdvancedSettingsControl(environmentData);
+        this.analyticsClient = new AnalyticsClient(environmentData);
+        this.applicationLinkControl = new ApplicationLinkControl(environmentData);
         this.applicationProperties = new ApplicationPropertiesControl(environmentData);
-        this.systemProperties = new SystemPropertiesControl(environmentData);
-        this.project = new ProjectControl(environmentData);
-        this.permissionSchemes = new PermissionSchemesControl(environmentData);
-        this.notificationSchemes = new NotificationSchemesControl(environmentData);
-        this.issueSecuritySchemes = new IssueSecuritySchemesControl(environmentData);
-        this.mailServers = new MailServersControl(environmentData);
-        this.searchRequests = new SearchRequestControl(environmentData);
-        this.userProfile = new UserProfileControl(environmentData);
+        this.attachmentsControl = new AttachmentsControl(environmentData);
+        this.auditingControl = new AuditingControl(environmentData);
+        this.customFieldsControl = new CustomFieldsControl(environmentData);
+        this.darkFeatures = new DarkFeaturesControl(environmentData);
+        this.dashboardControl = new DashboardControl(environmentData);
         this.dataImport = new DataImportControl(environmentData);
-        this.services = new ServicesControl(environmentData);
+        this.entityLinkControl = new EntityLinkControl(environmentData);
+        this.entityPropertyControl = new EntityPropertyControl(environmentData);
         this.fieldConfigurationControl = new FieldConfigurationControl(environmentData);
+        this.fieldConfigurationSchemes = new FieldConfigurationSchemesControl(environmentData);
+        this.generalConfigurationControl = new GeneralConfigurationControl(environmentData);
+        this.i18n = new I18nControl(environmentData);
+        this.indexingControl = new IndexingControl(environmentData);
+        this.issueLinkingControl = new IssueLinkingControl(environmentData);
+        this.issueSecuritySchemes = new IssueSecuritySchemesControl(environmentData);
         this.issueTypeControl = new IssueTypeControl(environmentData);
         this.issues = new IssuesControl(environmentData, issueTypeControl);
-        this.subtaskControl = new SubtaskControl(environmentData);
-        this.webSudoControl = new WebSudoControl(environmentData);
-        this.issueLinkingControl = new IssueLinkingControl(environmentData);
-        this.dashboardControl = new DashboardControl(environmentData);
-        this.generalConfigurationControl = new GeneralConfigurationControl(environmentData);
-        this.workflowsControl = new WorkflowsControl(environmentData);
-        this.workflowSchemesControl = new WorkflowSchemesControl(environmentData);
-        this.advancedSettingsControl = new AdvancedSettingsControl(environmentData);
-        this.searchClient = new SearchClient(environmentData);
-        this.customFieldsControl = new CustomFieldsControl(environmentData);
-        this.screensControl = new ScreensControl(environmentData);
-        this.projectRoleClient = new ProjectRoleClient(environmentData);
-        this.attachmentsControl = new AttachmentsControl(environmentData);
-        this.timeTrackingControl = new TimeTrackingControl(environmentData);
         this.licenseControl = new LicenseControl(environmentData);
         this.logControl = new LogControl(environmentData);
-        this.indexingControl = new IndexingControl(environmentData);
-        this.applicationLinkControl = new ApplicationLinkControl(environmentData);
+        this.mailServers = new MailServersControl(environmentData);
+        this.notificationSchemes = new NotificationSchemesControl(environmentData);
+        this.permissions = new PermissionsControl(environmentData);
+        this.permissionSchemes = new PermissionSchemesControl(environmentData);
+        this.plugins = new PluginsControl(environmentData);
+        this.priorityControl = new PriorityControl(environmentData);
+        this.project = new ProjectControl(environmentData);
+        this.projectRoleClient = new ProjectRoleClient(environmentData);
         this.rawRestApiControl = new RawRestApiControl(environmentData);
-        this.whatsNewControl = new WhatsNewControl(environmentData);
         this.statusControl = new StatusControl(environmentData);
         this.resolutionControl = new ResolutionControl(environmentData);
-        this.priorityControl = new PriorityControl(environmentData);
-        this.auditingControl = new AuditingControl(environmentData);
-        this.fieldConfigurationSchemes = new FieldConfigurationSchemesControl(environmentData);
-        this.analyticsClient = new AnalyticsClient(environmentData);
+        this.screensControl = new ScreensControl(environmentData);
+        this.searchClient = new SearchClient(environmentData);
+        this.searchRequests = new SearchRequestControl(environmentData);
+        this.services = new ServicesControl(environmentData);
+        this.subtaskControl = new SubtaskControl(environmentData);
+        this.systemProperties = new SystemPropertiesControl(environmentData);
+        this.timeTrackingControl = new TimeTrackingControl(environmentData);
         this.userHistoryControl = new UserHistoryControl(environmentData);
-        this.entityPropertyControl = new EntityPropertyControl(environmentData);
+        this.userProfile = new UserProfileControl(environmentData);
+        this.usersAndGroups = new UsersAndGroupsControl(environmentData);
+        this.webSudoControl = new WebSudoControl(environmentData);
+        this.workflowSchemesControl = new WorkflowSchemesControl(environmentData);
+        this.workflowsControl = new WorkflowsControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -276,10 +269,12 @@ public class Backdoor
      * Deprecated way, does not work well across different environments.
      *
      * @param xmlFileName xml file name
+     * @param license the licence
      * @deprecated use {@link #restoreDataFromResource(String, String)} instead
      * @see DataImportControl#restoreData(String,String)
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public void restoreData(String xmlFileName, String license)
     {
         dataImport().restoreData(xmlFileName, license);
@@ -288,7 +283,8 @@ public class Backdoor
     /**
      * Restore data from classpath resource.
      *
-      * @param resourcePath name of the resource
+     * @param resourcePath name of the resource
+     * @param license the licence
      * @see DataImportControl#restoreDataFromResource(String,String)
      */
     public void restoreDataFromResource(String resourcePath, String license)
@@ -376,11 +372,6 @@ public class Backdoor
         return rawRestApiControl;
     }
 
-    public WhatsNewControl whatsNew()
-    {
-        return whatsNewControl;
-    }
-
     public AuditingControl auditing()
     {
         return auditingControl;
@@ -406,5 +397,11 @@ public class Backdoor
     public EntityPropertyControl getEntityPropertyControl()
     {
         return entityPropertyControl;
+    }
+
+    @Nonnull
+    public EntityLinkControl getEntityLinkControl()
+    {
+        return entityLinkControl;
     }
 }

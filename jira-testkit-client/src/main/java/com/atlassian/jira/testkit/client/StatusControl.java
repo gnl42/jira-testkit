@@ -20,9 +20,8 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * Some helper methods for Statuses.
  * 
- * See {@link com.atlassian.jira.testkit.plugin.StatusBackdoor} in
+ * See <code>com.atlassian.jira.testkit.plugin.StatusBackdoor</code> in
  * jira-testkit-plugin for backend.
- * 
  */
 public class StatusControl extends BackdoorControl<StatusControl>
 {
@@ -79,6 +78,4 @@ public class StatusControl extends BackdoorControl<StatusControl>
     {
         return createResource().path("status");
     }
-
-   
 }

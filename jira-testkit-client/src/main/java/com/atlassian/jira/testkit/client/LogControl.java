@@ -11,8 +11,8 @@ package com.atlassian.jira.testkit.client;
 
 /**
  * Use this class from func/selenium/page-object tests that need to log messages on server side.
- * <p/>
- * See {@link com.atlassian.jira.testkit.plugin.LogAccess} in jira-testkit-plugin for backend.
+ *
+ * See <code>com.atlassian.jira.testkit.plugin.LogAccess</code> in jira-testkit-plugin for backend.
  *
  * @since v6.0
  */

@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.context.JiraContextNode;
 import com.atlassian.jira.issue.context.ProjectContext;
@@ -94,6 +95,7 @@ public class FieldConfigurationBackdoor
     @POST
     @AnonymousAllowed
     @Path("changeFieldVisibility")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response changeFieldVisibility(@QueryParam("fieldConfigurationName") String configurationName, @QueryParam("fieldName") String fieldName, @QueryParam("hide") boolean hide)
     {
         final EditableFieldLayout editableFieldLayout = getFieldLayout(configurationName);
@@ -122,6 +124,7 @@ public class FieldConfigurationBackdoor
     @POST
     @AnonymousAllowed
     @Path("changeFieldDescription")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response changeFieldDescription(@QueryParam("fieldConfigurationName") String configurationName, @QueryParam("fieldName") String fieldName, @QueryParam("description") String description)
     {
         final EditableFieldLayout editableFieldLayout = getFieldLayout(configurationName);
@@ -145,6 +148,7 @@ public class FieldConfigurationBackdoor
     @POST
     @AnonymousAllowed
     @Path("associateCustomFieldWithProject")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response associateCustomFieldWithProject(@QueryParam("fieldId") String fieldId, @QueryParam("projectName") String projectName)
     {
         final CustomField customField = customFieldManager.getCustomFieldObject(fieldId);
