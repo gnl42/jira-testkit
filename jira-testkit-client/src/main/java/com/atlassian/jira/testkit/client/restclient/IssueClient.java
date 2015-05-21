@@ -199,7 +199,7 @@ public class IssueClient extends RestApiClient<IssueClient>
     }
 
     /**
-     * GETs the issue with the given key.
+     * DELETEs the issue with the given key.
      *
      * @param issueKey a String containing an issue key or id
      * @param deleteSubtasks the attributes to expand
@@ -224,7 +224,7 @@ public class IssueClient extends RestApiClient<IssueClient>
     }
 
     /**
-     * GETs the issue with the given key.
+     * Assigns an issue to the given user.
      *
      * @param issueKey a String containing an issue key or id
      * @param assignee user object
@@ -243,6 +243,27 @@ public class IssueClient extends RestApiClient<IssueClient>
             }
         });
     }
+
+    /**
+     * Transitions an issue along the given transition ID.
+     *
+     * @param issueKey a String containing an issue key or id
+     * @param transition an object containing a transition ID
+     * @return
+     */
+    public Response transition(final String issueKey, final IssueUpdateRequest transition)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                WebResource transitionResource = createResource().path(issueKey).path("transitions");
+                return transitionResource.type(APPLICATION_JSON_TYPE).post(ClientResponse.class, transition);
+            }
+        });
+    }
+
 
     /**
      * GETs the issue with the given key, returning a Response.

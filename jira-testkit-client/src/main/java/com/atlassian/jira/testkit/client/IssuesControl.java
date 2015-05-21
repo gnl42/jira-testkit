@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.rest.api.issue.ResourceRef;
 import com.atlassian.jira.testkit.client.restclient.Comment;
 import com.atlassian.jira.testkit.client.restclient.CommentClient;
 import com.atlassian.jira.testkit.client.restclient.Issue;
@@ -155,6 +156,12 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return issueClient.get(issueKey, expand);
     }
 
+    public void transitionIssue(String issueKey, int transitionId)
+    {
+        ResourceRef transition = ResourceRef.withId(String.valueOf(transitionId));
+        IssueUpdateRequest updateSummaryRequest = new IssueUpdateRequest().transition(transition);
+        issueClient.transition(issueKey, updateSummaryRequest);
+    }
 
     public IssuesControl addLabel(String issueKey, String label)
     {

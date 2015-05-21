@@ -141,9 +141,16 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      * @param newProjectTypeKey The key of the new project type
      * @return a {@link com.sun.jersey.api.client.ClientResponse} object
      */
-    public ClientResponse updateProjectType(String keyOrId, String newProjectTypeKey)
+    public Response<Project> updateProjectType(final String keyOrId, final String newProjectTypeKey)
     {
-        return projectWithKey(keyOrId).path("type").path(newProjectTypeKey).put(ClientResponse.class);
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return projectWithKey(keyOrId).path("type").path(newProjectTypeKey).put(ClientResponse.class);
+            }
+        }, Project.class);
     }
 
     /**

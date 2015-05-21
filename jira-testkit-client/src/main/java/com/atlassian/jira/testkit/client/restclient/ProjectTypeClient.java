@@ -1,9 +1,12 @@
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.beans.ProjectTypeBean;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+
+import java.util.List;
 
 public class ProjectTypeClient extends RestApiClient<ProjectTypeClient>
 {
@@ -11,19 +14,41 @@ public class ProjectTypeClient extends RestApiClient<ProjectTypeClient>
     {
         super(environmentData);
     }
-    public ClientResponse getAllProjectTypes()
+
+    public Response<List<ProjectTypeBean>> getAllProjectTypes()
     {
-        return projectTypes().get(ClientResponse.class);
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return projectTypes().get(ClientResponse.class);
+            }
+        }, ProjectTypeBean.LIST_TYPE);
     }
 
-    public ClientResponse getByKey(String projectTypeKey)
+    public Response<ProjectTypeBean> getByKey(final String projectTypeKey)
     {
-        return projectTypes().path(projectTypeKey).get(ClientResponse.class);
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return projectTypes().path(projectTypeKey).get(ClientResponse.class);
+            }
+        }, ProjectTypeBean.class);
     }
 
-    public ClientResponse getAccessibleProjectTypeByKey(String projectTypeKey)
+    public Response<ProjectTypeBean> getAccessibleProjectTypeByKey(final String projectTypeKey)
     {
-        return projectTypes().path(projectTypeKey).path("accessible").get(ClientResponse.class);
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return projectTypes().path(projectTypeKey).path("accessible").get(ClientResponse.class);
+            }
+        }, ProjectTypeBean.class);
     }
 
     protected WebResource projectTypes()

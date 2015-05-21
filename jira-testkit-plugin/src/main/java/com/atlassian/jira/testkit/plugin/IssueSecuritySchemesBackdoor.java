@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.jira.issue.security.IssueSecurityLevel;
 import com.atlassian.jira.issue.security.IssueSecurityLevelManager;
 import com.atlassian.jira.issue.security.IssueSecuritySchemeManager;
@@ -70,6 +71,7 @@ public class IssueSecuritySchemesBackdoor
 
     @POST
     @Path("{schemeId}")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response addSecurityLevel(@PathParam ("schemeId") int id, @QueryParam("name") String name, @QueryParam("description") String description)
     {
         IssueSecurityLevel issueSecurityLevel = levelManager.createIssueSecurityLevel(id, name, description);
@@ -79,6 +81,7 @@ public class IssueSecuritySchemesBackdoor
 
     @POST
     @Path("{schemeId}/{securityLevelId}")
+    @XsrfProtectionExcluded // Only available during testing.
     public Response addUserToSecurityLevel(@PathParam("schemeId") long schemeId, @PathParam ("securityLevelId") long securityLevelId, @QueryParam("userKey") String userKey) throws GenericEntityException {
         //SingleUser
         String type = "user";

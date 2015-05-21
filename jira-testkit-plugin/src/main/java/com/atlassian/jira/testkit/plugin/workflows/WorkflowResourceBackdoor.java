@@ -14,14 +14,16 @@ import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
@@ -53,5 +55,17 @@ public class WorkflowResourceBackdoor
             str.add(workflow.getName());
         }
         return Response.ok(str).cacheControl(never()).build();
+    }
+
+    @POST
+    @Path ("cloneWorkflow")
+    public Response cloneWorkflow(
+            @QueryParam ("sourceName") String sourceName,
+            @QueryParam ("resultName") String resultName)
+    {
+        JiraWorkflow sourceWorkflow = workflowManager.getWorkflow(sourceName);
+        JiraWorkflow newWorkflow = workflowManager.copyWorkflow("admin", resultName, "", sourceWorkflow);
+        workflowManager.createWorkflow("admin", newWorkflow);
+        return Response.ok().build();
     }
 }
