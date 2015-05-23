@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.beans;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -40,4 +41,23 @@ public class ApplicationRole
 
     @JsonProperty
     public Boolean hasUnlimitedSeats;
+
+    @Override
+    public String toString()
+    {
+        return new ToStringBuilder(this)
+                .append("key", key)
+                .append("groups", groups)
+                .append("name", name)
+                .append("defaultGroups", defaultGroups)
+                .append("selectedByDefault", selectedByDefault)
+                .append("defined", defined)
+                .append("numberOfSeats", numberOfSeats)
+                .append("remainingSeats", remainingSeats)
+                .append("userCount", userCount)
+                .append("userCountDescription", userCountDescription)
+                .append("hasUnlimitedSeats", hasUnlimitedSeats)
+                .toString();
+    }
+
 }
