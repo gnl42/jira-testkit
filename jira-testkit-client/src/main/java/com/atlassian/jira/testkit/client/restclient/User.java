@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.beans.ApplicationRole;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -40,6 +41,7 @@ public class User
     public Map<String, String> avatarUrls;
     public String emailAddress;
     public Expando<Group> groups;
+    public Expando<ApplicationRole> applicationRoles;
     public String timeZone;
     public String locale;
 
@@ -111,7 +113,7 @@ public class User
 
     public enum Expand
     {
-        groups
+        groups, applicationRoles
     }
 
     @Override
