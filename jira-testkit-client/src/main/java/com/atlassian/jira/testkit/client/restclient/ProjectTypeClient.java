@@ -6,6 +6,7 @@ import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 public class ProjectTypeClient extends RestApiClient<ProjectTypeClient>
@@ -49,6 +50,18 @@ public class ProjectTypeClient extends RestApiClient<ProjectTypeClient>
                 return projectTypes().path(projectTypeKey).path("accessible").get(ClientResponse.class);
             }
         }, ProjectTypeBean.class);
+    }
+
+    public Response setSelectedProjectTypeKey(final String projectTypeKey)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return projectTypes().path("current").type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, projectTypeKey);
+            }
+        });
     }
 
     protected WebResource projectTypes()
