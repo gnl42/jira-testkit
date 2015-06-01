@@ -52,18 +52,6 @@ public class ProjectTypeClient extends RestApiClient<ProjectTypeClient>
         }, ProjectTypeBean.class);
     }
 
-    public Response setSelectedProjectTypeKey(final String projectTypeKey)
-    {
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                return projectTypes().path("current").type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, projectTypeKey);
-            }
-        });
-    }
-
     protected WebResource projectTypes()
     {
         return createResource().path("project/type");
