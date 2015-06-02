@@ -9,9 +9,12 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.beans.ApplicationRole;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import java.util.List;
 
 /**
  *
@@ -28,8 +31,19 @@ public class UserBean
     public String password;
     public String emailAddress;
     public String notification;
+    private List<String> applicationKeys;
 
     public UserBean() {}
+
+    public UserBean(final String name, final String displayName, final String key, final String password, final String emailAddress, final String notification, List<String> applicationKeys) {
+        this.name = name;
+        this.displayName = displayName;
+        this.key = key;
+        this.password = password;
+        this.emailAddress = emailAddress;
+        this.notification = notification;
+        this.applicationKeys = applicationKeys;
+    }
 
     public UserBean(final String name, final String displayName, final String key, final String password, final String emailAddress, final String notification)
     {
@@ -50,7 +64,8 @@ public class UserBean
                 .setKey(key)
                 .setName(name)
                 .setNotification(notification)
-                .setPassword(password);
+                .setPassword(password)
+                .setApplicationKeys(applicationKeys);
     }
 
     public static Builder builder()
@@ -60,13 +75,13 @@ public class UserBean
 
     public static class Builder
     {
-
         private String name;
         private String displayName;
         private String key;
         private String password;
         private String emailAddress;
         private String notification;
+        private List<String> applicationKeys;
 
         public Builder setName(final String name)
         {
@@ -104,9 +119,15 @@ public class UserBean
             return this;
         }
 
+        public Builder setApplicationKeys(final List<String> roles)
+        {
+            this.applicationKeys = roles;
+            return this;
+        }
+
         public UserBean build()
         {
-            return new UserBean(name, displayName, key, password, emailAddress, notification);
+            return new UserBean(name, displayName, key, password, emailAddress, notification, applicationKeys);
         }
     }
 
@@ -143,5 +164,10 @@ public class UserBean
     public String getSelf()
     {
         return self;
+    }
+
+    public List<String> getApplicationKeys()
+    {
+        return applicationKeys;
     }
 }
