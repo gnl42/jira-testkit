@@ -33,6 +33,7 @@ import java.util.List;
 public class Version
 {
     public static final GenericType<List<Version>> VERSIONS_TYPE = new GenericType<List<Version>>(){};
+    public static final GenericType<PageBean<Version>> VERSIONS_PAGED_TYPE = new GenericType<PageBean<Version>>(){};
     private static final String DATE_FORMAT = "dd/MMM/yy";
 
     public String self;

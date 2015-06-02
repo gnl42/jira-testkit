@@ -12,6 +12,7 @@ package com.atlassian.jira.testkit.client;
 import com.atlassian.jira.testkit.client.jerseyclient.ApacheClientFactoryImpl;
 import com.atlassian.jira.testkit.client.jerseyclient.JerseyClientFactory;
 import com.atlassian.jira.testkit.client.restclient.Errors;
+import com.atlassian.jira.testkit.client.restclient.PageBean;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
@@ -81,9 +82,9 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     /**
      * The user to log in as.
      */
-    private String loginAs = "admin";
+    protected String loginAs = "admin";
 
-    private String loginPassword = loginAs;
+    protected String loginPassword = loginAs;
 
     private final Set<ClientResponse> responses = Sets.newHashSet();
 
@@ -215,7 +216,7 @@ g     */
      *
      * @return a Client
      */
-    private Client client()
+    protected final Client client()
     {
         return client.get();
     }
