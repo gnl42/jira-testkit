@@ -97,6 +97,14 @@ public class UserClient extends RestApiClient<UserClient>
         return resource.get(UserPickerResults.class);
     }
 
+    public UserBean createUser(final UserBean userBean)
+    {
+        return createResource().path("user")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .post(UserBean.class, userBean);
+    }
+
     public UserBean updateEmail(String userName, String newEmail)
     {
         return updateUser(userName, UserBean.builder().setEmailAddress(newEmail).build());
