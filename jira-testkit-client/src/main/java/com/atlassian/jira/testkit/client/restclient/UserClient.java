@@ -125,7 +125,7 @@ public class UserClient extends RestApiClient<UserClient>
         return updateUser(userName, UserBean.builder().setName(newName).build());
     }
 
-    private UserBean updateUser(final String userName, final UserBean updateBean)
+    public UserBean updateUser(final String userName, final UserBean updateBean)
     {
         return createResource().path("user").queryParam("username", userName)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
