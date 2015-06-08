@@ -43,7 +43,7 @@ public final class GenericRestClient extends RestApiClient<GenericRestClient>
 
     public <T> Response<PageBean<T>> getNextPage(PageBean<T> currentPage, GenericType<PageBean<T>> actualPageType)
     {
-        if (Boolean.TRUE.equals(currentPage.getIsLastPage()) || currentPage.getNextPage() == null) {
+        if (Boolean.TRUE.equals(currentPage.getIsLast()) || currentPage.getNextPage() == null) {
             throw new IllegalArgumentException("last page or next URL not specified");
         }
 

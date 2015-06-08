@@ -14,7 +14,7 @@ public class PageBean<T>
     private int maxResults;
     private long startAt;
     private long total;
-    private Boolean isLastPage;
+    private Boolean isLast;
     private List<T> values;
 
     public PageBean()
@@ -29,14 +29,14 @@ public class PageBean<T>
         this.startAt = startAt;
     }
 
-    public PageBean(final URI self, final URI nextPage, final int maxResults, final long startAt, final long total, final Boolean isLastPage, final List<T> values)
+    public PageBean(final URI self, final URI nextPage, final int maxResults, final long startAt, final long total, final Boolean isLast, final List<T> values)
     {
         this.self = self;
         this.nextPage = nextPage;
         this.maxResults = maxResults;
         this.startAt = startAt;
         this.total = total;
-        this.isLastPage = isLastPage;
+        this.isLast = isLast;
         this.values = values;
     }
 
@@ -90,14 +90,14 @@ public class PageBean<T>
         this.total = total;
     }
 
-    public Boolean getIsLastPage()
+    public Boolean getIsLast()
     {
-        return isLastPage;
+        return isLast;
     }
 
-    public void setIsLastPage(final Boolean isLastPage)
+    public void setIsLast(final Boolean isLast)
     {
-        this.isLastPage = isLastPage;
+        this.isLast = isLast;
     }
 
     public List<T> getValues()
@@ -123,14 +123,14 @@ public class PageBean<T>
                 Objects.equal(this.maxResults, that.maxResults) &&
                 Objects.equal(this.startAt, that.startAt) &&
                 Objects.equal(this.total, that.total) &&
-                Objects.equal(this.isLastPage, that.isLastPage) &&
+                Objects.equal(this.isLast, that.isLast) &&
                 Objects.equal(this.values, that.values);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(self, nextPage, maxResults, startAt, total, isLastPage,
+        return Objects.hashCode(self, nextPage, maxResults, startAt, total, isLast,
                 values);
     }
 }
