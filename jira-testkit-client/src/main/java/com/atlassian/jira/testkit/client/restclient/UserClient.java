@@ -133,6 +133,16 @@ public class UserClient extends RestApiClient<UserClient>
                 .put(UserBean.class, updateBean);
     }
 
+    public void addUserToApplication(final String userName, final String applicationKey)
+    {
+        createResource().path("user").path("application").queryParam("username", userName).queryParam("applicationKey", applicationKey).post();
+    }
+
+    public void removeUserFromApplication(String username, String applicationKey)
+    {
+        createResource().path("user").path("application").queryParam("username", username).queryParam("applicationKey", applicationKey).delete();
+    }
+
     public WebResource getSearchAssignableResource(String query, String issueKey, String startAt, String maxResults)
     {
         WebResource resource = applyPagingParams(query, startAt, maxResults, createResource().path("user").path("assignable").path("search"));
