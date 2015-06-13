@@ -47,13 +47,13 @@
         <hallelujah.version>3.1-alpha-4</hallelujah.version>
         <hamcrest.version>1.2</hamcrest.version>
         <jackson.version>1.9.1</jackson.version>
-        <jdkLevel>1.6</jdkLevel>
+        <jdkLevel>1.8</jdkLevel>
         <jersey.contrib.version>1.9.1</jersey.contrib.version>
         <jersey.version>1.8-atlassian-6</jersey.version>
         <jira.amps.version>${jira.version}</jira.amps.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.rest.version>6.8.6</jira.rest.version>
-        <jira.version>7.0-20150518.133859</jira.version>
+        <jira.version>7.0.0-QR20150611075632</jira.version>
         <joda.time.version>2.0</joda.time.version>
         <jsr311.version>1.1</jsr311.version>
         <junit.version>4.10</junit.version>

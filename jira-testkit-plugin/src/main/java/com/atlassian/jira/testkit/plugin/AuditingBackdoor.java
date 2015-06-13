@@ -9,15 +9,23 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.jira.auditing.AssociatedItem;
+import com.atlassian.jira.auditing.AuditingManager;
+import com.atlassian.jira.auditing.RecordRequest;
+import com.atlassian.jira.auditing.Records;
 import com.atlassian.jira.ofbiz.OfBizDelegator;
+import com.atlassian.jira.testkit.beans.AuditEntryBean;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -37,9 +45,13 @@ public class AuditingBackdoor
     private static String CHANGED_VALUES_ENTITY_NAME = "AuditChangedValue";
 
     private final OfBizDelegator ofBizDelegator;
+    private final AuditingManager auditingManager;
+    private final UserManager userManager;
 
-    public AuditingBackdoor(OfBizDelegator ofBizDelegator) {
+    public AuditingBackdoor(OfBizDelegator ofBizDelegator, AuditingManager auditingManager, UserManager userManager) {
         this.ofBizDelegator = ofBizDelegator;
+        this.auditingManager = auditingManager;
+        this.userManager = userManager;
     }
 
     @GET
@@ -68,6 +80,24 @@ public class AuditingBackdoor
             record.set("created", new Timestamp(record.getTimestamp("created").getTime() - secondsIntoPast * 1000));
             record.store();
         }
+        return Response.ok().cacheControl(never()).build();
+    }
+
+    @POST
+    @Path("addEntry")
+    public Response addEntry(AuditEntryBean entry)
+    {
+        final AssociatedItem objectItem = entry.objectItem;
+        RecordRequest recordRequest = new RecordRequest(
+                entry.category,
+                entry.summaryI18nKey,
+                entry.eventSource,
+                entry.author,
+                entry.remoteAddress,
+                entry.description)
+                .forObject(objectItem.getObjectType(), objectItem.getObjectName(), objectItem.getObjectId());
+
+        auditingManager.store(recordRequest);
         return Response.ok().cacheControl(never()).build();
     }
 }
