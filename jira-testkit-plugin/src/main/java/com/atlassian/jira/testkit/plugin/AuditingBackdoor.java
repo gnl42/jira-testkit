@@ -12,17 +12,16 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.jira.auditing.AssociatedItem;
 import com.atlassian.jira.auditing.AuditingManager;
 import com.atlassian.jira.auditing.RecordRequest;
-import com.atlassian.jira.auditing.Records;
 import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.jira.testkit.beans.AuditEntryBean;
-import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,12 +45,10 @@ public class AuditingBackdoor
 
     private final OfBizDelegator ofBizDelegator;
     private final AuditingManager auditingManager;
-    private final UserManager userManager;
 
-    public AuditingBackdoor(OfBizDelegator ofBizDelegator, AuditingManager auditingManager, UserManager userManager) {
+    public AuditingBackdoor(OfBizDelegator ofBizDelegator, AuditingManager auditingManager) {
         this.ofBizDelegator = ofBizDelegator;
         this.auditingManager = auditingManager;
-        this.userManager = userManager;
     }
 
     @GET
@@ -87,7 +84,15 @@ public class AuditingBackdoor
     @Path("addEntry")
     public Response addEntry(AuditEntryBean entry)
     {
-        final AssociatedItem objectItem = entry.objectItem;
+        final AssociatedItem objectItem = new AssociatedItem()
+        {
+            @Nonnull public String getObjectName() { return "dummy"; }
+            @Nullable public String getObjectId() { return ""; }
+            @Nullable public String getParentName() { return ""; }
+            @Nullable public String getParentId() { return ""; }
+            @Nonnull public Type getObjectType() { return Type.LICENSE; }
+        };
+
         RecordRequest recordRequest = new RecordRequest(
                 entry.category,
                 entry.summaryI18nKey,

@@ -23,53 +23,7 @@ public class AuditEntryBean
     @JsonProperty public AuditingCategory category;
     @JsonProperty public String summaryI18nKey;
     @JsonProperty public String eventSource;
-    @JsonProperty public boolean isAuthorSysAdmin;
-    @JsonProperty public String categoryName;
     @JsonProperty public ApplicationUser author;
     @JsonProperty public String remoteAddress;
-    @JsonDeserialize(as=DummyAssociatedItem.class)
-    @JsonProperty public AssociatedItem objectItem = new DummyAssociatedItem();
-    @JsonProperty public Iterable<ChangedValue> changedValues;
-    @JsonProperty public Iterable<AssociatedItem> associatedItems;
     @JsonProperty public String description;
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class DummyAssociatedItem implements AssociatedItem
-    {
-
-        @Nonnull
-        @Override
-        public String getObjectName()
-        {
-            return "dummy";
-        }
-
-        @Nullable
-        @Override
-        public String getObjectId()
-        {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public String getParentName()
-        {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public String getParentId()
-        {
-            return null;
-        }
-
-        @Nonnull
-        @Override
-        public Type getObjectType()
-        {
-            return Type.APPLICATION_ROLE;
-        }
-    }
 }
