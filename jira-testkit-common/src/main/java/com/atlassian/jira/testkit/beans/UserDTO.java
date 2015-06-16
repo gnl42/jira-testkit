@@ -132,7 +132,8 @@ public class UserDTO
         return new ApplicationUser()
         {
             @Override
-            public Long getId() {
+            public Long getId()
+            {
                 return id;
             }
 
