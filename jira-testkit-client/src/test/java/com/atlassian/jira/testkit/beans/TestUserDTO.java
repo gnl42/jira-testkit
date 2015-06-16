@@ -17,6 +17,7 @@ public class TestUserDTO
 {
     private static final boolean ACTIVE = true;
     private static final long DIRECTORY_ID = 1L;
+    private static final long USER_ID = 2L;
     private static final String DISPLAY_NAME = "a";
     private static final String EMAIL = "b";
     private static final String KEY = "c";
@@ -27,7 +28,7 @@ public class TestUserDTO
     public void gettingAsApplicationUserShouldUseOwnValuesForBothUserTypes()
     {
         // Set up
-        final UserDTO user = new UserDTO(ACTIVE, DIRECTORY_ID, DISPLAY_NAME, EMAIL, KEY, NAME, USERNAME);
+        final UserDTO user = new UserDTO(ACTIVE, DIRECTORY_ID, DISPLAY_NAME, EMAIL, KEY, NAME, USERNAME, USER_ID);
         final User mockDirectoryUser = mock(User.class);
 
         // Invoke
@@ -47,6 +48,7 @@ public class TestUserDTO
         assertThat(applicationUser.getName(), is(NAME));
         assertThat(applicationUser.getUsername(), is(USERNAME));
         assertThat(applicationUser.isActive(), is(ACTIVE));
+        assertThat(applicationUser.getId(), is(USER_ID));
     }
 
     private void assertTestValues(final User directoryUser)

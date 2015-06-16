@@ -93,7 +93,8 @@ public class IssueClient extends RestApiClient<IssueClient>
      */
     public Issue getFromURL(String issueURL, Issue.Expand... expand) throws UniformInterfaceException
     {
-        return expanded(resourceRoot(issueURL), setOf(Issue.Expand.class, expand)).get(Issue.class);
+        final EnumSet<Issue.Expand> expands = setOf(Issue.Expand.class, expand);
+        return expanded(resourceRoot(issueURL), expands).get(Issue.class);
     }
 
     public IssueCreateResponse create(IssueUpdateRequest issue)

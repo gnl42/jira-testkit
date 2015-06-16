@@ -30,6 +30,9 @@ public class UserDTO
     private final String key;
 
     @JsonProperty
+    private final Long id;
+
+    @JsonProperty
     private final String name;
 
     @JsonProperty
@@ -43,7 +46,8 @@ public class UserDTO
             @JsonProperty("email") final String email,
             @JsonProperty("key") final String key,
             @JsonProperty("name") final String name,
-            @JsonProperty("username") final String username)
+            @JsonProperty("username") final String username,
+            @JsonProperty("id") final Long id)
     {
         Validate.notBlank(key);
         Validate.notBlank(username);
@@ -54,6 +58,7 @@ public class UserDTO
         this.key = key;
         this.name = name;
         this.username = username;
+        this.id = id;
     }
 
     public UserDTO(final ApplicationUser user)
@@ -65,7 +70,8 @@ public class UserDTO
                 user.getEmailAddress(),
                 user.getKey(),
                 user.getName(),
-                user.getUsername()
+                user.getUsername(),
+                user.getId()
         );
     }
 
@@ -125,6 +131,12 @@ public class UserDTO
         Validate.notNull(directoryUser);
         return new ApplicationUser()
         {
+            @Override
+            public Long getId()
+            {
+                return id;
+            }
+
             @Override
             public String getKey()
             {
