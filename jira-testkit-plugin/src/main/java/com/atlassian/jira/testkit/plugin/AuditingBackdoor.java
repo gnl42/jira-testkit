@@ -84,15 +84,6 @@ public class AuditingBackdoor
     @Path("addEntry")
     public Response addEntry(AuditEntryBean entry)
     {
-        final AssociatedItem objectItem = new AssociatedItem()
-        {
-            @Nonnull public String getObjectName() { return "dummy"; }
-            @Nullable public String getObjectId() { return ""; }
-            @Nullable public String getParentName() { return ""; }
-            @Nullable public String getParentId() { return ""; }
-            @Nonnull public Type getObjectType() { return Type.LICENSE; }
-        };
-
         RecordRequest recordRequest = new RecordRequest(
                 entry.category,
                 entry.summaryI18nKey,
@@ -100,7 +91,7 @@ public class AuditingBackdoor
                 entry.author,
                 entry.remoteAddress,
                 entry.description)
-                .forObject(objectItem.getObjectType(), objectItem.getObjectName(), objectItem.getObjectId());
+                .forObject(AssociatedItem.Type.LICENSE, "dummy");
 
         auditingManager.store(recordRequest);
         return Response.ok().cacheControl(never()).build();
