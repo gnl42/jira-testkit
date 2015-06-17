@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
-
 /**
  * Client class for the Project resource.
  *
@@ -223,6 +222,31 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
+     * GETs a list of versions, associated with the passed project.
+     *
+     * @param key the key of the project to query.
+     * @return a list of versions.
+     */
+    public PageBean<Version> getVersionsPaged(String key, final Long startAt, final Integer maxResults, final String orderBy)
+    {
+        WebResource webResource = projectVersionsPaged(key);
+        if (startAt != null)
+        {
+            webResource = webResource.queryParam("startAt", startAt.toString());
+        }
+        if (maxResults != null)
+        {
+            webResource = webResource.queryParam("maxResults", maxResults.toString());
+        }
+        if (orderBy != null)
+        {
+            webResource = webResource.queryParam("orderBy", orderBy);
+        }
+
+        return webResource.get(Version.VERSIONS_PAGED_TYPE);
+    }
+
+    /**
      * GETs a map of avatars, associated with the passed project.
      *
      * @param key the key of the project to query.
@@ -305,7 +329,7 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
-     * Returns a WebResource for the versions gi
+     * Returns a WebResource for the project versions 
      *
      * @param projectKey a String containing the project key
      * @return a Response
@@ -313,6 +337,17 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     protected WebResource projectVersionWithKey(String projectKey)
     {
         return projectWithKey(projectKey).path("versions");
+    }
+
+    /**
+     * Returns a WebResource for the versions gi
+     *
+     * @param projectKey a String containing the project key
+     * @return a Response
+     */
+    protected WebResource projectVersionsPaged(String projectKey)
+    {
+        return projectWithKey(projectKey).path("version");
     }
 
     /**

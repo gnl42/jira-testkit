@@ -12,6 +12,7 @@ package com.atlassian.jira.testkit.client;
 import com.atlassian.jira.testkit.client.jerseyclient.ApacheClientFactoryImpl;
 import com.atlassian.jira.testkit.client.jerseyclient.JerseyClientFactory;
 import com.atlassian.jira.testkit.client.restclient.Errors;
+import com.atlassian.jira.testkit.client.restclient.PageBean;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
