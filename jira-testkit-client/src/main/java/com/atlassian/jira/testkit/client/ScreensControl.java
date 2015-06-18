@@ -1,13 +1,30 @@
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.Screen;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import org.apache.axis.utils.StringUtils;
+
+import java.util.List;
 
 public class ScreensControl extends BackdoorControl<ScreensControl>
 {
     public ScreensControl(JIRAEnvironmentData environmentData)
     {
         super(environmentData);
+    }
+
+    public List<Screen> getAllScreens()
+    {
+        return createResource()
+                .get(new GenericType<List<Screen>>(){});
+    }
+
+    public Screen getScreen(final String screenIdOrName)
+    {
+        return createResource()
+                .queryParam("screen", screenIdOrName)
+                .get(Screen.class);
     }
 
     public ScreensControl addTabToScreen(final String screenName,final String name)
