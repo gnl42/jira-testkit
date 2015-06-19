@@ -20,9 +20,9 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
  *
  * @since 4.4
  */
-@Path("license")
-@Consumes({ MediaType.APPLICATION_JSON })
-@Produces({ MediaType.APPLICATION_JSON })
+@Path ("license")
+@Consumes ({ MediaType.APPLICATION_JSON })
+@Produces ({ MediaType.APPLICATION_JSON })
 public class LicenseBackdoor {
     private final JiraLicenseManager licenseManager;
     private final ApplicationRoleManagerBridge applicationRoleManagerBridge;
