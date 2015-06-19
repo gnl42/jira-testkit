@@ -21,7 +21,7 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>${atlassian.plugin.key}</Bundle-SymbolicName>
-						<Spring-Context>*;timeout:=60</Spring-Context>
+						<Spring-Context>*</Spring-Context>
                         <Export-Package>
                             com.atlassian.jira.testkit*
                         </Export-Package>
