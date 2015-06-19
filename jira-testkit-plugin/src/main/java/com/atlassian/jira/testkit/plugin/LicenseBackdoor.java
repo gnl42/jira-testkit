@@ -1,7 +1,7 @@
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.jira.bc.license.JiraLicenseUpdaterService;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.license.JiraLicenseManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
@@ -22,29 +22,24 @@ import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 @Path ("license")
 @Consumes ({ MediaType.APPLICATION_JSON })
 @Produces ({ MediaType.APPLICATION_JSON })
-public class LicenseBackdoor
-{
-	private final JiraLicenseUpdaterService licenseService;
-    private final JiraAuthenticationContext jiraAuthenticationContext;
+public class LicenseBackdoor {
+    private final JiraLicenseManager licenseManager;
 
-	public LicenseBackdoor(JiraAuthenticationContext jiraAuthenticationContext)
-	{
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-        this.licenseService = ComponentAccessor.getComponentOfType(JiraLicenseUpdaterService.class);
-	}
+    public LicenseBackdoor() {
+        this.licenseManager = ComponentAccessor.getComponentOfType(JiraLicenseManager.class);
+    }
 
-	@POST
-	@Path("set")
-	@AnonymousAllowed
-	public Response license(String license)
-	{
+    @POST
+    @Path("set")
+    @AnonymousAllowed
+    public Response license(String license) {
 
-		try {
-			licenseService.setLicense(licenseService.validate(jiraAuthenticationContext.getI18nHelper(), license));
-			return Response.ok(true).cacheControl(never()).build();
-		} catch (Exception e) {
-			return Response.ok(false).cacheControl(never()).build();
-		}
-	}
+        try {
+            licenseManager.setLicense(license);
+            return Response.ok(true).cacheControl(never()).build();
+        } catch (Exception e) {
+            return Response.ok(false).cacheControl(never()).build();
+        }
+    }
 
 }

@@ -112,8 +112,8 @@ public class UsersAndGroupsBackdoor
     @Path("user/delete")
     public Response deleteUser(@QueryParam ("userName") String username)
     {
-        User admin = userUtil.getUser("admin");     // shouldn't have to pass admin in for permissions at this level...
-        User userToRemove = userUtil.getUser(username);
+        ApplicationUser admin = userUtil.getUserByName("admin");     // shouldn't have to pass admin in for permissions at this level...
+        ApplicationUser userToRemove = userUtil.getUserByName(username);
 
         userUtil.removeUser(admin, userToRemove);
 
