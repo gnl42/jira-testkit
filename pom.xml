@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>5.0.34-comp70-8</version>
+	<version>5.0.34-comp72-9-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>JIRA TestKit</name>
 
@@ -21,6 +21,7 @@
 	<modules>
 		<module>jira-testkit-plugin</module>
 		<module>jira-testkit-client</module>
+		<module>jira-testkit-common</module>
 	</modules>
 
 	<properties>
@@ -237,6 +238,11 @@
 				<scope>compile</scope>
 			</dependency>
 			<!-- COMPILE -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>10.0.1</version>
+			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
 				<artifactId>jsr305</artifactId>
