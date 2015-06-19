@@ -24,13 +24,15 @@ import static java.util.Collections.singleton;
 public class ApplicationRoleControl extends RestApiClient<ApplicationRoleControl>
 {
     private final DarkFeaturesControl darkFeature;
+    private final LicenseControl licenseControl;
 
     private static final String CORE_KEY = "jira-core";
 
-    public ApplicationRoleControl(JIRAEnvironmentData environmentData, DarkFeaturesControl darkFeature)
+    public ApplicationRoleControl(JIRAEnvironmentData environmentData, DarkFeaturesControl darkFeature, LicenseControl licenseControl)
     {
         super(environmentData);
         this.darkFeature = darkFeature;
+        this.licenseControl = licenseControl;
     }
 
     public List<ApplicationRoleBean> getRoles()
@@ -140,7 +142,7 @@ public class ApplicationRoleControl extends RestApiClient<ApplicationRoleControl
 
     public boolean isEnabled()
     {
-        return darkFeature.isGlobalEnabled("com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED");
+        return licenseControl.isRolesEnabled();
     }
 
     public Response<ApplicationRoleBean> putSelectedByDefaultResponse(final String role, final boolean selectedByDefault)

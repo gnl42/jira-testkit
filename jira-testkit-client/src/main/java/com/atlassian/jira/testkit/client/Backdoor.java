@@ -88,7 +88,7 @@ public class Backdoor
 		this.licenseControl = new LicenseControl(environmentData);
         this.projectRoleClient = new ProjectRoleClient(environmentData);
 		this.logControl = new LogControl(environmentData);
-        this.applicationRoleControl = new ApplicationRoleControl(environmentData, darkFeatures);
+        this.applicationRoleControl = new ApplicationRoleControl(environmentData, darkFeatures, licenseControl);
     }
 
     public ScreensControl screens()

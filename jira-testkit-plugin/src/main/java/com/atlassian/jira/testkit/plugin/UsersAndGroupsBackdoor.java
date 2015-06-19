@@ -199,6 +199,15 @@ public class UsersAndGroupsBackdoor
         return Response.ok(null).build();
     }
 
+    @GET
+    @AnonymousAllowed
+    @Path("group/exists")
+    public Response groupExists(@QueryParam ("groupName") final String groupName)
+    {
+        final boolean exists = crowdService.getGroup(groupName) != null;
+        return Response.ok(Boolean.toString(exists)).build();
+    }
+
 	@GET
 	@AnonymousAllowed
 	@Path("group/delete")

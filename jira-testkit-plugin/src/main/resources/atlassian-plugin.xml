@@ -29,4 +29,5 @@
     <component key="searchServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.search.SearchServiceBridgeFactory"/>
     <component key="customFieldUtilsBridgeFactory" class="com.atlassian.jira.compatibility.factory.issue.customfields.CustomFieldUtilsBridgeFactory"/>
     <component key="customFieldManagerBridgeFactory" class="com.atlassian.jira.compatibility.factory.issue.fields.CustomFieldManagerBridgeFactory"/>
+    <component key="ApplicationRoleManagerBridgeFactory" class="com.atlassian.jira.compatibility.factory.application.ApplicationRoleManagerBridgeFactory"/>
 </atlassian-plugin>
