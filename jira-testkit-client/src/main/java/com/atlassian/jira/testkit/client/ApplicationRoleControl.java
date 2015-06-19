@@ -142,7 +142,7 @@ public class ApplicationRoleControl extends RestApiClient<ApplicationRoleControl
 
     public boolean isEnabled()
     {
-        return licenseControl.isRolesEnabled() || darkFeature.isGlobalEnabled("com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED");
+        return licenseControl.isRolesEnabled();
     }
 
     public Response<ApplicationRoleBean> putSelectedByDefaultResponse(final String role, final boolean selectedByDefault)
