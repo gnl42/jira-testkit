@@ -6,6 +6,7 @@ import com.atlassian.jira.testkit.client.restclient.Errors;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
@@ -209,6 +210,24 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         {
             T object = clientResponse.getEntity(clazz);
             return new Response<T>(clientResponse.getStatus(), null, object);
+        }
+
+        return errorResponse(clientResponse);
+    }
+
+    protected <T> Response<T> toResponse(Method method, GenericType<T> clazz)
+    {
+        ClientResponse clientResponse = method.call();
+        if (clientResponse.getStatus() < 300)
+        {
+            T object = null;
+            if (clientResponse.hasEntity())
+            {
+                object = clientResponse.getEntity(clazz);
+            }
+            final Response<T> tResponse = new Response<T>(clientResponse.getStatus(), null, object);
+            clientResponse.close();
+            return tResponse;
         }
 
         return errorResponse(clientResponse);
