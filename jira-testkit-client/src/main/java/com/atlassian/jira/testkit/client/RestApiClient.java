@@ -12,7 +12,6 @@ package com.atlassian.jira.testkit.client;
 import com.atlassian.jira.testkit.client.jerseyclient.ApacheClientFactoryImpl;
 import com.atlassian.jira.testkit.client.jerseyclient.JerseyClientFactory;
 import com.atlassian.jira.testkit.client.restclient.Errors;
-import com.atlassian.jira.testkit.client.restclient.PageBean;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
@@ -21,6 +20,7 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
+import com.sun.jersey.multipart.impl.MultiPartWriter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
@@ -28,7 +28,6 @@ import org.codehaus.jackson.map.DeserializationConfig;
 
 import java.util.EnumSet;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -63,6 +62,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
             final JacksonJaxbJsonProvider jacksonProvider = new JacksonJaxbJsonProvider();
             jacksonProvider.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             config.getSingletons().add(jacksonProvider);
+            config.getClasses().add(MultiPartWriter.class);
 
             final JerseyClientFactory clientFactory = new ApacheClientFactoryImpl(config);
             Client client = clientFactory.create();
