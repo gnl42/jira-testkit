@@ -14,4 +14,9 @@ public class LicenseControl extends BackdoorControl<LicenseControl> {
     public boolean setLicense(String license) {
         return post(createResource().path("license").path("set"), license, Boolean.class);
     }
+
+	public boolean isRolesEnabled()
+	{
+		return Boolean.parseBoolean(get(createResource().path("license").path("rolesEnabled")));
+	}
 }
