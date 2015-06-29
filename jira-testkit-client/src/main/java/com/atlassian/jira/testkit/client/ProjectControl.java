@@ -17,7 +17,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     }
 
     /**
-     * Adds a project, or if a project with that name exists, does almost nothing.
+     * Adds a business project, or if a project with that name exists, does almost nothing.
      * Choose a project name that will not clash with operational links on the page
      * such as "View Projects" or "Add".
      *
@@ -27,10 +27,26 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
      */
     public void addProject(String name, String key, String lead)
     {
+        addProject(name, key, lead, "business");
+    }
+
+    /**
+     * Adds a project with the specified type, or if a project with that name exists, does almost nothing.
+     * Choose a project name that will not clash with operational links on the page
+     * such as "View Projects" or "Add".
+     *
+     * @param name the name of the project.
+     * @param key  the project key.
+     * @param lead the username of the project lead.
+     * @param type the type of the project
+     */
+    public void addProject(String name, String key, String lead, String type)
+    {
         get(createResource().path("project/add")
                 .queryParam("name", name)
                 .queryParam("key", key)
-                .queryParam("lead", lead));
+                .queryParam("lead", lead)
+                .queryParam("type", type));
     }
 
     /**

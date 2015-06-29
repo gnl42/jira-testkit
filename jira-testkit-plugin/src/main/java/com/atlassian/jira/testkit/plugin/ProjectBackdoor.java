@@ -69,7 +69,8 @@ public class ProjectBackdoor
     @Path("add")
     public Response addProject(@QueryParam ("name") String name,
                                @QueryParam ("key") String key,
-                               @QueryParam ("lead") String lead)
+                               @QueryParam ("lead") String lead,
+                               @QueryParam ("type") String type)
     {
         ApplicationUser admin = userUtil.getUserByName("admin");
 
@@ -81,6 +82,7 @@ public class ProjectBackdoor
                 .withLead(userUtil.getUserByName(lead))
                 .withDescription("This project is awesome")
                 .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
+                .withType(type)
                 .build();
         
         ProjectService.CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
