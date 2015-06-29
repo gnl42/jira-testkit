@@ -190,12 +190,12 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         return client.get();
     }
 
-    protected Response toResponse(Method method)
+    protected Response<?> toResponse(Method method)
     {
         ClientResponse clientResponse = method.call();
         if (clientResponse.getStatus() == 200)
         {
-            final Response response = new Response(clientResponse.getStatus(), null);
+            final Response<?> response = new Response(clientResponse.getStatus(), null);
             clientResponse.close();
             return response;
         }
@@ -205,14 +205,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
 
     protected <T> Response<T> toResponse(Method method, Class<T> clazz)
     {
-        ClientResponse clientResponse = method.call();
-        if (clientResponse.getStatus() < 300)
-        {
-            T object = clientResponse.getEntity(clazz);
-            return new Response<T>(clientResponse.getStatus(), null, object);
-        }
-
-        return errorResponse(clientResponse);
+       return toResponse(method, new GenericType<T>(clazz));
     }
 
     protected <T> Response<T> toResponse(Method method, GenericType<T> clazz)
@@ -233,7 +226,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
         return errorResponse(clientResponse);
     }
 
-    protected Response errorResponse(ClientResponse clientResponse)
+    protected <T> Response<T> errorResponse(ClientResponse clientResponse)
     {
         Errors entity = null;
         if (clientResponse.hasEntity() && APPLICATION_JSON_TYPE.isCompatible(clientResponse.getType()))
@@ -245,7 +238,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
             catch (Exception e) { log.debug("Failed to deserialise Errors from response", e); }
         }
 
-        final Response response = new Response(clientResponse.getStatus(), entity);
+        final Response<T> response = new Response<T>(clientResponse.getStatus(), entity);
         clientResponse.close();
         return response;
     }

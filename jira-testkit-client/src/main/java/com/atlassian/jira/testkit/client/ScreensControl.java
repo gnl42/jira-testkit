@@ -3,7 +3,6 @@ package com.atlassian.jira.testkit.client;
 import com.atlassian.jira.testkit.beans.Screen;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import org.apache.axis.utils.StringUtils;
 
 import java.util.List;
 
@@ -27,52 +26,65 @@ public class ScreensControl extends BackdoorControl<ScreensControl>
                 .get(Screen.class);
     }
 
-    public ScreensControl addTabToScreen(final String screenName,final String name)
+    public ScreensControl addTabToScreen(final String screenName, final String name)
     {
-        get(createResource().path("screens").path("addTab")
+        get(createResource().path("addTab")
                 .queryParam("screen", "" + screenName)
                 .queryParam("name", name));
         return this;
     }
 
-    public ScreensControl deleteTabFromScreen(final String screenName,final String name)
+    public ScreensControl deleteTabFromScreen(final String screenName, final String name)
     {
-        get(createResource().path("screens").path("deleteTab")
+        get(createResource().path("deleteTab")
                 .queryParam("screen", "" + screenName)
                 .queryParam("name", name));
         return this;
     }
 
-    public ScreensControl addFieldToScreen(final String screenName,final String fieldName)
+    public ScreensControl addFieldToScreen(final String screenName, final String fieldName)
     {
-        get(createResource().path("screens").path("addField")
-                .queryParam("screen", "" + screenName)
-                .queryParam("field", fieldName));
-        return this;
+        return addFieldToScreen(screenName, fieldName, null, null);
     }
 
-    public ScreensControl addFieldToScreenTab(final String screenName, final String tabName, final String fieldName, String position)
+    public ScreensControl addFieldToScreen(final String screenName, final String fieldName, String tabName, String position)
     {
-        final WebResource webResource = createResource().path("screens").path("addField")
+        WebResource query = createResource().path("addField")
                 .queryParam("screen", "" + screenName)
-                .queryParam("tab", tabName)
                 .queryParam("field", fieldName);
-
-
-        if (position != null && !StringUtils.isEmpty(position))
+        if (tabName != null)
         {
-            webResource.queryParam("position", position);
+            query = query.queryParam("tab", tabName);
         }
-        get(webResource);
+        if (position != null)
+        {
+            query = query.queryParam("position", position);
+        }
+        get(query);
+
         return this;
     }
 
-    public ScreensControl removeFieldFromScreen(final String screenName,final String fieldName)
+    public ScreensControl setFieldPosition(final String screenName, final String fieldName, int position)
     {
-        get(createResource().path("screens").path("removeField")
+        get(createResource().path("setFieldPosition")
+                .queryParam("screen", "" + screenName)
+                .queryParam("field", fieldName)
+                .queryParam("position", String.valueOf(position)));
+        return this;
+    }
+
+    public ScreensControl removeFieldFromScreen(final String screenName, final String fieldName)
+    {
+        get(createResource().path("removeField")
                 .queryParam("screen", "" + screenName)
                 .queryParam("field", fieldName));
         return this;
     }
 
+    @Override
+    protected WebResource createResource()
+    {
+        return super.createResource().path("screens");
+    }
 }
