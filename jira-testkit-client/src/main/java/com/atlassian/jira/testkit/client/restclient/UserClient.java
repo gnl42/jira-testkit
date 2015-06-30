@@ -251,7 +251,7 @@ public class UserClient extends RestApiClient<UserClient>
         });
     }
 
-    protected Response postResponse(final WebResource resource)
+    private Response postResponse(final WebResource resource)
     {
         return toResponse(new Method()
         {
@@ -263,7 +263,7 @@ public class UserClient extends RestApiClient<UserClient>
         });
     }
 
-    protected Response deleteResponse(final WebResource resource)
+    private Response deleteResponse(final WebResource resource)
     {
         return toResponse(new Method()
         {
