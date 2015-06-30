@@ -138,9 +138,19 @@ public class UserClient extends RestApiClient<UserClient>
         applicationAccessResource(userName, applicationKey).post();
     }
 
+    public Response addUserToApplicationResponse(final String username, final String applicationKey)
+    {
+        return postResponse(applicationAccessResource(username, applicationKey));
+    }
+
     public void removeUserFromApplication(String username, String applicationKey)
     {
         applicationAccessResource(username, applicationKey).delete();
+    }
+
+    public Response removeUserFromApplicationResponse(final String username, final String applicationKey)
+    {
+        return deleteResponse(applicationAccessResource(username, applicationKey));
     }
 
     public WebResource applicationAccessResource(final String username, final String applicationKey)
@@ -241,7 +251,7 @@ public class UserClient extends RestApiClient<UserClient>
         });
     }
 
-    public Response postResponse(final WebResource resource)
+    protected Response postResponse(final WebResource resource)
     {
         return toResponse(new Method()
         {
@@ -253,7 +263,7 @@ public class UserClient extends RestApiClient<UserClient>
         });
     }
 
-    public Response deleteResponse(final WebResource resource)
+    protected Response deleteResponse(final WebResource resource)
     {
         return toResponse(new Method()
         {
