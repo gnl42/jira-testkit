@@ -135,12 +135,27 @@ public class UserClient extends RestApiClient<UserClient>
 
     public void addUserToApplication(final String userName, final String applicationKey)
     {
-        createResource().path("user").path("application").queryParam("username", userName).queryParam("applicationKey", applicationKey).post();
+        applicationAccessResource(userName, applicationKey).post();
+    }
+
+    public Response addUserToApplicationResponse(final String username, final String applicationKey)
+    {
+        return postResponse(applicationAccessResource(username, applicationKey));
     }
 
     public void removeUserFromApplication(String username, String applicationKey)
     {
-        createResource().path("user").path("application").queryParam("username", username).queryParam("applicationKey", applicationKey).delete();
+        applicationAccessResource(username, applicationKey).delete();
+    }
+
+    public Response removeUserFromApplicationResponse(final String username, final String applicationKey)
+    {
+        return deleteResponse(applicationAccessResource(username, applicationKey));
+    }
+
+    public WebResource applicationAccessResource(final String username, final String applicationKey)
+    {
+        return createResource().path("user").path("application").queryParam("username", username).queryParam("applicationKey", applicationKey);
     }
 
     public WebResource getSearchAssignableResource(String query, String issueKey, String startAt, String maxResults)
@@ -232,6 +247,30 @@ public class UserClient extends RestApiClient<UserClient>
             public ClientResponse call()
             {
                 return resource.get(ClientResponse.class);
+            }
+        });
+    }
+
+    private Response postResponse(final WebResource resource)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return resource.post(ClientResponse.class);
+            }
+        });
+    }
+
+    private Response deleteResponse(final WebResource resource)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return resource.delete(ClientResponse.class);
             }
         });
     }
