@@ -13,9 +13,12 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
@@ -31,11 +34,13 @@ public class PluginsBackdoor
 
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
+    private final PluginSettingsFactory pluginSettingsFactory;
 
-    public PluginsBackdoor(PluginController pluginController, PluginAccessor pluginAccessor)
+    public PluginsBackdoor(PluginController pluginController, PluginAccessor pluginAccessor, final PluginSettingsFactory pluginSettingsFactory)
     {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
+        this.pluginSettingsFactory = pluginSettingsFactory;
     }
 
     @GET
@@ -80,4 +85,21 @@ public class PluginsBackdoor
         pluginController.enablePluginModule(key);
         return Response.ok().build();
     }
+
+    @GET
+    @AnonymousAllowed
+    @Path ("settings/{key}")
+    public Response getSettings(@PathParam("key") String key) {
+        final Object value = pluginSettingsFactory.createGlobalSettings().get(key);
+        return Response.ok(value).build();
+    }
+
+    @PUT
+    @AnonymousAllowed
+    @Path ("settings/{key}")
+    public Response putSettings(@PathParam("key") String key, final String value) {
+        pluginSettingsFactory.createGlobalSettings().put(key, value);
+        return Response.ok().build();
+    }
+
 }
