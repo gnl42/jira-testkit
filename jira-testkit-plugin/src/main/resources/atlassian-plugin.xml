@@ -10,6 +10,7 @@
     </rest>
 
     <component-import key="lifeCycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager"/>
+    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
 
     <component interface="com.atlassian.jira.testkit.plugin.InitialiseSystemProperties" key="initSystemProperties"
                name="Init System Properties" class="com.atlassian.jira.testkit.plugin.InitialiseSystemPropertiesImpl"
