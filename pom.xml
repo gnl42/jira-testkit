@@ -8,7 +8,7 @@
 
 	<groupId>com.atlassian.jira.tests</groupId>
 	<artifactId>jira-testkit-plugin-parent</artifactId>
-	<version>6.4.47-SNAPSHOT</version>
+	<version>6.4.47</version>
 	<packaging>pom</packaging>
 	<name>JIRA TestKit</name>
 
@@ -16,7 +16,7 @@
 		<connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</developerConnection>
 		<url>http://bitbucket.org/atlassian/jira-testkit</url>
-	  <tag>HEAD</tag>
+	  <tag>jira-testkit-plugin-parent-6.4.47</tag>
     </scm>
 
     <licenses>
