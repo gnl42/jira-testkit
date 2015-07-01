@@ -35,14 +35,11 @@ public class ClasspathResources
 {
 
     /**
-     * <p/>
      * For given classpath location ('dir'), list all resources whose name matches given <tt>pattern</tt>.
      *
-     * <p/>
      * NOTE: Location is only used here to filter out a narrow set of locations to look in, the <tt>pattern</tt>
      * still has to match the entire resource name to be included in the result.
      *
-     * <p/>
      * NOTE 2: This will only work with classloaders based on file systems: class directory or JAR. More sophisticated
      * resource locations are not supported.
      *
