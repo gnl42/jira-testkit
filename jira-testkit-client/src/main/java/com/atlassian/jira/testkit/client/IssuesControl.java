@@ -135,9 +135,14 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
     public Response<Comment> commentIssue(String issueKey, String comment)
     {
+        return commentIssueWithVisibility(issueKey, comment, "group", "jira-administrators");
+    }
+
+    public Response<Comment> commentIssueWithVisibility(String issueKey, String comment, String restrictedType, String restrictedParam)
+    {
         Comment newComment = new Comment();
         newComment.body = comment;
-        newComment.visibility = new Visibility("group", "jira-administrators");
+        newComment.visibility = new Visibility(restrictedType, restrictedParam);
         return commentClient.post(issueKey, newComment);
     }
 

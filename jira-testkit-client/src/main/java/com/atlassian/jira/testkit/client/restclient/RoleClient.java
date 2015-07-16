@@ -34,6 +34,26 @@ public class RoleClient extends RestApiClient<RoleClient>
         return roles().type(MediaType.APPLICATION_JSON_TYPE).post(ProjectRole.class, new CreateProjectRoleBean(name, description));
     }
 
+    public ProjectRole updatePartial(Long id, String name, String description)
+    {
+        return roles().path(String.valueOf(id)).type(MediaType.APPLICATION_JSON_TYPE).post(ProjectRole.class, new CreateProjectRoleBean(name, description));
+    }
+
+    public ProjectRole updateFull(Long id, String name, String description)
+    {
+        return roles().path(String.valueOf(id)).type(MediaType.APPLICATION_JSON_TYPE).put(ProjectRole.class, new CreateProjectRoleBean(name, description));
+    }
+
+    public void deleteProjectRole(Long id)
+    {
+        roles().path(String.valueOf(id)).delete();
+    }
+
+    public void deleteProjectRole(Long id, Long replacementId)
+    {
+        roles().path(String.valueOf(id)).queryParam("swap", String.valueOf(replacementId)).delete();
+    }
+
     protected WebResource roles()
     {
         return createResource().path("role");
