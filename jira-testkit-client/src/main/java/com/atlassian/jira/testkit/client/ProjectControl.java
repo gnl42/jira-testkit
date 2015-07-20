@@ -117,9 +117,45 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
         get(resource);
     }
 
+    /**
+     * Gets the project's default assignee (i.e., the "Automatic" assignee) 
+     *
+     * @param projectKey the key of the project
+     */
+    public ProjectAssigneeType getProjectDefaultAssignee(String projectKey)
+    {
+        WebResource resource = createResource().path("project/defaultAssignee/get")
+                .queryParam("project", projectKey);
+
+        return ProjectAssigneeType.withId(Integer.parseInt(get(resource)));
+    }
+
 	public boolean deleteProject(String key)
 	{
 		return get(createResource().path("project/delete").queryParam("key", key), Boolean.class);
 	}
 
+    public static enum ProjectAssigneeType
+    {
+        PROJECT_DEFAULT(0), COMPONENT_LEAD(1), PROJECT_LEAD(2), UNASSIGNED(3);
+        
+        final private int id;
+        
+        ProjectAssigneeType(int id)
+        {
+            this.id = id;
+        }
+        
+        static ProjectAssigneeType withId(int id)
+        {
+            for (ProjectAssigneeType type : ProjectAssigneeType.values())
+            {
+                if (type.id == id)
+                {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException(id + " is not a valid ProjectAssigneeType id.");
+        }
+    }
 }
