@@ -125,7 +125,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     public ProjectAssigneeType getProjectDefaultAssignee(String projectKey)
     {
         WebResource resource = createResource().path("project/defaultAssignee/get")
-                .queryParam("project", "" + projectKey);
+                .queryParam("project", projectKey);
 
         return ProjectAssigneeType.withId(Integer.parseInt(get(resource)));
     }
@@ -139,7 +139,7 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     {
         PROJECT_DEFAULT(0), COMPONENT_LEAD(1), PROJECT_LEAD(2), UNASSIGNED(3);
         
-        private int id;
+        final private int id;
         
         ProjectAssigneeType(int id)
         {
