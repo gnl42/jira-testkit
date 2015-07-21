@@ -78,6 +78,18 @@ public class ProjectRole
         {
             return avatarUrl;
         }
+
+        @Override
+        public String toString()
+        {
+            return "Actor{" +
+                    "id=" + id +
+                    ", displayName='" + displayName + '\'' +
+                    ", type='" + type + '\'' +
+                    ", name='" + name + '\'' +
+                    ", avatarUrl='" + avatarUrl + '\'' +
+                    '}';
+        }
     }
 
     public String getSelf()
