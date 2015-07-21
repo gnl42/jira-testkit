@@ -4,8 +4,11 @@ import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 
@@ -54,6 +57,36 @@ public class RoleClient extends RestApiClient<RoleClient>
         roles().path(String.valueOf(id)).queryParam("swap", String.valueOf(replacementId)).delete();
     }
 
+    public ProjectRoleActorsBean getDefaultActorsForRole(Long id)
+    {
+        return roles().path(String.valueOf(id)).path("actors").get(ProjectRoleActorsBean.class);
+    }
+
+    public ProjectRoleActorsBean addDefaultActorsToRole(Long id, String[] usernames, String[] groupnames)
+    {
+        return roles()
+                .path(String.valueOf(id)).path("actors")
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .post(ProjectRoleActorsBean.class,
+                        new ActorInputBean(
+                                usernames == null ? null : Arrays.asList(usernames),
+                                groupnames == null? null : Arrays.asList(groupnames)));
+    }
+
+    public ProjectRoleActorsBean deleteDefaultActorsToRole(Long id, String username, String groupname)
+    {
+        WebResource actors = roles().path(String.valueOf(id)).path("actors");
+        if (username != null)
+        {
+            actors = actors.queryParam("user", username);
+        }
+        else if (groupname != null)
+        {
+            actors = actors.queryParam("group", groupname);
+        }
+        return actors.delete(ProjectRoleActorsBean.class);
+    }
+
     protected WebResource roles()
     {
         return createResource().path("role");
@@ -70,6 +103,21 @@ public class RoleClient extends RestApiClient<RoleClient>
         {
             this.name = name;
             this.description = description;
+        }
+    }
+
+    private static class ActorInputBean
+    {
+        @JsonProperty
+        private Collection<String> user;
+        @JsonProperty
+        private Collection<String> group;
+
+        @JsonCreator
+        public ActorInputBean(@JsonProperty("user") Collection<String> usernames, @JsonProperty("group") Collection<String> groupnames)
+        {
+            this.user = usernames;
+            this.group = groupnames;
         }
     }
 }
