@@ -80,7 +80,7 @@ public class RoleClient extends RestApiClient<RoleClient>
         {
             actors = actors.queryParam("user", username);
         }
-        else if (groupname != null)
+        if (groupname != null)
         {
             actors = actors.queryParam("group", groupname);
         }
