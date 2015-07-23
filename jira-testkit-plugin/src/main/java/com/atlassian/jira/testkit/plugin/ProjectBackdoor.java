@@ -340,7 +340,27 @@ public class ProjectBackdoor
         return Response.ok(null).build();
     }
 
-	@GET
+    @GET
+    @AnonymousAllowed
+    @Path("{projectKey}/defaultAssignee")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getAutomaticAssignee(@PathParam("projectKey") String projectKey)
+    {
+        ApplicationUser admin = userUtil.getUserByName("admin");
+        
+        Project project = projectManager.getProjectObjByKey(projectKey);
+        
+        if (project != null)
+        {
+            return Response.ok("No Project found with key " + projectKey).status(Response.Status.NOT_FOUND).build();
+        }
+
+        long assigneeType = project.getAssigneeType();
+        return Response.ok(assigneeType).build();
+    }
+
+    
+    @GET
 	@AnonymousAllowed
 	@Path("delete")
 	@Produces({MediaType.APPLICATION_JSON})
