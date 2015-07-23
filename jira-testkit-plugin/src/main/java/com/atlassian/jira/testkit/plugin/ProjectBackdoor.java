@@ -349,8 +349,8 @@ public class ProjectBackdoor
         ApplicationUser admin = userUtil.getUserByName("admin");
         
         Project project = projectManager.getProjectObjByKey(projectKey);
-        
-        if (project != null)
+
+        if (project == null)
         {
             return Response.ok("No Project found with key " + projectKey).status(Response.Status.NOT_FOUND).build();
         }
