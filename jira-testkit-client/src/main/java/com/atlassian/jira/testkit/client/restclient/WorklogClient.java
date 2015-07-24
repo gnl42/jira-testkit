@@ -178,4 +178,16 @@ public class WorklogClient extends RestApiClient<WorklogClient>
             }
         });
     }
+
+    public Response<WorklogSincePage> getUpdatedWorklogsSince(Long since)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("worklog").path("updated").queryParam("since", String.valueOf(since)).get(ClientResponse.class);
+            }
+        }, WorklogSincePage.class);
+    }
 }
