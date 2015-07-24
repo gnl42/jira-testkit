@@ -16,7 +16,9 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 import javax.ws.rs.core.MediaType;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Client for the work log resource.
@@ -179,7 +181,7 @@ public class WorklogClient extends RestApiClient<WorklogClient>
         });
     }
 
-    public Response<WorklogSincePage> getUpdatedWorklogsSince(Long since)
+    public Response<WorklogChangedSinceBean> getUpdatedWorklogsSince(Long since)
     {
         return toResponse(new Method()
         {
@@ -188,6 +190,37 @@ public class WorklogClient extends RestApiClient<WorklogClient>
             {
                 return createResource().path("worklog").path("updated").queryParam("since", String.valueOf(since)).get(ClientResponse.class);
             }
-        }, WorklogSincePage.class);
+        }, WorklogChangedSinceBean.class);
+    }
+
+    public Response<WorklogsBean> getWorklogs(Collection<Long> ids)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("worklog").path("list").post(ClientResponse.class, new WorklogIdsRequestBean(ids));
+            }
+        }, WorklogsBean.class);
+    }
+
+    public class WorklogIdsRequestBean
+    {
+        private Collection<Long> ids;
+
+        public WorklogIdsRequestBean() { }
+
+        public WorklogIdsRequestBean(Collection<Long> ids) { this.ids = ids; }
+
+        public Collection<Long> getIds()
+        {
+            return ids;
+        }
+
+        public void setIds(final Set<Long> ids)
+        {
+            this.ids = ids;
+        }
     }
 }
