@@ -19,7 +19,7 @@ public class WorklogChangedSinceBean
     public Long until;
 
     @JsonProperty
-    public boolean isLastPage;
+    public boolean lastPage;
 
     @JsonProperty
     public URI self;

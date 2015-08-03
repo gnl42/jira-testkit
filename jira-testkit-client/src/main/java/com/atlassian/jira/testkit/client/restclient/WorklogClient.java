@@ -12,11 +12,13 @@ package com.atlassian.jira.testkit.client.restclient;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -188,21 +190,35 @@ public class WorklogClient extends RestApiClient<WorklogClient>
             @Override
             public ClientResponse call()
             {
-                return createResource().path("worklog").path("updated").queryParam("since", String.valueOf(since)).get(ClientResponse.class);
+                return WorklogClient.this.createResource().path("worklog").path("updated").queryParam("since", String.valueOf(since)).get(ClientResponse.class);
             }
         }, WorklogChangedSinceBean.class);
     }
 
-    public Response<WorklogsBean> getWorklogs(Collection<Long> ids)
+    public Response<WorklogChangedSinceBean> getDeletedWorklogsSince(Long since)
     {
         return toResponse(new Method()
         {
             @Override
             public ClientResponse call()
             {
-                return createResource().path("worklog").path("list").post(ClientResponse.class, new WorklogIdsRequestBean(ids));
+                return WorklogClient.this.createResource().path("worklog").path("deleted").queryParam("since", String.valueOf(since)).get(ClientResponse.class);
             }
-        }, WorklogsBean.class);
+        }, WorklogChangedSinceBean.class);
+    }
+
+    public Response<List<Worklog>> getWorklogs(Collection<Long> ids)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("worklog").path("list")
+                        .type(MediaType.APPLICATION_JSON_TYPE)
+                        .post(ClientResponse.class, new WorklogIdsRequestBean(ids));
+            }
+        }, new GenericType<List<Worklog>>() {});
     }
 
     public class WorklogIdsRequestBean

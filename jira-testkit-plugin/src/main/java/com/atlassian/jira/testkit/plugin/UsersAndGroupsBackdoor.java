@@ -32,7 +32,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.util.concurrent.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -253,7 +252,7 @@ public class UsersAndGroupsBackdoor
             @QueryParam ("usernamePrefix") String usernamePrefix,
             @QueryParam ("displayNamePrefix") String displayNamePrefix,
             @QueryParam ("numberOfNewUsers") int numberOfNewUsers,
-            @Nullable @QueryParam ("groupName") String groupName)
+            @javax.annotation.Nullable @QueryParam ("groupName") String groupName)
     {
         Group group = null;
         if (StringUtils.isNotBlank(groupName))
