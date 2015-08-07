@@ -18,6 +18,8 @@ import com.atlassian.jira.testkit.beans.UserDTO;
 
 import com.sun.jersey.api.client.WebResource;
 
+import javax.annotation.Nullable;
+
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
 /**
@@ -159,6 +161,34 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public UsersAndGroupsControl deleteGroup(String groupName)
     {
         get(createResource().path("group").path("delete").queryParam("groupName", groupName));
+        return this;
+    }
+
+    public void addGroupToGroup(String childGroupName, String parentGroupName)
+    {
+        get(createResource().path("group").path("addToGroup").queryParam("groupName", childGroupName).queryParam("parentGroupName", parentGroupName));
+    }
+
+    /**
+     * Makes a lot of new groups, fast, and optionally adds them to a parent group.
+     * Also allows creation of a number of new users for each created group.
+     *
+     * Any created users have auto-generated names of the form [groupName]-user[index], e.g. testgroup-user0.
+     *
+     * @param groupNamePrefix prefix before each new group name, e.g. "testgroup" becomes "testgroup0"
+     * @param numberOfNewGroups number of users to add
+     * @param parentGroupName the parent group name (requires nested groups to be enabled)
+     * @param numberOfNewUsersPerGroup number of new users to create and add to each group
+     * @return this control
+     */
+    public UsersAndGroupsControl addGroups(String groupNamePrefix, int numberOfNewGroups, @Nullable String parentGroupName, int numberOfNewUsersPerGroup)
+    {
+        get(createResource().path("group").path("addMany")
+                        .queryParam("groupNamePrefix", groupNamePrefix)
+                        .queryParam("numberOfNewGroups", "" + numberOfNewGroups)
+                        .queryParam("parentGroupName", parentGroupName)
+                        .queryParam("numberOfNewUsersPerGroup", "" + numberOfNewUsersPerGroup)
+        );
         return this;
     }
 

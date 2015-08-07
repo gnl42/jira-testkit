@@ -14,6 +14,7 @@ import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.crowd.embedded.api.Directory;
 import com.atlassian.crowd.embedded.api.Group;
+import com.atlassian.crowd.exception.InvalidMembershipException;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
 import com.atlassian.crowd.exception.embedded.InvalidGroupException;
 import com.atlassian.crowd.exception.runtime.UserNotFoundException;
@@ -38,6 +39,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -244,6 +246,70 @@ public class UsersAndGroupsBackdoor
 
 		return Response.ok(null).build();
 	}
+
+    @GET
+    @AnonymousAllowed
+    @Path("group/addToGroup")
+    public Response addGroupToGroup(
+            @QueryParam ("groupName") String groupName,
+            @QueryParam ("parentGroupName") String parentGroupName)
+    {
+        Group childGroup = crowdService.getGroup(groupName);
+        Group parentGroup = crowdService.getGroup(parentGroupName);
+
+        try
+        {
+            crowdService.addGroupToGroup(childGroup, parentGroup);
+        }
+        catch (OperationNotPermittedException | InvalidMembershipException e)
+        {
+            log.warn("Exception adding group to group", e);
+            throw new RuntimeException(e);
+        }
+
+        return Response.ok(null).build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("group/addMany")
+    public Response addManyGroups(
+            @QueryParam ("groupNamePrefix") String groupNamePrefix,
+            @QueryParam ("numberOfNewGroups") int numberOfNewGroups,
+            @Nullable @QueryParam ("parentGroupName") String parentGroupName,
+            @Nullable @QueryParam ("numberOfNewUsersPerGroup") Integer numberOfNewUsers)
+    {
+        Group parentGroup = null;
+        if (StringUtils.isNotBlank(parentGroupName))
+        {
+            parentGroup = crowdService.getGroup(parentGroupName);
+        }
+        try
+        {
+            for (int i = 0; i < numberOfNewGroups; i++)
+            {
+                String groupName = groupNamePrefix + i;
+                Group newGroup = crowdService.addGroup(new GroupTemplate(groupName));
+                if (parentGroup != null)
+                {
+                    crowdService.addGroupToGroup(newGroup, parentGroup);
+                }
+
+                if (numberOfNewUsers != null && numberOfNewUsers > 0)
+                {
+                    String prefix = groupName + "-user";
+                    addManyUsers(prefix, prefix, numberOfNewUsers, newGroup.getName());
+                }
+            }
+        }
+        catch (InvalidGroupException | OperationNotPermittedException | InvalidMembershipException e)
+        {
+            log.warn("Exception adding groups", e);
+            throw new RuntimeException(e);
+        }
+
+        return Response.ok(null).build();
+    }
 
 	@GET
     @AnonymousAllowed
