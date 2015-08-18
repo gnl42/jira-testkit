@@ -78,6 +78,9 @@ public class ServicesBackdoor
         public Long id;
         public String name;
         public String serviceClass;
+        public String cronExpression;
+        public Long delay;
+        public boolean local;
         public boolean usable;
         public Map<String, String> params;
 
@@ -90,6 +93,9 @@ public class ServicesBackdoor
             id = serviceContainer.getId();
             name = serviceContainer.getName();
             serviceClass = serviceContainer.getServiceClass();
+            cronExpression = serviceContainer.getCronExpression();
+            delay = serviceContainer.getDelay();
+            local = serviceContainer.isLocalService();
             usable = serviceContainer.isUsable();
             try
             {

@@ -50,6 +50,9 @@ public class ServicesControl extends BackdoorControl<ServicesControl>
         public Long id;
         public String name;
         public String serviceClass;
+        public String cronExpression;
+        public Long delay;
+        public boolean local;
         public boolean usable;
         public Map<String, String> params;
     }
