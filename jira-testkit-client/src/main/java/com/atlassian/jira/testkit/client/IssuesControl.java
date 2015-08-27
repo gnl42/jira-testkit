@@ -9,28 +9,32 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.rest.api.issue.IssueFields;
+import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
 import com.atlassian.jira.rest.api.issue.ResourceRef;
+import com.atlassian.jira.testkit.client.IssueTypeControl.IssueType;
 import com.atlassian.jira.testkit.client.restclient.Comment;
 import com.atlassian.jira.testkit.client.restclient.CommentClient;
 import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.IssueClient;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.atlassian.jira.testkit.client.restclient.Visibility;
-import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.jira.rest.api.issue.IssueFields;
-import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
 import com.atlassian.jira.util.collect.MapBuilder;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withId;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withKey;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withName;
+import static com.google.common.collect.Iterables.find;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -38,11 +42,14 @@ import static org.junit.Assert.assertTrue;
  *
  * @since v5.0
  */
+@SuppressWarnings ("unused" /* used in JIRA's func tests */)
+@ParametersAreNonnullByDefault
 public class IssuesControl extends BackdoorControl<IssuesControl>
 {
     // Ids of projects pre-imported from testkit-blankprojects.xml; should be present in most tests.
     public static final long HSP_PROJECT_ID = 10000;
     public static final long MKY_PROJECT_ID = 10001;
+    private static final String DEFAULT_PRIORITY = "1"; // presumed to be "Blocker"
 
     private IssueClient issueClient;
     private CommentClient commentClient;
@@ -63,7 +70,8 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
     public IssueCreateResponse createSubtask(String projectId, String parentKey, String summary)
     {
-        final IssueTypeControl.IssueType issueType = Iterables.find(issueTypeControl.getIssueTypes(), hasName("Sub-task"));
+        IssueType issueType = find(issueTypeControl.getIssueTypes(), type -> type.getName().equals("Sub-task"));
+
         IssueFields fields = new IssueFields();
         fields.project(withId("" + projectId)); // 10000
         fields.parent(withKey(parentKey));
@@ -75,62 +83,65 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return issueClient.create(issue.fields(fields));
     }
 
-    private Predicate<IssueTypeControl.IssueType> hasName(final String anObject)
-    {
-        return new Predicate<IssueTypeControl.IssueType>()
-        {
-            @Override
-            public boolean apply(final IssueTypeControl.IssueType input)
-            {
-                return input.getName().equals(anObject);
-            }
-        };
-    }
-
-    public IssueCreateResponse createIssue(String projectKey, String summary)
-    {
-        return createIssue(projectKey, summary, null);
-    }
-
     public IssuesControl setDescription(String issueKey, String description)
     {
-        final IssueUpdateRequest fields = new IssueUpdateRequest().fields(new IssueFields()
-                .description(description)
-        );
+        IssueUpdateRequest fields = new IssueUpdateRequest().fields(new IssueFields().description(description));
         issueClient.update(issueKey, fields);
         return this;
     }
 
-    public IssueCreateResponse createIssue(long projectId, String summary, String assignee)
+    public IssueCreateResponse createIssue(String projectKey, String summary)
     {
-        IssueFields fields = new IssueFields();
-        fields.project(withId("" + projectId)); // 10000
-        fields.issueType(withId("1"));  // Bug
-        fields.priority(withId("1"));   // Blocker
-        if (assignee != null)
-        {
-            fields.assignee(withName(assignee));
-        }
-        fields.summary(summary);
+        return createIssue(projectKey, summary, null, DEFAULT_PRIORITY, getBestGuessIssueType());
+    }
 
-        IssueUpdateRequest issue = new IssueUpdateRequest();
-        return issueClient.create(issue.fields(fields));
+    public IssueCreateResponse createIssue(long projectId, String summary, @Nullable String assignee)
+    {
+        return createIssue(String.valueOf(projectId), summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType());
     }
 
     public IssueCreateResponse createIssue(String projectKey, String summary, String assignee)
     {
+        return createIssue(projectKey, summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType());
+    }
+
+    public IssueCreateResponse createIssue(String projectKey, String summary, @Nullable String assignee,
+            String priorityId, String issueType)
+    {
         IssueFields fields = new IssueFields();
-        fields.project(withKey(projectKey)); // MKY
-        fields.issueType(withId("1"));  // Bug
-        fields.priority(withId("1"));   // Blocker
+        fields.project(withKey(projectKey));
+        fields.issueType(withId(issueType));
+        fields.priority(withId(priorityId));
+        fields.summary(summary);
         if (assignee != null)
         {
             fields.assignee(withName(assignee));
         }
-        fields.summary(summary);
 
-        IssueUpdateRequest issue = new IssueUpdateRequest();
-        return issueClient.create(issue.fields(fields));
+        return issueClient.create(new IssueUpdateRequest().fields(fields));
+    }
+
+    /**
+     * Compatibility fallback used to handle the case where clients want to create an issue, but don't care what
+     * type it is. Heuristic is to filter out all the issue types with known required extras (such as epic or sub-task),
+     * returning the first issue type found. Fails fast if no issue types found.
+     */
+    @Nonnull
+    private String getBestGuessIssueType()
+    {
+        List<IssueType> issueTypes = issueTypeControl.getIssueTypes();
+        Optional<IssueType> issueType = issueTypes.stream()
+                .filter(type -> !type.isSubtask() && !type.getName().equals("Epic"))
+                .findFirst();
+
+        if (!issueType.isPresent())
+        {
+            // no other issue types, so fail fast on the client rather than returning the error response to make it
+            // easier to debug.
+            throw new UnsupportedOperationException("Can't create issue due to no default issue types");
+        }
+
+        return issueType.get().getId();
     }
 
     public Response<Comment> commentIssue(String issueKey, String comment)
@@ -145,7 +156,6 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         newComment.visibility = new Visibility(restrictedType, restrictedParam);
         return commentClient.post(issueKey, newComment);
     }
-
 
     public void assignIssue(String issueKey, String username)
     {
