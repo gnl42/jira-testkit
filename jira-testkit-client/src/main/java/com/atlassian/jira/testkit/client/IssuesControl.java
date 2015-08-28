@@ -63,6 +63,8 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         commentClient = new CommentClient(environmentData);
     }
 
+    /** @deprecated use createIssue(projectKey,...); since 7.0 */
+    @Deprecated
     public IssueCreateResponse createIssue(long projectId, String summary)
     {
         return createIssue(projectId, summary, null);
@@ -95,9 +97,21 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return createIssue(projectKey, summary, null, DEFAULT_PRIORITY, getBestGuessIssueType());
     }
 
+    /** @deprecated use createIssue(projectKey,...); since 7.0 */
+    @Deprecated
     public IssueCreateResponse createIssue(long projectId, String summary, @Nullable String assignee)
     {
-        return createIssue(String.valueOf(projectId), summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType());
+        IssueFields fields = new IssueFields();
+        fields.project(withId(String.valueOf(projectId)));
+        fields.issueType(withId(getBestGuessIssueType()));
+        fields.priority(withId(DEFAULT_PRIORITY));
+        fields.summary(summary);
+        if (assignee != null)
+        {
+            fields.assignee(withName(assignee));
+        }
+
+        return issueClient.create(new IssueUpdateRequest().fields(fields));
     }
 
     public IssueCreateResponse createIssue(String projectKey, String summary, String assignee)
