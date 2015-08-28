@@ -63,6 +63,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         commentClient = new CommentClient(environmentData);
     }
 
+    /** @deprecated use createIssue(projectKey,...); since 7.0 */
     @Deprecated
     public IssueCreateResponse createIssue(long projectId, String summary)
     {
@@ -96,6 +97,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return createIssue(projectKey, summary, null, DEFAULT_PRIORITY, getBestGuessIssueType());
     }
 
+    /** @deprecated use createIssue(projectKey,...); since 7.0 */
     @Deprecated
     public IssueCreateResponse createIssue(long projectId, String summary, @Nullable String assignee)
     {
