@@ -138,6 +138,18 @@ public class UserClient extends RestApiClient<UserClient>
         applicationAccessResource(userName, applicationKey).post();
     }
 
+    public List<User> searchByPermission(String query, String permissions, String issueKey, String projectKey, String startAt, String maxResults)
+    {
+        WebResource resource = getSearchByPermissionResource(query, permissions, issueKey, projectKey, startAt, maxResults);
+        return Arrays.asList(resource.get(User[].class));
+    }
+
+    public Response searchByPermissionResponse(String query, String permissions, String issueKey, String projectKey, String startAt, String maxResults)
+    {
+        WebResource resource = getSearchByPermissionResource(query, permissions, issueKey, projectKey, startAt, maxResults);
+        return getResponse(resource);
+    }
+
     public Response addUserToApplicationResponse(final String username, final String applicationKey)
     {
         return postResponse(applicationAccessResource(username, applicationKey));
@@ -186,6 +198,18 @@ public class UserClient extends RestApiClient<UserClient>
             resource = resource.queryParam("includeActive", includeActive.toString());
         if (includeInactive != null)
             resource = resource.queryParam("includeInactive", includeInactive.toString());
+        return resource;
+    }
+
+    public WebResource getSearchByPermissionResource(String query, String permissions, String issueKey, String projectKey, String startAt, String maxResults)
+    {
+        WebResource resource = createResource().path("user").path("permission").path("search");
+        resource = StringUtils.isNotBlank(query) ? resource.queryParam("username", query) : resource;
+        resource = StringUtils.isNotBlank(issueKey) ? resource.queryParam("issueKey", issueKey) : resource;
+        resource = StringUtils.isNotBlank(projectKey) ? resource.queryParam("projectKey", projectKey) : resource;
+        resource = StringUtils.isNotBlank(startAt) ? resource.queryParam("startAt", startAt) : resource;
+        resource = StringUtils.isNotBlank(maxResults) ? resource.queryParam("maxResults", maxResults) : resource;
+        resource = resource.queryParam("permissions", permissions);
         return resource;
     }
 
@@ -241,38 +265,17 @@ public class UserClient extends RestApiClient<UserClient>
     
     public Response getResponse(final WebResource resource)
     {
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                return resource.get(ClientResponse.class);
-            }
-        });
+        return toResponse(() -> resource.get(ClientResponse.class));
     }
 
     private Response postResponse(final WebResource resource)
     {
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                return resource.post(ClientResponse.class);
-            }
-        });
+        return toResponse(() -> resource.post(ClientResponse.class));
     }
 
     private Response deleteResponse(final WebResource resource)
     {
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                return resource.delete(ClientResponse.class);
-            }
-        });
+        return toResponse(() -> resource.delete(ClientResponse.class));
     }
 
     /**
