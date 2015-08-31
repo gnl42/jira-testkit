@@ -185,6 +185,16 @@ public class MailServersControl extends BackdoorControl<MailServersControl>
         assertThat("Clinet response status should be equal to \"OK\"", clientResponse.getStatus(), equalTo(Response.Status.OK.getStatusCode()));
     }
 
+    /**
+     * Checks if smpt is configured. There has to be at least one smtp server and outgoing mails should be enabled.
+     *
+     * @return true if smtp server is configured, false otherwise.
+     */
+    public boolean isSmtpConfigured()
+    {
+        return Boolean.parseBoolean(createResource().path("mailServers/smtpConfigured").get(String.class));
+    }
+
     static class MailServersBean
     {
         public String name;

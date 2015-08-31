@@ -117,4 +117,22 @@ public class MailServersBackdoor
         mailQueue.sendBuffer();
         return Response.ok().build();
     }
+
+    @GET
+    @Path ("smtpConfigured")
+    public Response smtpMailConfigured()
+    {
+        boolean configured = true;
+        if (MailFactory.isSendingDisabled())
+        {
+            configured = false;
+        }
+        MailServerManager mailServerManager = MailFactory.getServerManager();
+        if (!mailServerManager.isDefaultSMTPMailServerDefined())
+        {
+            configured = false;
+        }
+
+        return Response.ok(configured).build();
+    }
 }

@@ -62,6 +62,7 @@ public class Backdoor
     private final WebSudoControl webSudoControl;
     private final WorkflowSchemesControl workflowSchemesControl;
     private final WorkflowsControl workflowsControl;
+    private final FeatureManagerControl featureManagerControl;
 
     public Backdoor(JIRAEnvironmentData environmentData)
     {
@@ -112,6 +113,7 @@ public class Backdoor
         this.webSudoControl = new WebSudoControl(environmentData);
         this.workflowSchemesControl = new WorkflowSchemesControl(environmentData);
         this.workflowsControl = new WorkflowsControl(environmentData);
+        this.featureManagerControl = new FeatureManagerControl(environmentData);
     }
 
     public ScreensControl screens()
@@ -403,5 +405,10 @@ public class Backdoor
     public EntityLinkControl getEntityLinkControl()
     {
         return entityLinkControl;
+    }
+
+    public FeatureManagerControl getFeatureManagerControl()
+    {
+        return featureManagerControl;
     }
 }
