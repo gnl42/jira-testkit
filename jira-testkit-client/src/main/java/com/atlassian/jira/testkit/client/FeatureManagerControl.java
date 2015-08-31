@@ -23,11 +23,11 @@ public class FeatureManagerControl extends BackdoorControl<FeatureManagerControl
 
     public boolean isOnDemand()
     {
-        return Boolean.parseBoolean(createOnDemandResource().path("featureManager").get(String.class));
+        return Boolean.parseBoolean(createFeatureManagerResource().path("isOnDemand").get(String.class));
     }
 
-    private WebResource createOnDemandResource()
+    private WebResource createFeatureManagerResource()
     {
-        return createResource().path("isOnDemand");
+        return createResource().path("featureManager");
     }
 }
