@@ -15,6 +15,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
+import java.util.Objects;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -75,6 +76,22 @@ public class CommentClient extends RestApiClient<CommentClient>
             public ClientResponse call()
             {
                 return createResource().path("issue").path(issueKey).path("comment").get(ClientResponse.class);
+            }
+        }, CommentsWithPaginationBean.class);
+    }
+
+    public Response<CommentsWithPaginationBean> getComments(final String issueKey, final Integer startAt, final Integer maxResults, final String orderBy)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("issue").path(issueKey).path("comment")
+                        .queryParam("startAt", Objects.toString(startAt))
+                        .queryParam("maxResults", Objects.toString(maxResults))
+                        .queryParam("orderBy", orderBy)
+                        .get(ClientResponse.class);
             }
         }, CommentsWithPaginationBean.class);
     }
