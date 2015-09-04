@@ -2,6 +2,7 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.restclient.AnalyticsClient;
 import com.atlassian.jira.testkit.client.restclient.ProjectRoleClient;
+import com.atlassian.jira.testkit.client.restclient.RoleClient;
 import com.atlassian.jira.testkit.client.restclient.SearchClient;
 
 import javax.annotation.Nonnull;
@@ -48,6 +49,7 @@ public class Backdoor
     private final ProjectRoleClient projectRoleClient;
     private final RawRestApiControl rawRestApiControl;
     private final ResolutionControl resolutionControl;
+    private final RoleClient roleClient;
     private final ScreensControl screensControl;
     private final SearchClient searchClient;
     private final SearchRequestControl searchRequests;
@@ -100,6 +102,7 @@ public class Backdoor
         this.rawRestApiControl = new RawRestApiControl(environmentData);
         this.statusControl = new StatusControl(environmentData);
         this.resolutionControl = new ResolutionControl(environmentData);
+        this.roleClient = new RoleClient(environmentData);
         this.screensControl = new ScreensControl(environmentData);
         this.searchClient = new SearchClient(environmentData);
         this.searchRequests = new SearchRequestControl(environmentData);
@@ -230,6 +233,10 @@ public class Backdoor
     public ResolutionControl resolutions()
     {
         return resolutionControl;
+    }
+
+    public RoleClient roleClient() {
+        return roleClient;
     }
 
     public PriorityControl priorities()
