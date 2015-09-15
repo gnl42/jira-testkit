@@ -44,6 +44,10 @@ public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
         issueType.setIconUrl(iconURL);
         issueType.setSubtask(false);
 
+        return createIssueType(issueType);
+    }
+
+    public IssueType createIssueType(IssueType issueType) {
         return createIssueTypeResource().post(IssueType.class, issueType);
     }
 
