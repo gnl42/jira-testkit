@@ -94,7 +94,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
     public IssueCreateResponse createIssue(String projectKey, String summary)
     {
-        return createIssue(projectKey, summary, null, DEFAULT_PRIORITY, getBestGuessIssueType());
+        return createIssue(projectKey, summary, null, DEFAULT_PRIORITY, getBestGuessIssueType(Optional.of(projectKey)));
     }
 
     /** @deprecated use createIssue(projectKey,...); since 7.0 */
@@ -103,7 +103,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     {
         IssueFields fields = new IssueFields();
         fields.project(withId(String.valueOf(projectId)));
-        fields.issueType(withId(getBestGuessIssueType()));
+        fields.issueType(withId(getBestGuessIssueType(Optional.of(Long.toString(projectId)))));
         fields.priority(withId(DEFAULT_PRIORITY));
         fields.summary(summary);
         if (assignee != null)
@@ -116,7 +116,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
 
     public IssueCreateResponse createIssue(String projectKey, String summary, String assignee)
     {
-        return createIssue(projectKey, summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType());
+        return createIssue(projectKey, summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType(Optional.of(projectKey)));
     }
 
     public IssueCreateResponse createIssue(String projectKey, String summary, @Nullable String assignee,
@@ -141,10 +141,13 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
      * returning the first issue type found. Fails fast if no issue types found.
      */
     @Nonnull
-    private String getBestGuessIssueType()
+    private String getBestGuessIssueType(Optional<String> projectIdOrKey)
     {
-        List<IssueType> issueTypes = issueTypeControl.getIssueTypes();
-        Optional<IssueType> issueType = issueTypes.stream()
+        final List<IssueType> issueTypes = projectIdOrKey
+                .map(issueTypeControl::getIssueTypesForProject)
+                .orElse(issueTypeControl.getIssueTypes());
+        final Optional<IssueType> issueType = issueTypes
+                .stream()
                 .filter(type -> !type.isSubtask() && !type.getName().equals("Epic"))
                 .findFirst();
 

@@ -12,26 +12,24 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.IssueTypeManager;
 import com.atlassian.jira.config.SubTaskManager;
-import com.atlassian.jira.testkit.plugin.util.Errors;
+import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.testkit.plugin.util.Errors;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.List;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.trimToNull;
 
 /**
@@ -48,23 +46,51 @@ public class IssueTypeBackdoorResource
     
     private final ConstantsManager constantsManager;
     private final IssueTypeManager issueTypeManager;
-    
-    public IssueTypeBackdoorResource(ConstantsManager constantsManager, IssueTypeManager issueTypeManager)
+    private final ProjectManager projectManager;
+    private final IssueTypeSchemeManager issueTypeSchemeManager;
+
+    public IssueTypeBackdoorResource(
+            final ConstantsManager constantsManager,
+            final IssueTypeManager issueTypeManager,
+            final ProjectManager projectManager,
+            final IssueTypeSchemeManager issueTypeSchemeManager)
     {
         this.constantsManager = constantsManager;
         this.issueTypeManager = issueTypeManager;
+        this.projectManager = projectManager;
+        this.issueTypeSchemeManager = issueTypeSchemeManager;
+    }
+
+    @GET
+    @Path("project/{projectIdOrKey}")
+    public Response getIssueTypesForProject(@PathParam("projectIdOrKey") String projectIdOrKey)
+    {
+        Project project;
+        if (StringUtils.isNumeric(projectIdOrKey))
+        {
+            project = projectManager.getProjectObj(Long.valueOf(projectIdOrKey));
+        }
+        else
+        {
+            project = projectManager.getProjectObjByKey(projectIdOrKey);
+        }
+
+        if (project == null)
+        {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(toBeans(issueTypeSchemeManager.getIssueTypesForProject(project))).cacheControl(never()).build();
     }
 
     @GET
     public Response getAllTypes()
     {
-        final Collection<IssueType> issueTypes = constantsManager.getAllIssueTypeObjects();
-        final List<IssueTypeBean> issueTypeBeans = Lists.newArrayList();
-        for (IssueType issueType : issueTypes)
-        {
-            issueTypeBeans.add(new IssueTypeBean(issueType));
-        }
-        return Response.ok(issueTypeBeans).cacheControl(never()).build();
+        return Response.ok(toBeans(constantsManager.getAllIssueTypeObjects())).cacheControl(never()).build();
+    }
+
+    private List<IssueTypeBean> toBeans(final Collection<IssueType> issueTypes)
+    {
+        return issueTypes.stream().map(IssueTypeBean::new).collect(toList());
     }
     
     @POST

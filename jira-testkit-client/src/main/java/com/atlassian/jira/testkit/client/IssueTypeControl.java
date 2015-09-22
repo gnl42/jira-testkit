@@ -56,6 +56,11 @@ public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
         return createIssueTypeResource().get(LIST_GENERIC_TYPE);
     }
 
+    public List<IssueType> getIssueTypesForProject(final String projectIdOrKey)
+    {
+        return createIssueTypeResource(projectIdOrKey).get(LIST_GENERIC_TYPE);
+    }
+
     public void deleteIssueType(long id)
     {
         createIssueTypeResource().path(valueOf(id)).delete();
@@ -64,6 +69,11 @@ public class IssueTypeControl extends BackdoorControl<IssueTypeControl>
     private WebResource createIssueTypeResource()
     {
         return createResource().path("issueType");
+    }
+
+    private WebResource createIssueTypeResource(String projectIdOrKey)
+    {
+        return createIssueTypeResource().path("project").path(projectIdOrKey);
     }
 
     public static class IssueType
