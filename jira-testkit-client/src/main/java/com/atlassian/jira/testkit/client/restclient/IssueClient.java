@@ -60,6 +60,10 @@ public class IssueClient extends RestApiClient<IssueClient>
         return issueResource(issueKey, expand).get(Issue.class);
     }
 
+    public Issue getWithProperties(String issueKey, List<String> properties, Issue.Expand... expand) {
+        return issueResource(issueKey, expand).queryParam("property", String.join(",", properties)).get(Issue.class);
+    }
+
     public WebResource issueResource(String issueKey, Issue.Expand... expand)
     {
         return issueWithKey(issueKey, Collections.<StringList>emptyList(), setOf(Issue.Expand.class, expand));
