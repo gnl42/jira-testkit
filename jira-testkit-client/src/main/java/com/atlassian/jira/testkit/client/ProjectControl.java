@@ -50,6 +50,26 @@ public class ProjectControl extends BackdoorControl<ProjectControl>
     }
 
     /**
+     * Adds a project in the same way as {@link #addProject(String, String, String)}, but allows to specify the project template to be applied.
+     *
+     * @param name the name of the project
+     * @param key  the project key
+     * @param lead the username of the project lead
+     * @param projectTemplateKey the key of the project template to be applied
+     * @return the project ID
+     */
+    public long addProjectWithTemplate(String name, String key, String lead, String projectTemplateKey)
+    {
+        final String s = createResource().path("project/add")
+                .queryParam("name", name)
+                .queryParam("key", key)
+                .queryParam("lead", lead)
+                .queryParam("template", projectTemplateKey)
+                .get(String.class);
+        return Long.parseLong(s);
+    }
+
+    /**
      * Sets the permission scheme for the given Project to be the given Scheme.
      *
      * @param projectId the id of the project.
