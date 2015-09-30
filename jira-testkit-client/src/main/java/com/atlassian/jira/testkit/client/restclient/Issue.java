@@ -11,6 +11,7 @@ package com.atlassian.jira.testkit.client.restclient;
 
 import com.atlassian.jira.rest.api.issue.JsonTypeBean;
 import com.atlassian.jira.testkit.beans.IssueSecurityType;
+import com.atlassian.jira.util.json.JSONObject;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -54,6 +55,32 @@ public class Issue
     public Map<String, JsonTypeBean> schema;
     public Editmeta editmeta;
     public ChangeLog changelog;
+    public Properties properties;
+
+
+    public static class Properties {
+
+        public Map<String, Object> map = Maps.newHashMap();
+
+        @JsonAnySetter
+        public void addProperty(String key, Object value)
+        {
+            map.put(key, value);
+        }
+    }
+
+    public JSONObject getProperty(String property) {
+        Object value = properties.map.get(property);
+        if (value != null) {
+            if (value instanceof Map) {
+                return new JSONObject((Map) value);
+            } else {
+                return new JSONObject(value);
+            }
+        }
+
+        return null;
+    }
 
     @JsonIgnoreProperties (ignoreUnknown = true)
     public static class Fields
