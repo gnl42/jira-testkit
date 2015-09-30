@@ -70,7 +70,8 @@ public class ProjectBackdoor
     public Response addProject(@QueryParam ("name") String name,
                                @QueryParam ("key") String key,
                                @QueryParam ("lead") String lead,
-                               @QueryParam ("type") String type)
+                               @QueryParam ("type") String type,
+                               @QueryParam ("template") String projectTemplateKey)
     {
         ApplicationUser admin = userUtil.getUserByName("admin");
 
@@ -79,6 +80,7 @@ public class ProjectBackdoor
         ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
                 .withName(name)
                 .withKey(key)
+                .withProjectTemplateKey(projectTemplateKey)
                 .withLead(userUtil.getUserByName(lead))
                 .withDescription("This project is awesome")
                 .withAssigneeType(AssigneeTypes.PROJECT_LEAD)
