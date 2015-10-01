@@ -6,12 +6,16 @@ import com.atlassian.jira.testkit.client.util.TimeBombLicence;
 import com.atlassian.jira.testkit.client.xmlbackup.XmlBackupCopier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,7 +32,12 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     public static final String FS = System.getProperty("file.separator");
     public static final String IMPORT = "import";
 
-    private static final Iterable<Integer> REST_NOT_SETUP_ERROR_CODES = ImmutableList.of(
+    // Wait this long before deciding that the startup page really isn't going away...
+    private static final int STARTUP_TIMEOUT_SECONDS = 60;
+    private static final long STARTUP_POLL_INTERVAL_MILLIS = 1000L;
+
+    private static final String RETRY_AFTER = "Retry-After";
+    private static final List<Integer> REST_NOT_SETUP_ERROR_CODES = ImmutableList.of(
             Response.Status.NOT_FOUND.getStatusCode(),
             Response.Status.SERVICE_UNAVAILABLE.getStatusCode()
     );
@@ -47,6 +56,53 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         this.xmlBackupCopier = new XmlBackupCopier(environmentData.getBaseUrl());
     }
 
+    private static <T> T getWithStartupRetry(WebResource resource, Class<T> tClass) throws UniformInterfaceException
+    {
+        final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(STARTUP_TIMEOUT_SECONDS);
+        UniformInterfaceException lastEx = null;
+
+        do
+        {
+            try
+            {
+                return resource.get(tClass);
+            }
+            catch (UniformInterfaceException uie)
+            {
+                if (!looksLikeStillStartingUp(uie))
+                {
+                    throw uie;
+                }
+
+                lastEx = uie;
+                startupPhaseStall();
+            }
+        }
+        while (System.nanoTime() < deadline);
+
+        throw new IllegalStateException("Timed out while waiting for JIRA startup to complete", lastEx);
+    }
+
+    private static void startupPhaseStall()
+    {
+        try
+        {
+            Thread.sleep(STARTUP_POLL_INTERVAL_MILLIS);
+        }
+        catch (InterruptedException ie)
+        {
+            throw new RuntimeException("Interrupted while waiting for JIRA startup to complete", ie);
+        }
+    }
+
+    // During the startup, we get 503's with a Retry-After header.
+    private static boolean looksLikeStillStartingUp(UniformInterfaceException ex)
+    {
+        final ClientResponse response = ex.getResponse();
+        return response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode() &&
+                response.getHeaders().containsKey(RETRY_AFTER);
+    }
+    
     private boolean looksLikeNotSetup(UniformInterfaceException interfaceException)
     {
         return Iterables.contains(REST_NOT_SETUP_ERROR_CODES, interfaceException.getResponse().getStatus());
@@ -56,7 +112,9 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     {
         try
         {
-            get(resourceRoot(environmentData.getBaseUrl().toExternalForm()).path("rest").path("api").path(REST_VERSION).path("serverInfo"));
+            final WebResource serverInfo = resourceRoot(environmentData.getBaseUrl().toExternalForm())
+                    .path("rest").path("api").path(REST_VERSION).path("serverInfo");
+            getWithStartupRetry(serverInfo, String.class);
             return true;
         }
         catch (UniformInterfaceException interfaceException)
@@ -211,6 +269,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         return jiraHomeDir;
     }
 
+    
     static class DataImportBean
     {
         public String filePath;
