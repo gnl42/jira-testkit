@@ -2,6 +2,7 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.client.dump.FuncTestTimer;
 import com.atlassian.jira.testkit.client.dump.TestInformationKit;
+import com.atlassian.jira.testkit.client.log.FuncTestOut;
 import com.atlassian.jira.testkit.client.util.TimeBombLicence;
 import com.atlassian.jira.testkit.client.xmlbackup.XmlBackupCopier;
 import com.google.common.collect.ImmutableList;
@@ -56,9 +57,9 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
         this.xmlBackupCopier = new XmlBackupCopier(environmentData.getBaseUrl());
     }
 
-    private static <T> T getWithStartupRetry(WebResource resource, Class<T> tClass) throws UniformInterfaceException
+    private static <T> T getWithStartupRetry(int timeoutSeconds, WebResource resource, Class<T> tClass) throws UniformInterfaceException
     {
-        final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(STARTUP_TIMEOUT_SECONDS);
+        final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
         UniformInterfaceException lastEx = null;
 
         do
@@ -73,7 +74,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
                 {
                     throw uie;
                 }
-
+                FuncTestOut.out.println("JIRA Not up yet, lets try again in a sec..");
                 lastEx = uie;
                 startupPhaseStall();
             }
@@ -107,14 +108,18 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     {
         return Iterables.contains(REST_NOT_SETUP_ERROR_CODES, interfaceException.getResponse().getStatus());
     }
-
     public boolean isSetUp()
+    {
+        return isSetUp(STARTUP_TIMEOUT_SECONDS);
+    }
+    
+    public boolean isSetUp(int timeoutSeconds)
     {
         try
         {
             final WebResource serverInfo = resourceRoot(environmentData.getBaseUrl().toExternalForm())
                     .path("rest").path("api").path(REST_VERSION).path("serverInfo");
-            getWithStartupRetry(serverInfo, String.class);
+            getWithStartupRetry(timeoutSeconds, serverInfo, String.class);
             return true;
         }
         catch (UniformInterfaceException interfaceException)
