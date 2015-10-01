@@ -74,7 +74,6 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
                 {
                     throw uie;
                 }
-                FuncTestOut.out.println("JIRA Not up yet, lets try again in a sec..");
                 lastEx = uie;
                 startupPhaseStall();
             }
