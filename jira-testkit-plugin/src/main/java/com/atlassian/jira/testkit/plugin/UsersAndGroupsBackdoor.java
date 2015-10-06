@@ -12,7 +12,6 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
-import com.atlassian.crowd.embedded.api.Directory;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.InvalidMembershipException;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
@@ -33,7 +32,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
@@ -158,7 +156,7 @@ public class UsersAndGroupsBackdoor
     @GET
     @AnonymousAllowed
     @Path("user/addToGroup")
-    public Response userToGroup(
+    public Response addUserToGroup(
             @QueryParam ("userName") String userName,
             @QueryParam ("groupName") String groupName)
     {
@@ -486,14 +484,8 @@ public class UsersAndGroupsBackdoor
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllDirectories()
     {
-        return Response.ok(Lists.transform(crowdDirectoryService.findAllDirectories(), new Function<Directory, DirectoryDTO>()
-        {
-            @Override
-            public DirectoryDTO apply(final Directory directory)
-            {
-                return new DirectoryDTO(directory);
-            }
-        })).build();
+        return Response.ok(Lists.transform(crowdDirectoryService.findAllDirectories(),
+                directory -> new DirectoryDTO(directory))).build();
     }
 
     @GET
