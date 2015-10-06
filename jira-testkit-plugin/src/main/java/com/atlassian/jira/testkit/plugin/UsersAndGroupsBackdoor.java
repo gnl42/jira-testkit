@@ -132,7 +132,7 @@ public class UsersAndGroupsBackdoor
         return Response.ok(null).build();
     }
 
-    private void doAddUser(final @QueryParam ("userName") String username, final @QueryParam ("password") String password, final @QueryParam ("email") String email, final @QueryParam ("displayName") String displayName, final @QueryParam ("sendEmail") boolean sendEmail)
+    private void doAddUser(final String username, final String password, final String email, final String displayName, final boolean sendEmail)
             throws PermissionException, CreateException
     {
         UserService.CreateUserRequest createUserRequest = UserService.CreateUserRequest
@@ -335,10 +335,10 @@ public class UsersAndGroupsBackdoor
             for (int i = 0; i < numberOfNewUsers; i++)
             {
                 String username = usernamePrefix + i;
-                userUtil.createUserNoNotification(username,
+                doAddUser(username,
                         username,
                         "e" + username + "@example.com",     // make the email slightly different to the username
-                        displayNamePrefix + i);
+                        displayNamePrefix + i, false);
 
                 if (group != null)
                 {
