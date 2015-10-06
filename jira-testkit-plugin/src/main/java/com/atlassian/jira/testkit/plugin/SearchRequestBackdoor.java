@@ -24,7 +24,6 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.query.Query;
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 
@@ -125,29 +124,24 @@ public class SearchRequestBackdoor
 
     private Iterable<SearchRequestBean> asBeans(final ApplicationUser user, Iterable<? extends SearchRequest> requests)
     {
-        return Iterables.transform(requests, new Function<SearchRequest, SearchRequestBean>()
-        {
-            @Override
-            public SearchRequestBean apply(SearchRequest input)
+        return Iterables.transform(requests, input -> {
+            final SearchRequestBean searchRequestBean = new SearchRequestBean();
+            searchRequestBean.searchName = input.getName();
+            searchRequestBean.searchJql = input.getQuery().getQueryString();
+            searchRequestBean.username = input.getOwnerUserName();
+            searchRequestBean.searchDescription = input.getDescription();
+            searchRequestBean.favourite = favouritesService.isFavourite(user, input);
+            searchRequestBean.favouriteCount = input.getFavouriteCount();
+            try
             {
-                final SearchRequestBean searchRequestBean = new SearchRequestBean();
-                searchRequestBean.searchName = input.getName();
-                searchRequestBean.searchJql = input.getQuery().getQueryString();
-                searchRequestBean.username = input.getOwnerUserName();
-                searchRequestBean.searchDescription = input.getDescription();
-                searchRequestBean.favourite = favouritesService.isFavourite(user, input);
-                searchRequestBean.favouriteCount = input.getFavouriteCount();
-                try
-                {
-                    searchRequestBean.jsonShareString
-                            = SharePermissionUtils.toJsonArray(input.getPermissions().getPermissionSet()).toString();
-                }
-                catch (JSONException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                return searchRequestBean;
+                searchRequestBean.jsonShareString
+                        = SharePermissionUtils.toJsonArray(input.getPermissions().getPermissionSet()).toString();
             }
+            catch (JSONException e)
+            {
+                throw new RuntimeException(e);
+            }
+            return searchRequestBean;
         });
     }
 }

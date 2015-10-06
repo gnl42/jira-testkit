@@ -9,31 +9,15 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
-import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
-import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
-import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
-import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
-import com.atlassian.jira.issue.security.IssueSecuritySchemeManager;
-import com.atlassian.jira.notification.NotificationSchemeManager;
-import com.atlassian.jira.permission.PermissionSchemeManager;
-import com.atlassian.jira.project.AssigneeTypes;
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.project.ProjectAssigneeTypes;
-import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.security.roles.ProjectRole;
-import com.atlassian.jira.testkit.plugin.util.CacheControl;
-import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import org.apache.log4j.Logger;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 @Path ("projectRoles")

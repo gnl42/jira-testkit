@@ -20,7 +20,7 @@ import com.atlassian.crowd.exception.embedded.InvalidGroupException;
 import com.atlassian.crowd.exception.runtime.UserNotFoundException;
 import com.atlassian.jira.bc.security.login.LoginInfo;
 import com.atlassian.jira.bc.security.login.LoginService;
-import com.atlassian.jira.event.user.UserEventType;
+import com.atlassian.jira.bc.user.UserService;
 import com.atlassian.jira.exception.AddException;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
@@ -72,10 +72,11 @@ public class UsersAndGroupsBackdoor
     private final GroupManager groupManager;
     private final UserManager userManager;
     private final CrowdDirectoryService crowdDirectoryService;
+    private final UserService userService;
 
     public UsersAndGroupsBackdoor(final UserUtil userUtil, final CrowdService crowdService,
             final LoginService loginService, final GroupManager groupManager, final UserManager userManager,
-            final CrowdDirectoryService crowdDirectoryService)
+            final CrowdDirectoryService crowdDirectoryService, final UserService userService)
     {
         this.crowdService = crowdService;
         this.userUtil = userUtil;
@@ -83,6 +84,7 @@ public class UsersAndGroupsBackdoor
         this.groupManager = groupManager;
         this.userManager = userManager;
         this.crowdDirectoryService = crowdDirectoryService;
+        this.userService = userService;
     }
 
     @GET
@@ -114,14 +116,7 @@ public class UsersAndGroupsBackdoor
     {
         try
         {
-            if (sendEmail)
-            {
-                userUtil.createUserWithNotification(username, password, email, displayName, UserEventType.USER_CREATED);
-            }
-            else
-            {
-                userUtil.createUserNoNotification(username, password, email, displayName);
-            }
+            doAddUser(username, password, email, displayName, sendEmail);
         }
         catch (PermissionException e)
         {
@@ -135,6 +130,16 @@ public class UsersAndGroupsBackdoor
         }
 
         return Response.ok(null).build();
+    }
+
+    private void doAddUser(final @QueryParam ("userName") String username, final @QueryParam ("password") String password, final @QueryParam ("email") String email, final @QueryParam ("displayName") String displayName, final @QueryParam ("sendEmail") boolean sendEmail)
+            throws PermissionException, CreateException
+    {
+        UserService.CreateUserRequest createUserRequest = UserService.CreateUserRequest
+            .withUserDetails(null, username, password, email, displayName)
+            .sendNotification(sendEmail)
+            .skipValidation();
+        userService.createUser(userService.validateCreateUser(createUserRequest));
     }
 
     @GET
@@ -153,7 +158,7 @@ public class UsersAndGroupsBackdoor
     @GET
     @AnonymousAllowed
     @Path("user/addToGroup")
-    public Response addUserToGroup(
+    public Response userToGroup(
             @QueryParam ("userName") String userName,
             @QueryParam ("groupName") String groupName)
     {
@@ -445,14 +450,7 @@ public class UsersAndGroupsBackdoor
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers()
     {
-        return Response.ok(Collections2.transform(userManager.getAllApplicationUsers(), new Function<ApplicationUser, UserDTO>()
-        {
-            @Override
-            public UserDTO apply(final ApplicationUser user)
-            {
-                return new UserDTO(user);
-            }
-        })).build();
+        return Response.ok(Collections2.transform(userManager.getAllApplicationUsers(), user -> new UserDTO(user))).build();
     }
 
     @POST
