@@ -12,7 +12,6 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
-import com.atlassian.crowd.embedded.api.Directory;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.InvalidMembershipException;
 import com.atlassian.crowd.exception.OperationNotPermittedException;
@@ -20,7 +19,7 @@ import com.atlassian.crowd.exception.embedded.InvalidGroupException;
 import com.atlassian.crowd.exception.runtime.UserNotFoundException;
 import com.atlassian.jira.bc.security.login.LoginInfo;
 import com.atlassian.jira.bc.security.login.LoginService;
-import com.atlassian.jira.event.user.UserEventType;
+import com.atlassian.jira.bc.user.UserService;
 import com.atlassian.jira.exception.AddException;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
@@ -33,7 +32,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
@@ -72,10 +70,11 @@ public class UsersAndGroupsBackdoor
     private final GroupManager groupManager;
     private final UserManager userManager;
     private final CrowdDirectoryService crowdDirectoryService;
+    private final UserService userService;
 
     public UsersAndGroupsBackdoor(final UserUtil userUtil, final CrowdService crowdService,
             final LoginService loginService, final GroupManager groupManager, final UserManager userManager,
-            final CrowdDirectoryService crowdDirectoryService)
+            final CrowdDirectoryService crowdDirectoryService, final UserService userService)
     {
         this.crowdService = crowdService;
         this.userUtil = userUtil;
@@ -83,6 +82,7 @@ public class UsersAndGroupsBackdoor
         this.groupManager = groupManager;
         this.userManager = userManager;
         this.crowdDirectoryService = crowdDirectoryService;
+        this.userService = userService;
     }
 
     @GET
@@ -114,14 +114,7 @@ public class UsersAndGroupsBackdoor
     {
         try
         {
-            if (sendEmail)
-            {
-                userUtil.createUserWithNotification(username, password, email, displayName, UserEventType.USER_CREATED);
-            }
-            else
-            {
-                userUtil.createUserNoNotification(username, password, email, displayName);
-            }
+            doAddUser(username, password, email, displayName, sendEmail);
         }
         catch (PermissionException e)
         {
@@ -135,6 +128,16 @@ public class UsersAndGroupsBackdoor
         }
 
         return Response.ok(null).build();
+    }
+
+    private void doAddUser(final String username, final String password, final String email, final String displayName, final boolean sendEmail)
+            throws PermissionException, CreateException
+    {
+        UserService.CreateUserRequest createUserRequest = UserService.CreateUserRequest
+            .withUserDetails(null, username, password, email, displayName)
+            .sendNotification(sendEmail)
+            .skipValidation();
+        userService.createUser(userService.validateCreateUser(createUserRequest));
     }
 
     @GET
@@ -330,10 +333,10 @@ public class UsersAndGroupsBackdoor
             for (int i = 0; i < numberOfNewUsers; i++)
             {
                 String username = usernamePrefix + i;
-                userUtil.createUserNoNotification(username,
+                doAddUser(username,
                         username,
                         "e" + username + "@example.com",     // make the email slightly different to the username
-                        displayNamePrefix + i);
+                        displayNamePrefix + i, false);
 
                 if (group != null)
                 {
@@ -445,14 +448,7 @@ public class UsersAndGroupsBackdoor
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers()
     {
-        return Response.ok(Collections2.transform(userManager.getAllApplicationUsers(), new Function<ApplicationUser, UserDTO>()
-        {
-            @Override
-            public UserDTO apply(final ApplicationUser user)
-            {
-                return new UserDTO(user);
-            }
-        })).build();
+        return Response.ok(Collections2.transform(userManager.getAllApplicationUsers(), user -> new UserDTO(user))).build();
     }
 
     @POST
@@ -488,14 +484,8 @@ public class UsersAndGroupsBackdoor
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllDirectories()
     {
-        return Response.ok(Lists.transform(crowdDirectoryService.findAllDirectories(), new Function<Directory, DirectoryDTO>()
-        {
-            @Override
-            public DirectoryDTO apply(final Directory directory)
-            {
-                return new DirectoryDTO(directory);
-            }
-        })).build();
+        return Response.ok(Lists.transform(crowdDirectoryService.findAllDirectories(),
+                directory -> new DirectoryDTO(directory))).build();
     }
 
     @GET
