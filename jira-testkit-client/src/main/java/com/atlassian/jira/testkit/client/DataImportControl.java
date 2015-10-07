@@ -57,7 +57,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
     public static final Pattern TESTKIT_BLANKPROJECTS_XML_PATTERN = Pattern.compile(".*" + TESTKIT_BLANKPROJECTS + "(\\d+)\\.xml");
 
     // Wait this long before deciding that the startup page really isn't going away...
-    private static final int STARTUP_TIMEOUT_SECONDS = 60;
+    private static final long STARTUP_TIMEOUT_NANOS = TimeUnit.MINUTES.toNanos(3L);
     private static final long STARTUP_POLL_INTERVAL_MILLIS = 1000L;
 
     private static final String RETRY_AFTER = "Retry-After";
@@ -136,7 +136,7 @@ public class DataImportControl extends BackdoorControl<DataImportControl>
 
     private static <T> T getWithStartupRetry(WebResource resource, Class<T> tClass) throws UniformInterfaceException
     {
-        final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(STARTUP_TIMEOUT_SECONDS);
+        final long deadline = System.nanoTime() + STARTUP_TIMEOUT_NANOS;
         UniformInterfaceException lastEx = null;
 
         do
