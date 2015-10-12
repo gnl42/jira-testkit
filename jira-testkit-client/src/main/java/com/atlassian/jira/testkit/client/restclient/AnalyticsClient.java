@@ -9,37 +9,52 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+
 /**
  * Client for the Analytics resource.
  */
 public class AnalyticsClient extends RestApiClient<AnalyticsClient>
 {
+    public enum ReportMode
+    {
+        BTF("btf_processed"),
+        CLOUD("ondemand_processed"),
+        RAW("unprocessed");
+
+        final String alias;
+
+        ReportMode(final String alias)
+        {
+            this.alias = alias;
+        }
+    }
+
     /**
      * Constructs a new AttachmentClient for a JIRA instance.
      *
      * @param environmentData The JIRA environment data
      */
-    public AnalyticsClient(JIRAEnvironmentData environmentData)
+    public AnalyticsClient(final JIRAEnvironmentData environmentData)
     {
         super(environmentData);
     }
 
-    public void acknowledgePolicy() {
+    public void acknowledgePolicy()
+    {
         toResponse(new Method()
         {
             @Override
             public ClientResponse call()
             {
-                return createResource().path("acknowledge")
-                        .type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class);
+                return createResource().path("config").path("acknowledge")
+                        .type(APPLICATION_JSON_TYPE).put(ClientResponse.class);
             }
         });
     }
@@ -50,8 +65,8 @@ public class AnalyticsClient extends RestApiClient<AnalyticsClient>
             @Override
             public ClientResponse call()
             {
-                return createResource().path("enable")
-                        .type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsEnabled(false));
+                return createResource().path("config").path("enable")
+                        .type(APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsEnabled(false));
             }
         });
     }
@@ -63,15 +78,79 @@ public class AnalyticsClient extends RestApiClient<AnalyticsClient>
             @Override
             public ClientResponse call()
             {
-                return createResource().path("enable")
-                        .type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsEnabled(true));
+                return createResource().path("config").path("enable")
+                        .type(APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsEnabled(true));
             }
         });
     }
 
+    /**
+     * Start capturing events for getReport()
+     */
+    public void startCapturing()
+    {
+        toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("report")
+                        .type(APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsReportConfig(true));
+            }
+        });
+    }
+
+    /**
+     * Stop capturing events for getReport()
+     */
+    public void stopCapturing()
+    {
+        toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("report")
+                        .type(APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsReportConfig(false));
+            }
+        });
+    }
+
+    /**
+     * Deletes all captured events in getReport()
+     */
+    public void clearCaptured()
+    {
+        toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("report").delete(ClientResponse.class);
+            }
+        });
+    }
+
+    /**
+     * Get the report of all events raised between startCapturing() and stopCapturing()
+     */
+    public Response<AnalyticsReportBean> getReport(final ReportMode reportMode)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource().path("report").queryParam("mode", reportMode.alias).get(ClientResponse.class);
+            }
+        }, AnalyticsReportBean.class);
+    }
+
+
+
     @Override
     protected WebResource createResource()
     {
-        return resourceRoot(getEnvironmentData().getBaseUrl().toExternalForm()).path("rest").path("analytics").path("1.0").path("config");
+        return resourceRoot(getEnvironmentData().getBaseUrl().toExternalForm()).path("rest").path("analytics").path("1.0");
     }
 }
