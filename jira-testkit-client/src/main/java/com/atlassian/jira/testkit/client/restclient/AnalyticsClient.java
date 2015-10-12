@@ -46,10 +46,13 @@ public class AnalyticsClient extends RestApiClient<AnalyticsClient>
         super(environmentData);
     }
 
-    public void acknowledgePolicy() {
-        toResponse(new Method() {
+    public void acknowledgePolicy()
+    {
+        toResponse(new Method()
+        {
             @Override
-            public ClientResponse call() {
+            public ClientResponse call()
+            {
                 return createResource().path("config").path("acknowledge")
                         .type(APPLICATION_JSON_TYPE).put(ClientResponse.class);
             }
@@ -102,9 +105,11 @@ public class AnalyticsClient extends RestApiClient<AnalyticsClient>
      */
     public void stopCapturing()
     {
-        toResponse(new Method() {
+        toResponse(new Method()
+        {
             @Override
-            public ClientResponse call() {
+            public ClientResponse call()
+            {
                 return createResource().path("report")
                         .type(APPLICATION_JSON_TYPE).put(ClientResponse.class, new AnalyticsReportConfig(false));
             }
@@ -116,9 +121,11 @@ public class AnalyticsClient extends RestApiClient<AnalyticsClient>
      */
     public void clearCaptured()
     {
-        toResponse(new Method() {
+        toResponse(new Method()
+        {
             @Override
-            public ClientResponse call() {
+            public ClientResponse call()
+            {
                 return createResource().path("report").delete(ClientResponse.class);
             }
         });
