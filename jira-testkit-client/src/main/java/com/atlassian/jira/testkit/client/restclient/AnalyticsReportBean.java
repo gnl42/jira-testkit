@@ -4,14 +4,13 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 @JsonSerialize
 public class AnalyticsReportBean
 {
     public Boolean capturing;
     public List<EventBean> events;
-
-    public AnalyticsReportBean() {}
 
     public AnalyticsReportBean(final Boolean capturing, final List<EventBean> events)
     {
@@ -43,7 +42,8 @@ public class AnalyticsReportBean
 
             final StringBuilder sb = new StringBuilder();
 
-            for (Map.Entry<String, String> e : properties.entrySet()) {
+            for (final Entry<String, String> e : properties.entrySet())
+            {
                 sb.append(String.format("%s -> %s, ", e.getKey(), e.getValue()));
             }
 
