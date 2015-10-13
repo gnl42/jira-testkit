@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.client.restclient;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
@@ -9,33 +10,26 @@ import java.util.Map.Entry;
 @JsonSerialize
 public class AnalyticsReportBean
 {
+    @JsonProperty
     public Boolean capturing;
-    public List<EventBean> events;
 
-    public AnalyticsReportBean(final Boolean capturing, final List<EventBean> events)
-    {
-        this.capturing = capturing;
-        this.events = events;
-    }
+    @JsonProperty
+    public List<EventBean> events;
 
     @JsonSerialize
     public static class EventBean
     {
+        @JsonProperty
         public String name;
+
+        @JsonProperty
         public String time;
+
+        @JsonProperty
         public String user;
+
+        @JsonProperty
         public Map<String, String> properties;
-
-        public EventBean() {}
-
-        public EventBean(final String name, final String time, final String user, final Map<String, String> properties)
-        {
-            this.name = name;
-            this.time = time;
-            this.user = user;
-            this.properties = properties;
-        }
-
 
         @Override
         public String toString() {

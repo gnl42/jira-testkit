@@ -9,16 +9,7 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
-import java.util.List;
-import java.util.Map;
-
-import com.atlassian.jira.util.json.JSONObject;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonRawValue;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
