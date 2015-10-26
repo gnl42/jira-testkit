@@ -153,6 +153,22 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         addPermission(schemeId, permission, "user", userName);
     }
 
+
+    public void addCurrentAssigneePermission(long schemeId, ProjectPermissionKey permission)
+    {
+        addPermission(schemeId, permission, "assignee");
+    }
+
+    public void addApplicationRolePermission(long schemeId, ProjectPermissionKey permission, String applicationRole)
+    {
+        addPermission(schemeId, permission, "applicationRole", applicationRole);
+    }
+
+    public void addReporterPermission(long schemeId, ProjectPermissionKey permission)
+    {
+        addPermission(schemeId, permission, "reporter");
+    }
+
     /**
      * Removes a user permission.
      *
