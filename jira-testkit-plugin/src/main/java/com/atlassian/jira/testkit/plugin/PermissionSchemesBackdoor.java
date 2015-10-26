@@ -47,9 +47,9 @@ import javax.ws.rs.core.Response;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class PermissionSchemesBackdoor
 {
-    Logger log = LoggerFactory.getLogger(PermissionSchemesBackdoor.class);
-    private PermissionSchemeManager schemeManager;
-    private UserKeyService userKeyService;
+    private final Logger log = LoggerFactory.getLogger(PermissionSchemesBackdoor.class);
+    private final PermissionSchemeManager schemeManager;
+    private final UserKeyService userKeyService;
 
     public PermissionSchemesBackdoor(PermissionSchemeManager schemeManager, UserKeyService userKeyService)
     {
@@ -134,7 +134,7 @@ public class PermissionSchemesBackdoor
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
-        parameter = validateParameter(type, parameter);
+        parameter = transformParameter(type, parameter);
 
         ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
 
@@ -150,12 +150,14 @@ public class PermissionSchemesBackdoor
             }
             catch (GenericEntityException e)
             {
-                throw new RuntimeException(e);
+                log.error("Error adding new entry for permission scheme {0}", schemeId , e);
+                return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
             }
         }
         else
         {
             log.info("Attempted to add an entity which already exists; ignoring");
+            return Response.notModified("Attempted to add an entity which already exists").build();
         }
 
         return Response.ok(null).build();
@@ -201,7 +203,7 @@ public class PermissionSchemesBackdoor
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
-        parameter = validateParameter(type, parameter);
+        parameter = transformParameter(type, parameter);
 
         ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
         Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission, type, parameter);
@@ -209,21 +211,23 @@ public class PermissionSchemesBackdoor
         if (matchingEntries.isEmpty())
         {
             log.info("Attempted to remove an entity which does not exist; ignoring");
+            return Response.notModified("Attempted to remove an entity which does not exist").build();
         }
         else
         {
 
-            matchingEntries.stream().forEach(permissionSchemeEntry ->
+            for (PermissionSchemeEntry entry: matchingEntries)
             {
                 try
                 {
-                    schemeManager.deleteEntity(permissionSchemeEntry.getId());
+                    schemeManager.deleteEntity(entry.getId());
                 }
                 catch (GenericEntityException e)
                 {
-                    throw new RuntimeException(e);
+                    log.error("Error deleting existing entry for permission scheme {0}", schemeId , e);
+                    return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
                 }
-            });
+            }
         }
 
         return Response.ok(null).build();
@@ -286,24 +290,24 @@ public class PermissionSchemesBackdoor
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
-        parameter = validateParameter(type, parameter);
+        parameter = transformParameter(type, parameter);
 
         ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
         Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission);
 
 
-        matchingEntries.stream().forEach(permissionSchemeEntry ->
+        for (PermissionSchemeEntry entry : matchingEntries)
         {
             try
             {
-                schemeManager.deleteEntity(permissionSchemeEntry.getId());
-
+                schemeManager.deleteEntity(entry.getId());
             }
             catch (GenericEntityException e)
             {
-                throw new RuntimeException(e);
+                log.error("Error deleting existing entry for permission scheme {0}", schemeId , e);
+                return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
             }
-        });
+        }
 
 
         try
@@ -314,7 +318,8 @@ public class PermissionSchemesBackdoor
         }
         catch (GenericEntityException e)
         {
-            throw new RuntimeException(e);
+            log.error("Error adding new entry for permission scheme {0}", schemeId , e);
+            return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
         }
 
         return Response.ok(null).build();
@@ -324,7 +329,7 @@ public class PermissionSchemesBackdoor
      * There are a few changes that must be made to the parameter depending on the type of permission scheme entity
      * that we want to modify. This collects them to a single function.
      */
-    private @Nullable String validateParameter(@Nonnull final String type, @Nullable final String parameter)
+    private @Nullable String transformParameter(@Nonnull final String type, @Nullable final String parameter)
     {
         String newParameter = convertUserKey(type, parameter);
 
@@ -362,14 +367,14 @@ public class PermissionSchemesBackdoor
     }
 
 
-    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(@Nonnull long schemeId,
+    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
                                                                          @Nonnull ProjectPermissionKey permission)
     {
         return schemeManager.getPermissionSchemeEntries(schemeId, permission);
     }
 
 
-    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(@Nonnull long schemeId,
+    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
                                                                          @Nonnull ProjectPermissionKey permission,
                                                                          @Nonnull String type,
                                                                          @Nullable String parameter)

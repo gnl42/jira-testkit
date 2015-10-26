@@ -9,8 +9,10 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.issue.IssueFieldConstants;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 
+import javax.annotation.Nonnull;
 import java.lang.Long;
 import java.lang.String;
 
@@ -154,19 +156,36 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
 
-    public void addCurrentAssigneePermission(long schemeId, ProjectPermissionKey permission)
+    /**
+     * Add the current assignee to the given scheme permission
+     * @param schemeId for permission scheme to add to
+     * @param permission to add current assignee permission to
+     */
+    public void addCurrentAssigneePermission(final long schemeId, @Nonnull final ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, "assignee");
+        addPermission(schemeId, permission, IssueFieldConstants.ASSIGNEE);
     }
 
-    public void addApplicationRolePermission(long schemeId, ProjectPermissionKey permission, String applicationRole)
+    /**
+     * Add a given application role to the given scheme permission
+     * @param schemeId for permission scheme to add to
+     * @param permission to add current assignee permission to
+     * @param applicationRole to apply permission
+     */
+    public void addApplicationRolePermission(final long schemeId, @Nonnull final ProjectPermissionKey permission,
+                                             @Nonnull final String applicationRole)
     {
         addPermission(schemeId, permission, "applicationRole", applicationRole);
     }
 
-    public void addReporterPermission(long schemeId, ProjectPermissionKey permission)
+    /**
+     * Add the reporter to the given scheme permission
+     * @param schemeId for permission scheme to add to
+     * @param permission to add current assignee permission to
+     */
+    public void addReporterPermission(final long schemeId, @Nonnull final ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, "reporter");
+        addPermission(schemeId, permission, IssueFieldConstants.REPORTER);
     }
 
     /**
