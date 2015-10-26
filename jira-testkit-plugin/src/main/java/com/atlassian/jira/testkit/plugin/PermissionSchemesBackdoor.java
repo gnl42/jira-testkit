@@ -215,9 +215,12 @@ public class PermissionSchemesBackdoor
 
             matchingEntries.stream().forEach(permissionSchemeEntry ->
             {
-                try {
+                try
+                {
                     schemeManager.deleteEntity(permissionSchemeEntry.getId());
-                } catch (GenericEntityException e) {
+                }
+                catch (GenericEntityException e)
+                {
                     throw new RuntimeException(e);
                 }
             });
