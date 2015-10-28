@@ -75,11 +75,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public UsersAndGroupsControl addUserEvenIfUserExists(String username, String password, String displayName, String email, boolean sendEmail)
     {
         get(createResource().path("user").path("addEvenIfUserExists")
-                        .queryParam("userName", username)
-                        .queryParam("password", password)
-                        .queryParam("displayName", displayName)
-                        .queryParam("email", email)
-                        .queryParam("sendEmail", "" + sendEmail)
+                .queryParam("userName", username)
+                .queryParam("password", password)
+                .queryParam("displayName", displayName)
+                .queryParam("email", email)
+                .queryParam("sendEmail", "" + sendEmail)
         );
         return this;
     }
@@ -99,9 +99,9 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public UsersAndGroupsControl addUsers(String usernamePrefix, String displayNamePrefix, int numberOfNewUsers)
     {
         get(createResource().path("user").path("addMany")
-                        .queryParam("usernamePrefix", usernamePrefix)
-                        .queryParam("displayNamePrefix", displayNamePrefix)
-                        .queryParam("numberOfNewUsers", "" + numberOfNewUsers)
+                .queryParam("usernamePrefix", usernamePrefix)
+                .queryParam("displayNamePrefix", displayNamePrefix)
+                .queryParam("numberOfNewUsers", "" + numberOfNewUsers)
         );
         return this;
     }
@@ -121,10 +121,10 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
     public void addUsersWithGroup(String usernamePrefix, String displayNamePrefix, int numberOfNewUsers, String groupName)
     {
         get(createResource().path("user").path("addMany")
-                        .queryParam("usernamePrefix", usernamePrefix)
-                        .queryParam("displayNamePrefix", displayNamePrefix)
-                        .queryParam("numberOfNewUsers", "" + numberOfNewUsers)
-                        .queryParam("groupName", groupName)
+                .queryParam("usernamePrefix", usernamePrefix)
+                .queryParam("displayNamePrefix", displayNamePrefix)
+                .queryParam("numberOfNewUsers", "" + numberOfNewUsers)
+                .queryParam("groupName", groupName)
         );
     }
 
