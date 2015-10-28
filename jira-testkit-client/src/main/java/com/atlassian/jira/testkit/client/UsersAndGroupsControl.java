@@ -158,6 +158,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         get(createResource().path("group").path("add").queryParam("groupName", groupName));
     }
 
+    public boolean groupExists(String groupName)
+    {
+        return Boolean.parseBoolean(get(createResource().path("group").path("exists").queryParam("groupName", groupName)));
+    }
+    
     public UsersAndGroupsControl deleteGroup(String groupName)
     {
         get(createResource().path("group").path("delete").queryParam("groupName", groupName));
