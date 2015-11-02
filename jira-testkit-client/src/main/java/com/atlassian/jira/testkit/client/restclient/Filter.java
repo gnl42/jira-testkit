@@ -86,6 +86,32 @@ public class Filter
             this.group = group;
             return this;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            FilterPermission that = (FilterPermission) o;
+
+            if (group != null ? !group.equals(that.group) : that.group != null) return false;
+            if (id != null ? !id.equals(that.id) : that.id != null) return false;
+            if (project != null ? !project.equals(that.project) : that.project != null) return false;
+            if (role != null ? !role.equals(that.role) : that.role != null) return false;
+            if (type != null ? !type.equals(that.type) : that.type != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id != null ? id.hashCode() : 0;
+            result = 31 * result + (type != null ? type.hashCode() : 0);
+            result = 31 * result + (project != null ? project.hashCode() : 0);
+            result = 31 * result + (role != null ? role.hashCode() : 0);
+            result = 31 * result + (group != null ? group.hashCode() : 0);
+            return result;
+        }
     }
 
     public static class FilterSubscription

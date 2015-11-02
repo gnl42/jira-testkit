@@ -143,6 +143,70 @@ public class FilterClient extends RestApiClient<FilterClient>
         }, Filter.class);
     }
 
+
+    public Response<List<Filter.FilterPermission>> getFilterPermissions(String filterId)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return filterWithId(filterId).path("permission").get(ClientResponse.class);
+            }
+        }, new GenericType<List<Filter.FilterPermission>>(){});
+    }
+
+    public Response<Filter.FilterPermission> getFilterPermission(String filterId, String filterPermissionId)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return filterWithId(filterId).path("permission").path(filterPermissionId).get(ClientResponse.class);
+            }
+        }, Filter.FilterPermission.class);
+    }
+
+    public Response deleteFilterPermission(String filterId, String filterPermissionId)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return filterWithId(filterId).path("permission").path(filterPermissionId).delete(ClientResponse.class);
+            }
+        });
+    }
+
+    public Response<List<Filter.FilterPermission>> postFilterPermission(String filterId, FilterPermissionInputBean inputBean)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return filterWithId(filterId).path("permission").type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, inputBean);
+            }
+        }, new GenericType<List<Filter.FilterPermission>>(){});
+    }
+
+    public static class FilterPermissionInputBean
+    {
+        public String type;
+        public String projectId;
+        public String projectRoleId;
+        public String groupname;
+
+        public FilterPermissionInputBean(String type, String projectId, String projectRoleId, String groupname) {
+            this.type = type;
+            this.projectId = projectId;
+            this.projectRoleId = projectRoleId;
+            this.groupname = groupname;
+        }
+    }
+
     /**
      * Returns a WebResource.Builder that can be used to PUT a search.
      *
