@@ -10,6 +10,7 @@
 package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.issue.IssueFieldConstants;
+import com.atlassian.jira.permission.JiraPermissionHolderType;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 
 import javax.annotation.Nonnull;
@@ -71,12 +72,12 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void addGroupPermission(Long schemeId, int permission, String groupName)
     {
-        addPermission(schemeId, permission, "group", groupName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     public void addGroupPermission(Long schemeId, ProjectPermissionKey permission, String groupName)
     {
-        addPermission(schemeId, permission, "group", groupName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     /**
@@ -90,12 +91,12 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void removeGroupPermission(long schemeId, int permission, String groupName)
     {
-        removePermission(schemeId, permission, "group", groupName);
+        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     public void removeGroupPermission(long schemeId, ProjectPermissionKey permission, String groupName)
     {
-        removePermission(schemeId, permission, "group", groupName);
+        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     /**
@@ -109,12 +110,12 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void addProjectRolePermission(long schemeId, int permission, long projectRoleId)
     {
-        addPermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
+        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
     }
 
     public void addProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
     {
-        addPermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
+        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
     }
 
     /**
@@ -128,12 +129,12 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId)
     {
-        removePermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
+        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
     }
 
     public void removeProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
     {
-        removePermission(schemeId, permission, "projectrole", Long.toString(projectRoleId));
+        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
     }
 
     /**
@@ -147,12 +148,22 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void addUserPermission(long schemeId, int permission, String userName)
     {
-        addPermission(schemeId, permission, "user", userName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
     }
 
     public void addUserPermission(long schemeId, ProjectPermissionKey permission, String userName)
     {
-        addPermission(schemeId, permission, "user", userName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
+    }
+
+    public void addUserCustomFieldPermission(long schemeId, ProjectPermissionKey permission, String customFieldName)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customFieldName);
+    }
+
+    public void removeUserCustomFieldPermission(long schemeId, ProjectPermissionKey permission, String customFieldName)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customFieldName);
     }
 
 
@@ -199,12 +210,12 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void removeUserPermission(long schemeId, int permission, String userName)
     {
-        removePermission(schemeId, permission, "user", userName);
+        removePermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
     }
 
     public void removeUserPermission(long schemeId, ProjectPermissionKey permission, String userName)
     {
-        removePermission(schemeId, permission, "user", userName);
+        removePermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
     }
 
     /**
@@ -218,12 +229,12 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     @Deprecated
     public void replaceGroupPermissions(long schemeId, int permission, String groupName)
     {
-        replacePermissions(schemeId, permission, "group", groupName);
+        replacePermissions(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     public void replaceGroupPermissions(long schemeId, ProjectPermissionKey permission, String groupName)
     {
-        replacePermissions(schemeId, permission, "group", groupName);
+        replacePermissions(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     /**
@@ -234,17 +245,17 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      */
     public void addEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, "group");
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey());
     }
 
     public void addUserCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
     {
-        addPermission(schemeId, permission, "userCF", fieldId);
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), fieldId);
     }
 
     public void addGroupCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
     {
-        addPermission(schemeId, permission, "groupCF", fieldId);
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP_CUSTOM_FIELD.getKey(), fieldId);
     }
 
     /**
@@ -259,7 +270,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         get(createResource().path("permissionSchemes/entity/remove")
                 .queryParam("schemeId", schemeId.toString())
                 .queryParam("permission", permission.toString())
-                .queryParam("type", "group"));
+                .queryParam("type", JiraPermissionHolderType.GROUP.getKey()));
     }
 
     private void addPermission(long schemeId, int permission, String type, String parameter)

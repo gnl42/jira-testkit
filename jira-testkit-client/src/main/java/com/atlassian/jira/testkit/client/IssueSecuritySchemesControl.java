@@ -9,6 +9,8 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.permission.JiraPermissionHolderType;
+
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Issue Security Schemes.
  *
@@ -49,4 +51,33 @@ public class IssueSecuritySchemesControl extends BackdoorControl<IssueSecuritySc
     {
         createResource().path("issueSecuritySchemes").path(String.valueOf(schemeId)).path(String.valueOf(levelId)).queryParam("userKey", userKey).post();
     }
+
+    public void deleteUserFromSecurityLevel(long schemeId, long levelId, String userKey)
+    {
+        createResource().path("issueSecuritySchemes")
+                .path(String.valueOf(schemeId))
+                .path(String.valueOf(levelId))
+                .path(JiraPermissionHolderType.USER.getKey())
+                .path(userKey)
+                .delete();
+    }
+
+    public void deleteSecurityLevel(long schemeId, long securityLevelId)
+    {
+        createResource().path("issueSecuritySchemes")
+                .path(String.valueOf(schemeId))
+                .path(String.valueOf(securityLevelId))
+                .delete();
+    }
+
+    public void deleteUserCustomFieldFromSecurityLevel(long schemeId, long levelId, String customField)
+    {
+        createResource().path("issueSecuritySchemes")
+                .path(String.valueOf(schemeId))
+                .path(String.valueOf(levelId))
+                .path(JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey())
+                .path(customField)
+                .delete();
+    }
+
 }

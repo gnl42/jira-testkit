@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.jira.permission.JiraPermissionHolderType;
 import com.atlassian.jira.permission.PermissionSchemeEntry;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.scheme.Scheme;
@@ -345,7 +346,7 @@ public class PermissionSchemesBackdoor
      */
     private @Nonnull String convertUserKey(@Nonnull final String type, @Nullable final String parameter)
     {
-        if ("user".equals(type))
+        if (JiraPermissionHolderType.USER.getKey().equals(type))
         {
             return userKeyService.getKeyForUsername(parameter);
         }
@@ -359,7 +360,7 @@ public class PermissionSchemesBackdoor
      */
     private @Nullable String fixAnyoneGroupParameter(@Nonnull final String type, @Nullable final String parameter)
     {
-        if ("group".equals(type) && "".equals(parameter))
+        if (JiraPermissionHolderType.GROUP.getKey().equals(type) && "".equals(parameter))
         {
             return null;
         }

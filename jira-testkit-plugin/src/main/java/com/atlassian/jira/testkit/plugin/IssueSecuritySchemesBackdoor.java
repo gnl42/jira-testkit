@@ -13,6 +13,7 @@ import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.jira.issue.security.IssueSecurityLevel;
 import com.atlassian.jira.issue.security.IssueSecurityLevelManager;
 import com.atlassian.jira.issue.security.IssueSecuritySchemeManager;
+import com.atlassian.jira.permission.JiraPermissionHolderType;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
@@ -23,6 +24,8 @@ import org.ofbiz.core.entity.GenericValue;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Use this backdoor to manipulate Issue Security Schemes as part of setup for tests.
@@ -82,17 +85,97 @@ public class IssueSecuritySchemesBackdoor
     @POST
     @Path("{schemeId}/{securityLevelId}")
     @XsrfProtectionExcluded // Only available during testing.
-    public Response addUserToSecurityLevel(@PathParam("schemeId") long schemeId, @PathParam ("securityLevelId") long securityLevelId, @QueryParam("userKey") String userKey) throws GenericEntityException {
-        //SingleUser
-        String type = "user";
-        String parameter = userKey;
-
-        SchemeEntity entity = new SchemeEntity(type, parameter, securityLevelId);
+    public Response addUserToSecurityLevel(@PathParam("schemeId") long schemeId, @PathParam ("securityLevelId") long securityLevelId, @QueryParam("userKey") String userKey) throws GenericEntityException
+    {
+        SchemeEntity entity = new SchemeEntity(JiraPermissionHolderType.USER.getKey(), userKey, securityLevelId);
         GenericValue scheme = schemeManager.getScheme(schemeId);
         schemeManager.createSchemeEntity(scheme, entity);
 
         levelManager.clearUsersLevels();
 
         return Response.ok().cacheControl(CacheControl.never()).build();
+    }
+
+    @DELETE
+    @Path("{schemeId}/{securityLevelId}/user/{userKey}")
+    @XsrfProtectionExcluded // Only available during testing.
+    public Response deleteUserFromSecurityLevel(@PathParam("schemeId") long schemeId,
+                                                @PathParam ("securityLevelId") long securityLevelId,
+                                                @PathParam("userKey") String userKey) throws GenericEntityException
+    {
+
+        List<GenericValue> entities = schemeManager.getEntities(JiraPermissionHolderType.USER.getKey(), userKey).stream()
+                .filter(genericValue -> {
+                    Long securityId = (Long) genericValue.get("security");
+                    return (securityId == securityLevelId);
+                })
+                .collect(Collectors.toList());
+
+        if (entities.size() > 1)
+        {
+            return Response.serverError().cacheControl(CacheControl.never()).build();
+        }
+        else if (entities.size() == 0)
+        {
+            return Response.notModified().cacheControl(CacheControl.never()).build();
+        }
+        else
+        {
+            Long entityId = (Long)entities.get(0).get("id");
+            schemeManager.deleteEntity(entityId);
+            return Response.ok().cacheControl(CacheControl.never()).build();
+        }
+    }
+
+    @DELETE
+    @Path("{schemeId}/{securityLevelId}/userCF/{userKey}")
+    @XsrfProtectionExcluded // Only available during testing.
+    public Response deleteUserCustomFieldFromSecurityLevel(@PathParam("schemeId") long schemeId,
+                                                @PathParam ("securityLevelId") long securityLevelId,
+                                                @PathParam("userKey") String customField) throws GenericEntityException
+    {
+
+        List<GenericValue> entities = schemeManager.getEntities(JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customField).stream()
+                .filter(genericValue -> {
+                    Long securityId = (Long) genericValue.get("security");
+                    return (securityId == securityLevelId);
+                })
+                .collect(Collectors.toList());
+
+        if (entities.size() != 1)
+        {
+            return Response.serverError().cacheControl(CacheControl.never()).build();
+
+        }
+        else
+        {
+            Long entityId = (Long)entities.get(0).get("id");
+            schemeManager.deleteEntity(entityId);
+            return Response.ok().cacheControl(CacheControl.never()).build();
+        }
+    }
+
+    @DELETE
+    @Path("{schemeId}/{securityLevelId}")
+    @XsrfProtectionExcluded // Only available during testing.
+    public Response removeSecurityLevel(@PathParam("schemeId") int id, @PathParam("securityLevelId") int securityId)
+    {
+
+        List<IssueSecurityLevel> filteredLevels = levelManager.getIssueSecurityLevels(id).stream()
+                .filter(issueSecurityLevel -> issueSecurityLevel.getId() == securityId).collect(Collectors.toList());
+
+        if (filteredLevels.size() > 1)
+        {
+            return Response.serverError().cacheControl(CacheControl.never()).build();
+        }
+        else if (filteredLevels.size() == 1)
+        {
+            levelManager.deleteSecurityLevel(filteredLevels.get(0).getId());
+            return Response.ok().build();
+        }
+        else
+        {
+            return Response.notModified().cacheControl(CacheControl.never()).build();
+        }
     }
 }
