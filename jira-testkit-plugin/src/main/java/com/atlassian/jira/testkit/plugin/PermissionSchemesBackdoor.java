@@ -9,16 +9,25 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.jira.permission.JiraPermissionHolderType;
+import com.atlassian.jira.permission.PermissionSchemeEntry;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
+import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -39,11 +48,14 @@ import javax.ws.rs.core.Response;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class PermissionSchemesBackdoor
 {
-    private PermissionSchemeManager schemeManager;
+    private final Logger log = LoggerFactory.getLogger(PermissionSchemesBackdoor.class);
+    private final PermissionSchemeManager schemeManager;
+    private final UserKeyService userKeyService;
 
-    public PermissionSchemesBackdoor(PermissionSchemeManager schemeManager)
+    public PermissionSchemesBackdoor(PermissionSchemeManager schemeManager, UserKeyService userKeyService)
     {
         this.schemeManager = schemeManager;
+        this.userKeyService = userKeyService;
     }
 
     @GET
@@ -123,22 +135,30 @@ public class PermissionSchemesBackdoor
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
-        try
-        {
-            GenericValue scheme = schemeManager.getScheme(schemeId);
-            ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
-            List<GenericValue> entities = schemeManager.getEntities(scheme, permission, type, parameter);
-            if (!entities.isEmpty())
-            {
-                throw new IllegalStateException("PermissionScheme entity to be added already exists");
-            }
+        parameter = transformParameter(type, parameter);
 
-            SchemeEntity entity = new SchemeEntity(type, parameter, permissionKey);
-            schemeManager.createSchemeEntity(scheme, entity);
-        }
-        catch (GenericEntityException e)
+        ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
+
+        Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission, type, parameter);
+
+        if (matchingEntries.isEmpty())
         {
-            throw new RuntimeException(e);
+            try
+            {
+                GenericValue scheme = schemeManager.getScheme(schemeId);
+                SchemeEntity entity = new SchemeEntity(type, parameter, permissionKey);
+                schemeManager.createSchemeEntity(scheme, entity);
+            }
+            catch (GenericEntityException e)
+            {
+                log.error("Error adding new entry for permission scheme {0}", schemeId , e);
+                return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
+            }
+        }
+        else
+        {
+            log.info("Attempted to add an entity which already exists; ignoring");
+            return Response.notModified("Attempted to add an entity which already exists").build();
         }
 
         return Response.ok(null).build();
@@ -184,25 +204,31 @@ public class PermissionSchemesBackdoor
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
-        try
-        {
-            GenericValue scheme = schemeManager.getScheme(schemeId);
-            ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
-            List<GenericValue> entities = schemeManager.getEntities(scheme, permission, type, parameter);
-            if (entities.isEmpty())
-            {
-                throw new IllegalStateException("PermissionScheme entity to be removed does not exist");
-            }
+        parameter = transformParameter(type, parameter);
 
-            for (GenericValue entity : entities)
-            {
-                Long id = entity.getLong("id");
-                schemeManager.deleteEntity(id);
-            }
-        }
-        catch (GenericEntityException e)
+        ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
+        Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission, type, parameter);
+
+        if (matchingEntries.isEmpty())
         {
-            throw new RuntimeException(e);
+            log.info("Attempted to remove an entity which does not exist; ignoring");
+            return Response.notModified("Attempted to remove an entity which does not exist").build();
+        }
+        else
+        {
+
+            for (PermissionSchemeEntry entry: matchingEntries)
+            {
+                try
+                {
+                    schemeManager.deleteEntity(entry.getId());
+                }
+                catch (GenericEntityException e)
+                {
+                    log.error("Error deleting existing entry for permission scheme {0}", schemeId , e);
+                    return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
+                }
+            }
         }
 
         return Response.ok(null).build();
@@ -265,26 +291,104 @@ public class PermissionSchemesBackdoor
             @QueryParam ("type") String type,
             @QueryParam ("parameter") String parameter)
     {
+        parameter = transformParameter(type, parameter);
+
+        ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
+        Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission);
+
+
+        for (PermissionSchemeEntry entry : matchingEntries)
+        {
+            try
+            {
+                schemeManager.deleteEntity(entry.getId());
+            }
+            catch (GenericEntityException e)
+            {
+                log.error("Error deleting existing entry for permission scheme {0}", schemeId , e);
+                return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
+            }
+        }
+
+
         try
         {
             GenericValue scheme = schemeManager.getScheme(schemeId);
-            ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
-            List<GenericValue> entities = schemeManager.getEntities(scheme, permission);
-
-            for (GenericValue entity : entities)
-            {
-                Long id = entity.getLong("id");
-                schemeManager.deleteEntity(id);
-            }
-
-            SchemeEntity entity = new SchemeEntity(type, parameter, permission);
+            SchemeEntity entity = new SchemeEntity(type, parameter, permissionKey);
             schemeManager.createSchemeEntity(scheme, entity);
         }
         catch (GenericEntityException e)
         {
-            throw new RuntimeException(e);
+            log.error("Error adding new entry for permission scheme {0}", schemeId , e);
+            return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
         }
 
         return Response.ok(null).build();
+    }
+
+    /**
+     * There are a few changes that must be made to the parameter depending on the type of permission scheme entity
+     * that we want to modify. This collects them to a single function.
+     */
+    private @Nullable String transformParameter(@Nonnull final String type, @Nullable final String parameter)
+    {
+        String newParameter = convertUserKey(type, parameter);
+
+        newParameter = fixAnyoneGroupParameter(type, newParameter);
+
+        return newParameter;
+    }
+
+
+    /**
+     * The web interface when adding a user permission type uses this getKeyForUsername, so the backdoor should
+     * do the same.
+     */
+    private @Nonnull String convertUserKey(@Nonnull final String type, @Nullable final String parameter)
+    {
+        if (JiraPermissionHolderType.USER.getKey().equals(type))
+        {
+            return userKeyService.getKeyForUsername(parameter);
+        }
+        return parameter;
+    }
+
+
+    /**
+     * The empty string is often used on the client side but it is stored internally as null.
+     * Therefore, make sure future uses of this backdoor do not fail because they don't realise this.
+     */
+    private @Nullable String fixAnyoneGroupParameter(@Nonnull final String type, @Nullable final String parameter)
+    {
+        if (JiraPermissionHolderType.GROUP.getKey().equals(type) && "".equals(parameter))
+        {
+            return null;
+        }
+        return parameter;
+    }
+
+
+    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
+                                                                         @Nonnull ProjectPermissionKey permission)
+    {
+        return schemeManager.getPermissionSchemeEntries(schemeId, permission);
+    }
+
+
+    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
+                                                                         @Nonnull ProjectPermissionKey permission,
+                                                                         @Nonnull String type,
+                                                                         @Nullable String parameter)
+    {
+
+        return schemeManager.getPermissionSchemeEntries(schemeId, permission, type).stream()
+                .filter(entry -> {
+                    if (parameter == null) {
+                        return (entry.getParameter() == null);
+                    } else {
+                        return (entry.getParameter() != null && entry.getParameter().equals(parameter));
+                    }
+                })
+                .collect(Collectors.toList());
     }
 }
