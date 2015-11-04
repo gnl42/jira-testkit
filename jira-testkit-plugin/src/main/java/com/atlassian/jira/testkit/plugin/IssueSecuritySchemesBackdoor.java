@@ -47,6 +47,24 @@ public class IssueSecuritySchemesBackdoor
         this.levelManager = levelManager;
     }
 
+    /**
+     * Filters the security levels to only include the ones with the given security level id and has it's own id
+     * @param securityLevels to be filtered
+     * @param securityLevelId to be found
+     * @return list of filtered levels
+     */
+    private List<GenericValue> getSecurityLevels(final List<GenericValue> securityLevels, long securityLevelId)
+    {
+        return securityLevels.stream()
+                .filter(genericValue -> {
+                    Long id = (Long) genericValue.get("id");
+                    Long securityId = (Long) genericValue.get("security");
+                    return (id != null && securityId != null && securityId == securityLevelId);
+                })
+                .collect(Collectors.toList());
+    }
+
+
     @GET
     @AnonymousAllowed
     @Path("create")
@@ -103,25 +121,20 @@ public class IssueSecuritySchemesBackdoor
                                                 @PathParam ("securityLevelId") long securityLevelId,
                                                 @PathParam("userKey") String userKey) throws GenericEntityException
     {
+        final List<GenericValue> allEntities = schemeManager.getEntities(JiraPermissionHolderType.USER.getKey(), userKey);
+        final List<GenericValue> filteredEntities = getSecurityLevels(allEntities, securityLevelId);
 
-        List<GenericValue> entities = schemeManager.getEntities(JiraPermissionHolderType.USER.getKey(), userKey).stream()
-                .filter(genericValue -> {
-                    Long securityId = (Long) genericValue.get("security");
-                    return (securityId == securityLevelId);
-                })
-                .collect(Collectors.toList());
-
-        if (entities.size() > 1)
+        if (filteredEntities.size() > 1)
         {
             return Response.serverError().cacheControl(CacheControl.never()).build();
         }
-        else if (entities.size() == 0)
+        else if (filteredEntities.size() == 0)
         {
             return Response.notModified().cacheControl(CacheControl.never()).build();
         }
         else
         {
-            Long entityId = (Long)entities.get(0).get("id");
+            Long entityId = (Long)filteredEntities.get(0).get("id");
             schemeManager.deleteEntity(entityId);
             return Response.ok().cacheControl(CacheControl.never()).build();
         }
@@ -134,18 +147,17 @@ public class IssueSecuritySchemesBackdoor
                                                 @PathParam ("securityLevelId") long securityLevelId,
                                                 @PathParam("userKey") String customField) throws GenericEntityException
     {
+        final List<GenericValue> allEntities = schemeManager.getEntities(JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customField);
+        final List<GenericValue> entities = getSecurityLevels(allEntities, securityLevelId);
 
-        List<GenericValue> entities = schemeManager.getEntities(JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customField).stream()
-                .filter(genericValue -> {
-                    Long securityId = (Long) genericValue.get("security");
-                    return (securityId == securityLevelId);
-                })
-                .collect(Collectors.toList());
-
-        if (entities.size() != 1)
+        if (entities.size() > 1)
         {
             return Response.serverError().cacheControl(CacheControl.never()).build();
 
+        }
+        else if (entities.size() == 0)
+        {
+            return Response.notModified().cacheControl(CacheControl.never()).build();
         }
         else
         {
@@ -168,14 +180,14 @@ public class IssueSecuritySchemesBackdoor
         {
             return Response.serverError().cacheControl(CacheControl.never()).build();
         }
-        else if (filteredLevels.size() == 1)
+        else if (filteredLevels.size() == 0)
         {
-            levelManager.deleteSecurityLevel(filteredLevels.get(0).getId());
-            return Response.ok().build();
+            return Response.notModified().cacheControl(CacheControl.never()).build();
         }
         else
         {
-            return Response.notModified().cacheControl(CacheControl.never()).build();
+            levelManager.deleteSecurityLevel(filteredLevels.get(0).getId());
+            return Response.ok().build();
         }
     }
 }
