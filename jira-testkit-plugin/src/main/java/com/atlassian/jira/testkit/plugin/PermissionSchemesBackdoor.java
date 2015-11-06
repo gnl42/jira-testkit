@@ -158,7 +158,6 @@ public class PermissionSchemesBackdoor
         else
         {
             log.info("Attempted to add an entity which already exists; ignoring");
-            return Response.notModified("Attempted to add an entity which already exists").build();
         }
 
         return Response.ok(null).build();
@@ -209,14 +208,8 @@ public class PermissionSchemesBackdoor
         ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
         Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission, type, parameter);
 
-        if (matchingEntries.isEmpty())
+        if (!matchingEntries.isEmpty())
         {
-            log.info("Attempted to remove an entity which does not exist; ignoring");
-            return Response.notModified("Attempted to remove an entity which does not exist").build();
-        }
-        else
-        {
-
             for (PermissionSchemeEntry entry: matchingEntries)
             {
                 try
@@ -229,6 +222,10 @@ public class PermissionSchemesBackdoor
                     return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
                 }
             }
+        }
+        else
+        {
+            log.info("Attempted to remove an entity which does not exist; ignoring");
         }
 
         return Response.ok(null).build();
