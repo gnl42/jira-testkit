@@ -12,14 +12,19 @@ package com.atlassian.jira.testkit.client;
 import com.atlassian.jira.issue.IssueFieldConstants;
 import com.atlassian.jira.permission.JiraPermissionHolderType;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
+import com.atlassian.jira.util.json.JSONArray;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.sun.jersey.api.client.WebResource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.Long;
 import java.lang.String;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Permission Schemes.
@@ -355,7 +360,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     /**
      * See {@link PermissionSchemesControl#getPermissionEntries(java.lang.Long, com.atlassian.jira.security.plugin.ProjectPermissionKey, java.lang.String, java.lang.String)}
      */
-    public JSONObject getPermissionEntries(@Nonnull final Long schemeId)
+    public PermissionAssignments getPermissionEntries(@Nonnull final Long schemeId)
     {
         return getPermissionEntries(schemeId, null, null, null);
     }
@@ -363,7 +368,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     /**
      * See {@link PermissionSchemesControl#getPermissionEntries(java.lang.Long, com.atlassian.jira.security.plugin.ProjectPermissionKey, java.lang.String, java.lang.String)}
      */
-    public JSONObject getPermissionEntries(@Nonnull final Long schemeId, @Nonnull final String type)
+    public PermissionAssignments getPermissionEntries(@Nonnull final Long schemeId, @Nonnull final String type)
     {
         return getPermissionEntries(schemeId, null, type, null);
     }
@@ -372,7 +377,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     /**
      * See {@link PermissionSchemesControl#getPermissionEntries(java.lang.Long, com.atlassian.jira.security.plugin.ProjectPermissionKey, java.lang.String, java.lang.String)}
      */
-    public JSONObject getPermissionEntries(@Nonnull final Long schemeId, @Nonnull final ProjectPermissionKey permission,
+    public PermissionAssignments getPermissionEntries(@Nonnull final Long schemeId, @Nonnull final ProjectPermissionKey permission,
                                            @Nonnull final String type)
     {
         return getPermissionEntries(schemeId, permission, type, null);
@@ -382,7 +387,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     /**
      * See {@link PermissionSchemesControl#getPermissionEntries(java.lang.Long, com.atlassian.jira.security.plugin.ProjectPermissionKey, java.lang.String, java.lang.String)}
      */
-    public JSONObject getPermissionEntries(@Nonnull final Long schemeId, @Nonnull final String type,
+    public PermissionAssignments getPermissionEntries(@Nonnull final Long schemeId, @Nonnull final String type,
                                            @Nonnull final String parameter)
     {
         return getPermissionEntries(schemeId, null, type, parameter);
@@ -398,7 +403,7 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      * @param parameter any specific value for a type, e.g. jira-developers
      * @return JSONObject representing permissions
      */
-    public JSONObject getPermissionEntries(@Nonnull final Long schemeId, @Nullable final ProjectPermissionKey permission,
+    public PermissionAssignments getPermissionEntries(@Nonnull final Long schemeId, @Nullable final ProjectPermissionKey permission,
                                            @Nullable final String type, @Nullable final String parameter)
     {
         String result = get(buildGetPermissionEntriesRequest(schemeId, permission, type, parameter));
@@ -409,28 +414,28 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
                                                          @Nullable final String type, @Nullable final String parameter)
     {
         WebResource resource = createResource().path("permissionSchemes/entity/assigned");
-        resource.queryParam("schemeId", "" + schemeId);
+        resource = resource.queryParam("schemeId", "" + schemeId);
         if (permission != null)
         {
-            resource.queryParam("permission", "" + permission.permissionKey());
+            resource = resource.queryParam("permission", "" + permission.permissionKey());
         }
         if (type != null)
         {
-            resource.queryParam("type", type);
+            resource = resource.queryParam("type", type);
         }
         if (parameter != null)
         {
-            resource.queryParam("parameter", parameter);
+            resource = resource.queryParam("parameter", parameter);
         }
         return resource;
     }
 
-    private JSONObject parseGetPermissionEntriesResult(String result)
+    private PermissionAssignments parseGetPermissionEntriesResult(String result)
     {
         try {
-            return new JSONObject(result);
-
-        } catch (JSONException e)
+            return new PermissionAssignments(new JSONObject(result));
+        }
+        catch (JSONException e)
         {
             throw new RuntimeException(e);
         }
@@ -514,5 +519,108 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
                 .queryParam("permission", "" + permission.permissionKey())
                 .queryParam("type", type)
                 .queryParam("parameter", parameter));
+    }
+
+    public class PermissionAssignments
+    {
+        private final Map<String, Map<String, List<String>>> assignments;
+
+        public PermissionAssignments(JSONObject permissionJson)
+        {
+            assignments = Maps.newHashMap();
+            permissionJson.keys().forEachRemaining(permission -> {
+                try {
+
+                    JSONObject permissionTypes = permissionJson.getJSONObject(permission);
+                    assignments.put(permission, createTypeAssignments(permissionTypes));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            });
+        }
+
+        /**
+         * Given a JAVA style format for a specific JSON of format:
+         * {
+         *     BROWSE_USERS: ["admin", "dev"],
+         *     ASSIGN_ISSUES: ["admin"]
+         * }
+         *
+         * @param typeAssignmentsJson to create java mapping from
+         * @return java mapping of json
+         */
+        private Map<String, List<String>> createTypeAssignments(JSONObject typeAssignmentsJson) {
+            Map<String, List<String>> typeAssignments = Maps.newHashMap();
+
+            typeAssignmentsJson.keys().forEachRemaining(type -> {
+                try {
+                    JSONArray assignmentsArray = typeAssignmentsJson.getJSONArray(type);
+                    typeAssignments.put(type, createSingleTypeAssignment(assignmentsArray));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("error generating permission assignments", e);
+                }
+            });
+            return typeAssignments;
+        }
+
+        /**
+         * Given a JAVA style format for a specific JSON array of strings, e.g.
+         * ["admin", "dev"]
+         *
+         * @param singleTypeAssignments to create java array list from
+         * @return java list from json array
+         */
+        private List<String> createSingleTypeAssignment(JSONArray singleTypeAssignments) {
+            if (singleTypeAssignments.length() > 0) {
+                List<String> permissionTypeAssignmentList = Lists.newArrayList();
+                for (int i = 0; i < singleTypeAssignments.length(); ++i) {
+                    try {
+                        permissionTypeAssignmentList.add(singleTypeAssignments.getString(i));
+                    } catch (JSONException e) {
+                        throw new RuntimeException("error generating permission assignments", e);
+                    }
+                }
+                return permissionTypeAssignmentList;
+            }
+            return Lists.newArrayList();
+        }
+
+        /**
+         * Determine if the permission scheme has a given permission
+         * @return if specified permission is found
+         */
+        public boolean hasPermission(final String permission)
+        {
+            return assignments.containsKey(permission);
+        }
+
+        /**
+         * Find whether a given type is found in the permission
+         * @param permission to look in
+         * @param type to find, e.g. "users"
+         * @return if type is found in permission.
+         */
+        public boolean hasType(final String permission, final String type) {
+            return hasPermission(permission) && assignments.get(permission).containsKey(type);
+        }
+
+        /**
+         * Determine if a given permission assignment of type for a permission is present
+         * @param permission that assignment is in
+         * @param type of assignment
+         * @param parameter value for assignment
+         * @return if found
+         */
+        public boolean hasPermissionAssignment(final String permission, final String type, final String parameter)
+        {
+            return hasType(permission, type) && assignments.get(permission).get(type).contains(parameter);
+        }
+
+        public int length() {
+            return assignments.size();
+        }
     }
 }
