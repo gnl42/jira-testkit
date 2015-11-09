@@ -12,19 +12,24 @@ package com.atlassian.jira.testkit.plugin;
 import com.atlassian.jira.permission.JiraPermissionHolderType;
 import com.atlassian.jira.permission.PermissionSchemeEntry;
 import com.atlassian.jira.permission.PermissionSchemeManager;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -324,6 +329,80 @@ public class PermissionSchemesBackdoor
     }
 
     /**
+     * Gets all the current assigned permission holders for a given permission. If no permission is given all system
+     * permissions are returned. If no type is given, all types are placed in the response for the permission.
+     * This returns a JSON of Permission Key -> Permission Type -> Parameters. For example:
+     * {
+     *     EDIT_ISSUES: {
+     *         USER: ["bob", "jane"],
+     *         GROUP: ["jira-developers, "jira-admins"]
+     *     }
+     *     BROWSE_USERS: {
+     *         GROUP: ["jira-admins"]
+     *     }
+     * }
+     *
+     * @param schemeId the scheme ID
+     * @param permissionKey the permission to get permissions for, null if you want all permissions
+     * @param type the type of permissionHolder, e.g. "user", null if you want all types
+     */
+    @GET
+    @AnonymousAllowed
+    @Path("entity/assigned")
+    public Response getCurrentlyAssigned(@Nonnull @QueryParam ("schemeId") long schemeId,
+                                         @Nullable @QueryParam ("permission") String permissionKey,
+                                         @Nullable @QueryParam ("type") String type,
+                                         @Nullable @QueryParam ("parameter") String parameter)
+    {
+        final String modifiedParameter = transformParameter(type, parameter);
+        List<ProjectPermissionKey> permissionsToFind = Lists.newArrayList();
+
+        if (permissionKey == null)
+        {
+            permissionsToFind = ALL_PERMISSIONS;
+        }
+        else
+        {
+            permissionsToFind.add(new ProjectPermissionKey(permissionKey));
+        }
+
+        Map<String, Map<String, List<String>>> results = new HashMap<>();
+
+        permissionsToFind.stream().forEach(permission -> {
+            Collection<PermissionSchemeEntry> matchingEntries;
+            if (type == null)
+            {
+                matchingEntries = getPermissionSchemeEntries(schemeId, permission);
+            }
+            else if (modifiedParameter == null)
+            {
+                matchingEntries = getPermissionSchemeEntries(schemeId, permission, type);
+            }
+            else
+            {
+                matchingEntries = getPermissionSchemeEntries(schemeId, permission, type, modifiedParameter);
+            }
+
+            Map<String, List<String>> typesToParameters = Maps.newHashMap();
+
+            matchingEntries.stream().forEach(permissionSchemeEntry -> {
+                String entryType = permissionSchemeEntry.getType();
+                if (!typesToParameters.containsKey(entryType)) {
+                    typesToParameters.put(entryType, Lists.newArrayList());
+                }
+
+                typesToParameters.get(entryType).add(permissionSchemeEntry.getParameter());
+            });
+            if (typesToParameters.size() > 0) {
+                results.put(permission.permissionKey(), typesToParameters);
+            }
+        });
+
+        return Response.ok(results).build();
+    }
+
+
+    /**
      * There are a few changes that must be made to the parameter depending on the type of permission scheme entity
      * that we want to modify. This collects them to a single function.
      */
@@ -371,14 +450,20 @@ public class PermissionSchemesBackdoor
         return schemeManager.getPermissionSchemeEntries(schemeId, permission);
     }
 
+    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
+                                                                         @Nonnull ProjectPermissionKey permission,
+                                                                         String type)
+    {
+        return schemeManager.getPermissionSchemeEntries(schemeId, permission, type);
+    }
+
 
     private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
                                                                          @Nonnull ProjectPermissionKey permission,
                                                                          @Nonnull String type,
                                                                          @Nullable String parameter)
     {
-
-        return schemeManager.getPermissionSchemeEntries(schemeId, permission, type).stream()
+        return getPermissionSchemeEntries(schemeId, permission, type).stream()
                 .filter(entry -> {
                     if (parameter == null) {
                         return (entry.getParameter() == null);
@@ -388,4 +473,39 @@ public class PermissionSchemesBackdoor
                 })
                 .collect(Collectors.toList());
     }
+
+    public static final List<ProjectPermissionKey> ALL_PERMISSIONS = Lists.newArrayList(
+            ProjectPermissions.ADMINISTER_PROJECTS,
+            ProjectPermissions.BROWSE_PROJECTS,
+            ProjectPermissions.VIEW_DEV_TOOLS,
+            ProjectPermissions.VIEW_READONLY_WORKFLOW,
+            ProjectPermissions.CREATE_ISSUES,
+            ProjectPermissions.EDIT_ISSUES,
+            ProjectPermissions.TRANSITION_ISSUES,
+            ProjectPermissions.SCHEDULE_ISSUES,
+            ProjectPermissions.MOVE_ISSUES,
+            ProjectPermissions.ASSIGN_ISSUES,
+            ProjectPermissions.ASSIGNABLE_USER,
+            ProjectPermissions.RESOLVE_ISSUES,
+            ProjectPermissions.CLOSE_ISSUES,
+            ProjectPermissions.MODIFY_REPORTER,
+            ProjectPermissions.DELETE_ISSUES,
+            ProjectPermissions.LINK_ISSUES,
+            ProjectPermissions.SET_ISSUE_SECURITY,
+            ProjectPermissions.VIEW_VOTERS_AND_WATCHERS,
+            ProjectPermissions.MANAGE_WATCHERS,
+            ProjectPermissions.ADD_COMMENTS,
+            ProjectPermissions.EDIT_ALL_COMMENTS,
+            ProjectPermissions.EDIT_OWN_COMMENTS,
+            ProjectPermissions.DELETE_ALL_COMMENTS,
+            ProjectPermissions.DELETE_OWN_COMMENTS,
+            ProjectPermissions.CREATE_ATTACHMENTS,
+            ProjectPermissions.DELETE_ALL_ATTACHMENTS,
+            ProjectPermissions.DELETE_OWN_ATTACHMENTS,
+            ProjectPermissions.WORK_ON_ISSUES,
+            ProjectPermissions.EDIT_OWN_WORKLOGS,
+            ProjectPermissions.EDIT_ALL_WORKLOGS,
+            ProjectPermissions.DELETE_OWN_WORKLOGS,
+            ProjectPermissions.DELETE_ALL_WORKLOGS
+    );
 }
