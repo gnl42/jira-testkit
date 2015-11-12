@@ -12,8 +12,12 @@ package com.atlassian.jira.testkit.client;
 import com.atlassian.jira.issue.IssueFieldConstants;
 import com.atlassian.jira.permission.JiraPermissionHolderType;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
+import com.atlassian.jira.testkit.beans.PermissionSchemeBean;
+import com.sun.jersey.api.client.WebResource;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.lang.Long;
 import java.lang.String;
 
@@ -62,87 +66,90 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     }
 
     /**
-     * Adds a group permission.
-     *
-     * @param schemeId the scheme ID
-     * @param permission the permission
-     * @param groupName the group name
-     * @deprecated Use {@link PermissionSchemesControl#addGroupPermission(Long, ProjectPermissionKey, String)} instead
+     * Create a new add permission request for a given permission scheme
+     * @param schemeId to add permission assignment to
+     * @param permission to add assignment
+     * @param type of permission assignment.
+     * @return request builder that can request the change
      */
-    @Deprecated
-    public void addGroupPermission(Long schemeId, int permission, String groupName)
+    public PermissionRequestBuilder addPermission(long schemeId, ProjectPermissionKey permission, String type)
     {
-        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
-    }
-
-    public void addGroupPermission(Long schemeId, ProjectPermissionKey permission, String groupName)
-    {
-        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
+        return new PermissionRequestBuilder("entity/add").schemeId(schemeId).permission(permission).type(type);
     }
 
     /**
-     * Removes a group permission.
-     *
-     * @param schemeId the scheme ID
-     * @param permission the permission
-     * @param groupName the group name
-     * @deprecated Use {@link PermissionSchemesControl#removeGroupPermission(long, ProjectPermissionKey, String)} instead
+     * See {@link PermissionSchemesControl#addPermission(long, ProjectPermissionKey, String)}
      */
-    @Deprecated
-    public void removeGroupPermission(long schemeId, int permission, String groupName)
+    public PermissionRequestBuilder addPermission(long schemeId, ProjectPermissionKey permission, JiraPermissionHolderType type)
     {
-        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
-    }
-
-    public void removeGroupPermission(long schemeId, ProjectPermissionKey permission, String groupName)
-    {
-        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
+        return addPermission(schemeId, permission, type.getKey());
     }
 
     /**
-     * Adds a project role permission.
-     *
-     * @param schemeId the scheme ID
-     * @param permission the permission
-     * @param projectRoleId the project role ID
-     * @deprecated Use {@link PermissionSchemesControl#addProjectRolePermission(long, ProjectPermissionKey, long)} instead
+     * Create a new remove permission request for a given permission scheme
+     * @param schemeId to remove permission assignment from
+     * @param permission to remove assignment
+     * @param type of permission assignment.
+     * @return request builder that can request the change
      */
-    @Deprecated
-    public void addProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    public PermissionRequestBuilder removePermission(long schemeId, ProjectPermissionKey permission, String type)
     {
-        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
-    }
-
-    public void addProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
-    {
-        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
+        return new PermissionRequestBuilder("entity/remove").schemeId(schemeId).permission(permission).type(type);
     }
 
     /**
-     * Removes a project role permission.
-     *
-     * @param schemeId the scheme ID
-     * @param permission the permission
-     * @param projectRoleId the project role ID
-     * @deprecated Use {@link PermissionSchemesControl#removeProjectRolePermission(long, ProjectPermissionKey, long)} instead
+     * See {@link PermissionSchemesControl#removePermission(long, ProjectPermissionKey, String)}
      */
-    @Deprecated
-    public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    public PermissionRequestBuilder removePermission(long schemeId, ProjectPermissionKey permission, JiraPermissionHolderType type)
     {
-        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
-    }
-
-    public void removeProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
-    {
-        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
+        return removePermission(schemeId, permission, type.getKey());
     }
 
     /**
-     * Adds a user permission.
+     * Remove all current permission assignments and add a new one of a given type
+     * @param schemeId to replace permission assignments from
+     * @param permission to replace assignment
+     * @param type of new permission assignment.
+     * @return request builder that can request the change
+     */
+    public PermissionRequestBuilder replacePermission(long schemeId, ProjectPermissionKey permission, String type)
+    {
+        return new PermissionRequestBuilder("entity/replace").schemeId(schemeId).permission(permission).type(type);
+    }
+
+    /**
+     * See {@link PermissionSchemesControl#replacePermission(long, ProjectPermissionKey, String)}
+     */
+    public PermissionRequestBuilder replacePermission(long schemeId, ProjectPermissionKey permission, JiraPermissionHolderType type)
+    {
+        return replacePermission(schemeId, permission, type.getKey());
+    }
+
+    /**
+     * Get all the permission entries for a given scheme.
      *
-     * @param schemeId the scheme ID
-     * @param permission the permission
-     * @param userName the username
+     * @param schemeId of the permission scheme
+     * @return JSONObject representing permissions
+     */
+    public PermissionSchemeBean getAssignedPermissions(long schemeId)
+    {
+        String response = new PermissionRequestBuilder(Long.toString(schemeId)).getRequest();
+
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(response, PermissionSchemeBean.class);
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
      * @deprecated Use {@link PermissionSchemesControl#addUserPermission(long, ProjectPermissionKey, String)} instead
      */
     @Deprecated
@@ -151,19 +158,94 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         addPermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
     }
 
+    /**
+     * Adds a user permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param userName the username
+     */
     public void addUserPermission(long schemeId, ProjectPermissionKey permission, String userName)
     {
-        addPermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER)
+                .parameter(userName)
+                .getRequest();
     }
 
+
+    /**
+     * @deprecated Use {@link PermissionSchemesControl#removeUserPermission(long, ProjectPermissionKey, String)} instead
+     */
+    @Deprecated
+    public void removeUserPermission(long schemeId, int permission, String userName)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
+    }
+
+    /**
+     * Removes a user permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param userName the username
+     */
+    public void removeUserPermission(long schemeId, ProjectPermissionKey permission, String userName)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.USER)
+                .parameter(userName)
+                .getRequest();
+    }
+
+    /**
+     * Replace all of the current permissions and replace with the following user permission
+     * @param schemeId of the permission scheme
+     * @param permission to replace
+     * @param userName to replace with
+     */
+    public void replaceUserPermission(long schemeId, ProjectPermissionKey permission, String userName)
+    {
+        replacePermission(schemeId, permission, JiraPermissionHolderType.USER)
+                .parameter(userName)
+                .getRequest();
+    }
+
+    /**
+     * Add a new user custom field to a given permission
+     * @param schemeId of the permission scheme
+     * @param permission to add to
+     * @param customFieldName to add permission to
+     */
     public void addUserCustomFieldPermission(long schemeId, ProjectPermissionKey permission, String customFieldName)
     {
-        addPermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customFieldName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD)
+                .parameter(customFieldName)
+                .getRequest();
     }
 
+    /**
+     * Remove a give user custom field from a permission
+     * @param schemeId of the permission scheme
+     * @param permission to replace
+     * @param customFieldName to replace permission for
+     */
     public void removeUserCustomFieldPermission(long schemeId, ProjectPermissionKey permission, String customFieldName)
     {
-        removePermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), customFieldName);
+        removePermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD)
+                .parameter(customFieldName)
+                .getRequest();
+    }
+
+    /**
+     * Replace all of the current permissions and replace with the given custom field.
+     * @param schemeId of the permission scheme
+     * @param permission to replace
+     * @param customFieldName to replace permission for
+     */
+    public void replaceUserCustomFieldPermissions(long schemeId, ProjectPermissionKey permission, String customFieldName)
+    {
+        replacePermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD)
+                .parameter(customFieldName)
+                .getRequest();
     }
 
 
@@ -174,7 +256,8 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      */
     public void addCurrentAssigneePermission(final long schemeId, @Nonnull final ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, IssueFieldConstants.ASSIGNEE);
+        addPermission(schemeId, permission, IssueFieldConstants.ASSIGNEE)
+                .getRequest();
     }
 
     /**
@@ -186,7 +269,9 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
     public void addApplicationRolePermission(final long schemeId, @Nonnull final ProjectPermissionKey permission,
                                              @Nonnull final String applicationRole)
     {
-        addPermission(schemeId, permission, "applicationRole", applicationRole);
+        addPermission(schemeId, permission, "applicationRole")
+                .parameter(applicationRole)
+                .getRequest();
     }
 
     /**
@@ -196,34 +281,56 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      */
     public void addReporterPermission(final long schemeId, @Nonnull final ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, IssueFieldConstants.REPORTER);
+        addPermission(schemeId, permission, IssueFieldConstants.REPORTER)
+                .getRequest();
     }
 
     /**
-     * Removes a user permission.
-     *
-     * @param schemeId the scheme ID
-     * @param permission the permission
-     * @param userName the username
-     * @deprecated Use {@link PermissionSchemesControl#removeUserPermission(long, ProjectPermissionKey, String)} instead
+     * @deprecated Use {@link PermissionSchemesControl#addGroupPermission(Long, ProjectPermissionKey, String)} instead
      */
     @Deprecated
-    public void removeUserPermission(long schemeId, int permission, String userName)
+    public void addGroupPermission(Long schemeId, int permission, String groupName)
     {
-        removePermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
-    }
-
-    public void removeUserPermission(long schemeId, ProjectPermissionKey permission, String userName)
-    {
-        removePermission(schemeId, permission, JiraPermissionHolderType.USER.getKey(), userName);
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
     /**
-     * Removes any matching permission scheme entities for the given permission and adds an entity for the passed group.
+     * Adds a group permission.
      *
      * @param schemeId the scheme ID
      * @param permission the permission
      * @param groupName the group name
+     */
+    public void addGroupPermission(Long schemeId, ProjectPermissionKey permission, String groupName)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP)
+            .parameter(groupName)
+            .getRequest();
+    }
+
+    /**
+     * @deprecated Use {@link PermissionSchemesControl#removeGroupPermission(long, ProjectPermissionKey, String)} instead
+     */
+    @Deprecated
+    public void removeGroupPermission(long schemeId, int permission, String groupName)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
+    }
+    /**
+     * Removes a group permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param groupName the group name
+     */
+    public void removeGroupPermission(long schemeId, ProjectPermissionKey permission, String groupName)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP)
+                .parameter(groupName)
+                .getRequest();
+    }
+
+    /**
      * @deprecated Use {@link PermissionSchemesControl#replaceGroupPermissions(long, ProjectPermissionKey, String)} instead
      */
     @Deprecated
@@ -232,9 +339,108 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
         replacePermissions(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
     }
 
+    /**
+     * Removes any matching permission scheme entities for the given permission and adds an entity for the passed group.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param groupName the group name
+     */
     public void replaceGroupPermissions(long schemeId, ProjectPermissionKey permission, String groupName)
     {
-        replacePermissions(schemeId, permission, JiraPermissionHolderType.GROUP.getKey(), groupName);
+        replacePermission(schemeId, permission, JiraPermissionHolderType.GROUP)
+                .parameter(groupName)
+                .getRequest();
+    }
+
+    /**
+     * @deprecated Use {@link PermissionSchemesControl#addProjectRolePermission(long, ProjectPermissionKey, long)} instead
+     */
+    @Deprecated
+    public void addProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
+    }
+    /**
+     * Adds a project role permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param projectRoleId the project role ID
+     */
+    public void addProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE)
+                .parameter(Long.toString(projectRoleId))
+                .getRequest();
+    }
+
+    /**
+     * @deprecated Use {@link PermissionSchemesControl#removeProjectRolePermission(long, ProjectPermissionKey, long)} instead
+     */
+    @Deprecated
+    public void removeProjectRolePermission(long schemeId, int permission, long projectRoleId)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE.getKey(), Long.toString(projectRoleId));
+    }
+
+    /**
+     * Removes a project role permission.
+     *
+     * @param schemeId the scheme ID
+     * @param permission the permission
+     * @param projectRoleId the project role ID
+     */
+    public void removeProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE)
+                .parameter(Long.toString(projectRoleId))
+                .getRequest();
+    }
+
+    /**
+     * Replace all of the current project role permissions with the given role
+     * @param schemeId of the permission scheme
+     * @param permission to be edited
+     * @param projectRoleId to set as permission
+     */
+    public void replaceProjectRolePermission(long schemeId, ProjectPermissionKey permission, long projectRoleId)
+    {
+        replacePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_ROLE)
+                .parameter(Long.toString(projectRoleId))
+                .getRequest();
+    }
+
+    /**
+     * Add the project lead permission type to a permission
+     * @param schemeId of the permission scheme
+     * @param permission to add project lead permission to
+     */
+    public void addProjectLeadPermission(long schemeId, ProjectPermissionKey permission)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.PROJECT_LEAD)
+                .getRequest();
+    }
+
+    /**
+     * Add the project lead permission type to a permission
+     * @param schemeId of the permission scheme
+     * @param permission to remove project lead permission from
+     */
+    public void removeProjectLeadPermission(long schemeId, ProjectPermissionKey permission)
+    {
+        removePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_LEAD)
+                .getRequest();
+    }
+    /**
+     * Remove all current permission types and add the project lead permission type to a permission
+     * @param schemeId of the permission scheme
+     * @param permission to replace project lead permission with
+     */
+    public void replaceProjectLeadPermission(long schemeId, ProjectPermissionKey permission)
+    {
+        replacePermission(schemeId, permission, JiraPermissionHolderType.PROJECT_LEAD)
+                .getRequest();
     }
 
     /**
@@ -245,17 +451,8 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      */
     public void addEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {
-        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP.getKey());
-    }
-
-    public void addUserCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
-    {
-        addPermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey(), fieldId);
-    }
-
-    public void addGroupCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
-    {
-        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP_CUSTOM_FIELD.getKey(), fieldId);
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP)
+                .getRequest();
     }
 
     /**
@@ -267,10 +464,23 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
      */
     public void removeEveryonePermission(Long schemeId, ProjectPermissionKey permission)
     {
-        get(createResource().path("permissionSchemes/entity/remove")
-                .queryParam("schemeId", schemeId.toString())
-                .queryParam("permission", permission.toString())
-                .queryParam("type", JiraPermissionHolderType.GROUP.getKey()));
+        removePermission(schemeId, permission, JiraPermissionHolderType.GROUP)
+                .getRequest();
+    }
+
+
+    public void addUserCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.USER_CUSTOM_FIELD.getKey())
+                .parameter(fieldId)
+                .getRequest();
+    }
+
+    public void addGroupCustomFieldPermission(Long schemeId, ProjectPermissionKey permission, String fieldId)
+    {
+        addPermission(schemeId, permission, JiraPermissionHolderType.GROUP_CUSTOM_FIELD.getKey())
+                .parameter(fieldId)
+                .getRequest();
     }
 
     private void addPermission(long schemeId, int permission, String type, String parameter)
@@ -282,38 +492,11 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
                 .queryParam("parameter", parameter));
     }
 
-    private void addPermission(long schemeId, ProjectPermissionKey permission, String type, String parameter)
-    {
-        get(createResource().path("permissionSchemes/entity/add")
-                .queryParam("schemeId", "" + schemeId)
-                .queryParam("permission", "" + permission.permissionKey())
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
-    }
-
-    private void addPermission(long schemeId, ProjectPermissionKey permission, String type)
-    {
-        get(createResource().path("permissionSchemes/entity/add")
-                    .queryParam("schemeId", "" + schemeId)
-                    .queryParam("permission", "" + permission.permissionKey())
-                    .queryParam("type", type)
-        );
-    }
-
     private void removePermission(long schemeId, int permission, String type, String parameter)
     {
         get(createResource().path("permissionSchemes/legacy/entity/remove")
                 .queryParam("schemeId", "" + schemeId)
                 .queryParam("permission", "" + permission)
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
-    }
-
-    private void removePermission(long schemeId, ProjectPermissionKey permission, String type, String parameter)
-    {
-        get(createResource().path("permissionSchemes/entity/remove")
-                .queryParam("schemeId", "" + schemeId)
-                .queryParam("permission", "" + permission.permissionKey())
                 .queryParam("type", type)
                 .queryParam("parameter", parameter));
     }
@@ -327,12 +510,79 @@ public class PermissionSchemesControl extends BackdoorControl<PermissionSchemesC
                 .queryParam("parameter", parameter));
     }
 
-    private void replacePermissions(long schemeId, ProjectPermissionKey permission, String type, String parameter)
+    /**
+     * Requests a request to modify the permission entities for a permission scheme
+     */
+    public class PermissionRequestBuilder
     {
-        get(createResource().path("permissionSchemes/entity/replace")
-                .queryParam("schemeId", "" + schemeId)
-                .queryParam("permission", "" + permission.permissionKey())
-                .queryParam("type", type)
-                .queryParam("parameter", parameter));
+        private static final String BASE_URL = "permissionSchemes/";
+
+        private final String requestUrl;
+        private Long schemeId = null;
+        private ProjectPermissionKey permission = null;
+        private String type = null;
+        private String parameter = null;
+
+        public PermissionRequestBuilder(final String endpoint)
+        {
+            this.requestUrl = BASE_URL + endpoint;
+        }
+
+        public PermissionRequestBuilder schemeId(Long schemeId)
+        {
+            this.schemeId = schemeId;
+            return this;
+        }
+
+        public PermissionRequestBuilder permission(ProjectPermissionKey permission)
+        {
+            this.permission = permission;
+            return this;
+        }
+
+        public PermissionRequestBuilder type(JiraPermissionHolderType type)
+        {
+            this.type = type.getKey();
+            return this;
+        }
+
+        public PermissionRequestBuilder type(String type)
+        {
+            this.type = type;
+            return this;
+        }
+
+        public PermissionRequestBuilder parameter(String parameter)
+        {
+            this.parameter = parameter;
+            return this;
+        }
+
+        public String getRequest()
+        {
+            return get(buildRequestResource(requestUrl));
+        }
+
+        private WebResource buildRequestResource(final String path)
+        {
+            WebResource resource = createResource().path(path);
+            if (schemeId != null)
+            {
+                resource = resource.queryParam("schemeId", "" + schemeId);
+            }
+            if (permission != null)
+            {
+                resource = resource.queryParam("permission", "" + permission.permissionKey());
+            }
+            if (type != null)
+            {
+                resource = resource.queryParam("type", type);
+            }
+            if (parameter != null)
+            {
+                resource = resource.queryParam("parameter", parameter);
+            }
+            return resource;
+        }
     }
 }

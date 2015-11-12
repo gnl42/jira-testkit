@@ -15,6 +15,9 @@ import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
+import com.atlassian.jira.testkit.beans.PermissionGrantBean;
+import com.atlassian.jira.testkit.beans.PermissionHolderBean;
+import com.atlassian.jira.testkit.beans.PermissionSchemeBean;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.user.UserKeyService;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -81,6 +84,45 @@ public class PermissionSchemesBackdoor
         Scheme copyScheme = schemeManager.createSchemeObject(newSchemeName, description);
 
         return Response.ok(copyScheme.getId()).build();
+    }
+
+    /**
+     * Get all the permission assignments for a given scheme
+     * @param schemeId to get permissions for
+     * @return permissionSchemeBean representing permissions in the scheme
+     */
+    @GET
+    @AnonymousAllowed
+    @Path("{schemeId}")
+    public Response getPermissionScheme(@PathParam ("schemeId") Long schemeId)
+    {
+        Scheme scheme = schemeManager.getSchemeObject(schemeId);
+        if (scheme == null)
+        {
+            return Response.serverError().cacheControl(CacheControl.never()).build();
+        }
+
+
+        PermissionSchemeBean permissionSchemeBean = new PermissionSchemeBean(scheme.getId(), scheme.getName());
+
+        scheme.getEntities().stream().forEach(schemeEntity ->
+        {
+            final ProjectPermissionKey permissionKey = (ProjectPermissionKey) schemeEntity.getEntityTypeId();
+            final String type = schemeEntity.getType();
+            final String parameter = schemeEntity.getParameter();
+
+            PermissionHolderBean permissionHolderBean = new PermissionHolderBean();
+            permissionHolderBean.setType(type);
+            permissionHolderBean.setParameter(parameter);
+
+            PermissionGrantBean grantBean = new PermissionGrantBean();
+            grantBean.setPermission(permissionKey.permissionKey());
+            grantBean.setHolder(permissionHolderBean);
+
+            permissionSchemeBean.addPermission(grantBean);
+        });
+
+        return Response.ok(permissionSchemeBean).cacheControl(CacheControl.never()).build();
     }
 
     @DELETE
@@ -158,7 +200,6 @@ public class PermissionSchemesBackdoor
         else
         {
             log.info("Attempted to add an entity which already exists; ignoring");
-            return Response.notModified("Attempted to add an entity which already exists").build();
         }
 
         return Response.ok(null).build();
@@ -209,14 +250,8 @@ public class PermissionSchemesBackdoor
         ProjectPermissionKey permission = new ProjectPermissionKey(permissionKey);
         Collection<PermissionSchemeEntry> matchingEntries = getPermissionSchemeEntries(schemeId, permission, type, parameter);
 
-        if (matchingEntries.isEmpty())
+        if (!matchingEntries.isEmpty())
         {
-            log.info("Attempted to remove an entity which does not exist; ignoring");
-            return Response.notModified("Attempted to remove an entity which does not exist").build();
-        }
-        else
-        {
-
             for (PermissionSchemeEntry entry: matchingEntries)
             {
                 try
@@ -229,6 +264,10 @@ public class PermissionSchemesBackdoor
                     return Response.serverError().entity(e.getMessage()).cacheControl(CacheControl.never()).build();
                 }
             }
+        }
+        else
+        {
+            log.info("Attempted to remove an entity which does not exist; ignoring");
         }
 
         return Response.ok(null).build();
@@ -374,14 +413,20 @@ public class PermissionSchemesBackdoor
         return schemeManager.getPermissionSchemeEntries(schemeId, permission);
     }
 
+    private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
+                                                                         @Nonnull ProjectPermissionKey permission,
+                                                                         String type)
+    {
+        return schemeManager.getPermissionSchemeEntries(schemeId, permission, type);
+    }
+
 
     private Collection<PermissionSchemeEntry> getPermissionSchemeEntries(long schemeId,
                                                                          @Nonnull ProjectPermissionKey permission,
                                                                          @Nonnull String type,
                                                                          @Nullable String parameter)
     {
-
-        return schemeManager.getPermissionSchemeEntries(schemeId, permission, type).stream()
+        return getPermissionSchemeEntries(schemeId, permission, type).stream()
                 .filter(entry -> {
                     if (parameter == null) {
                         return (entry.getParameter() == null);

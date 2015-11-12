@@ -20,6 +20,8 @@ import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class IssueSecuritySchemesBackdoor
 {
+    private final Logger log = LoggerFactory.getLogger(PermissionSchemesBackdoor.class);
+
     private final IssueSecuritySchemeManager schemeManager;
     private final IssueSecurityLevelManager levelManager;
 
@@ -130,7 +134,8 @@ public class IssueSecuritySchemesBackdoor
         }
         else if (filteredEntities.size() == 0)
         {
-            return Response.notModified().cacheControl(CacheControl.never()).build();
+            log.info("Attempted to remove an entity which does not exist; ignoring");
+            return Response.ok().build();
         }
         else
         {
@@ -157,7 +162,8 @@ public class IssueSecuritySchemesBackdoor
         }
         else if (entities.size() == 0)
         {
-            return Response.notModified().cacheControl(CacheControl.never()).build();
+            log.info("Attempted to remove an entity which does not exist; ignoring");
+            return Response.ok().build();
         }
         else
         {
@@ -182,7 +188,8 @@ public class IssueSecuritySchemesBackdoor
         }
         else if (filteredLevels.size() == 0)
         {
-            return Response.notModified().cacheControl(CacheControl.never()).build();
+            log.info("Attempted to remove an entity which does not exist; ignoring");
+            return Response.ok().build();
         }
         else
         {
