@@ -105,7 +105,8 @@ public class PermissionSchemesBackdoor
 
         PermissionSchemeBean permissionSchemeBean = new PermissionSchemeBean(scheme.getId(), scheme.getName());
 
-        scheme.getEntities().stream().forEach(schemeEntity -> {
+        scheme.getEntities().stream().forEach(schemeEntity ->
+        {
             final ProjectPermissionKey permissionKey = (ProjectPermissionKey) schemeEntity.getEntityTypeId();
             final String type = schemeEntity.getType();
             final String parameter = schemeEntity.getParameter();
