@@ -19,6 +19,11 @@
       <tag>jira-testkit-plugin-parent-7.0.21</tag>
     </scm>
 
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://jira-bamboo.internal.atlassian.com/browse/JT-TC</url>
+    </ciManagement>
+
     <licenses>
         <license>
             <name>Apache License 2.0</name>
@@ -48,8 +53,8 @@
         <hamcrest.version>1.2</hamcrest.version>
         <jackson.version>1.9.1</jackson.version>
         <jdkLevel>1.8</jdkLevel>
-        <jersey.contrib.version>1.9.1</jersey.contrib.version>
-        <jersey.version>1.8-atlassian-6</jersey.version>
+        <jersey.contrib.version>1.19</jersey.contrib.version>
+        <jersey.version>1.19</jersey.version>
         <jira.amps.version>${jira.version}</jira.amps.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.rest.version>6.8.6</jira.rest.version>
