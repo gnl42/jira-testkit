@@ -15,6 +15,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Representation of a version in the JIRA REST API.
@@ -26,6 +27,9 @@ public class VersionIssueCounts
     public String self;
     public long issuesFixedCount;
     public long issuesAffectedCount;
+    public long issueCountWithCustomFieldsShowingVersion;
+    public List<String> customFieldNames;
+    public List<Long> customFieldIds;
 
     public VersionIssueCounts self(URI self)
     {
