@@ -110,6 +110,20 @@ public class VersionClient extends RestApiClient<VersionClient>
         });
     }
 
+    public Response merge(final String versionId, final String mergeToVersionId) throws UniformInterfaceException
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                WebResource mergeResource = versionWithID(versionId).path("mergeto").path(mergeToVersionId);
+
+                return mergeResource.put(ClientResponse.class);
+            }
+        });
+    }
+
     public Version move(String versionId, VersionMove versionMove) throws UniformInterfaceException
     {
         return versionMove(versionId).post(Version.class, versionMove);
