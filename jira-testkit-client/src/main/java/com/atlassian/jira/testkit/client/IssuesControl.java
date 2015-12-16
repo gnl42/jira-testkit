@@ -35,6 +35,7 @@ import static com.atlassian.jira.rest.api.issue.ResourceRef.withId;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withKey;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withName;
 import static com.google.common.collect.Iterables.find;
+import static org.apache.commons.lang.StringUtils.isNumeric;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -119,13 +120,22 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return createIssue(projectKey, summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType(Optional.of(projectKey)));
     }
 
+    /**
+     *
+     * @param projectKey - project key for project that issue will be linked to
+     * @param summary - summary of issue
+     * @param assignee - name of user to assign issue
+     * @param priority - priority of issue can be ether id or name (eg. "Major")
+     * @param issueType - type of issue can be ether id or name (eg. "Bug")
+     * @return
+     */
     public IssueCreateResponse createIssue(String projectKey, String summary, @Nullable String assignee,
-            String priorityId, String issueType)
+            String priority, String issueType)
     {
         IssueFields fields = new IssueFields();
         fields.project(withKey(projectKey));
-        fields.issueType(withId(issueType));
-        fields.priority(withId(priorityId));
+        fields.issueType(isNumeric(issueType) ? withId(issueType) : withName(issueType));
+        fields.priority(isNumeric(priority) ? withId(priority) : withName(priority));
         fields.summary(summary);
         if (assignee != null)
         {
