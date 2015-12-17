@@ -110,17 +110,23 @@ public class VersionClient extends RestApiClient<VersionClient>
         });
     }
 
+    public Response deleteVersionAndSwap(final String versionId, DeleteVersionWithCustomFieldParameters parameters) throws UniformInterfaceException
+    {
+        return toResponse((Method) () -> {
+            WebResource removeAndSwapResource = versionWithID(versionId).path("removeAndSwap");
+
+            return removeAndSwapResource
+                    .entity(parameters, MediaType.APPLICATION_JSON_TYPE)
+                    .post(ClientResponse.class);
+        });
+    }
+
     public Response merge(final String versionId, final String mergeToVersionId) throws UniformInterfaceException
     {
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                WebResource mergeResource = versionWithID(versionId).path("mergeto").path(mergeToVersionId);
+        return toResponse((Method) () -> {
+            WebResource mergeResource = versionWithID(versionId).path("mergeto").path(mergeToVersionId);
 
-                return mergeResource.put(ClientResponse.class);
-            }
+            return mergeResource.put(ClientResponse.class);
         });
     }
 
