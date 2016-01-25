@@ -158,6 +158,11 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
                 .queryParam("schemeName", schemeName).queryParam("newSchemeName", newSchemeName).get(String.class));
     }
 
+    public void assignScheme(final long schemeId, final String issueType, final String workflowName) {
+        final WorkflowSchemeData scheme = getWorkflowScheme(schemeId).setMapping(issueType, workflowName);
+        updateScheme(scheme);
+    }
+
     private WebResource createWorkflowSchemeResource(long id)
     {
         return createWorkflowSchemeResource().path(String.valueOf(id));
