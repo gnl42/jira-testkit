@@ -20,11 +20,8 @@ import com.atlassian.jira.testkit.beans.Screen;
 import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import com.google.common.base.Predicate;
+import org.apache.commons.lang.StringUtils;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -33,10 +30,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.ImmutableList.copyOf;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
 @Path ("screens")
@@ -45,31 +45,6 @@ import static com.google.common.collect.Iterables.transform;
 @Produces ({ MediaType.APPLICATION_JSON })
 public class ScreensBackdoorResource
 {
-    private static final Function<FieldScreen, Screen> toScreen = new Function<FieldScreen, Screen>()
-    {
-        @Override
-        public Screen apply(final FieldScreen input)
-        {
-            return new Screen(input.getId(), input.getName(), transform(input.getTabs(), toTab));
-        }
-    };
-
-    public static final Function<FieldScreenTab, Screen.Tab> toTab = new Function<FieldScreenTab, Screen.Tab>()
-    {
-        @Override
-        public Screen.Tab apply(final FieldScreenTab input)
-        {
-            return new Screen.Tab(input.getName(), transform(input.getFieldScreenLayoutItems(), new Function<FieldScreenLayoutItem, Field>()
-            {
-                @Override
-                public Field apply(final FieldScreenLayoutItem input)
-                {
-                    return new Field(input.getFieldId(), input.getOrderableField().getName());
-                }
-            }));
-        }
-    };
-
     private final FieldScreenManager fieldScreenManager;
     private final FieldManager fieldManager;
 
@@ -79,12 +54,46 @@ public class ScreensBackdoorResource
         this.fieldManager = fieldManager;
     }
 
+    private Function<FieldScreen, Screen> toScreen() {
+        return new Function<FieldScreen, Screen>() {
+            @Override
+            public Screen apply(final FieldScreen input) {
+                return new Screen(input.getId(), input.getName(), transform(input.getTabs(), convertToTab()));
+            }
+        };
+    }
+
+    private Function<FieldScreenTab, Screen.Tab> convertToTab() {
+        return new Function<FieldScreenTab, Screen.Tab>()
+        {
+            @Override
+            public Screen.Tab apply(final FieldScreenTab input)
+            {
+                Iterable<FieldScreenLayoutItem> filtered = filter(input.getFieldScreenLayoutItems(), new Predicate<FieldScreenLayoutItem>() {
+                    @Override
+                    public boolean apply(FieldScreenLayoutItem field) {
+                        return fieldManager.getField(field.getFieldId()) != null;
+                    }
+                });
+
+                Iterable<Field> fields = transform(filtered, new Function<FieldScreenLayoutItem, Field>() {
+                    @Override
+                    public Field apply(final FieldScreenLayoutItem input) {
+                        com.atlassian.jira.issue.fields.Field field = fieldManager.getField(input.getFieldId());
+                        return new Field(field.getId(), field.getName());
+                    }
+                });
+                return new Screen.Tab(input.getName(), fields);
+            }
+        };
+    }
+
     @GET
     public Response get(@QueryParam ("screen") String nameOrId)
     {
         if (nameOrId == null)
         {
-            return ok(copyOf(transform(fieldScreenManager.getFieldScreens(), toScreen)));
+            return ok(copyOf(transform(fieldScreenManager.getFieldScreens(), toScreen())));
         }
         else
         {
@@ -97,7 +106,7 @@ public class ScreensBackdoorResource
             }
             else
             {
-                return ok(toScreen.apply(fieldScreen));
+                return ok(toScreen().apply(fieldScreen));
             }
         }
     }
@@ -139,6 +148,7 @@ public class ScreensBackdoorResource
             {
                 screenTab.addFieldScreenLayoutItem(navigableField.getId(), Integer.valueOf(position));
             }
+            screenTab.store();
         }
         return Response.ok().cacheControl(CacheControl.never()).build();
     }
