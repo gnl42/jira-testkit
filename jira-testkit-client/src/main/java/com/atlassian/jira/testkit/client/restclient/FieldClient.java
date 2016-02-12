@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.rest.api.customfield.CustomFieldDefinitionJsonBean;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.sun.jersey.api.client.ClientResponse;
@@ -16,6 +17,7 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
@@ -44,6 +46,16 @@ public class FieldClient extends RestApiClient<FieldClient>
     public List<Field> get() throws UniformInterfaceException
     {
         return field().get(new GenericType<List<Field>>(){});
+    }
+
+
+    public Response createCustomFieldResponse(CustomFieldDefinitionJsonBean customFieldDefinitionJson) {
+        return toResponse(new Method() {
+            @Override
+            public ClientResponse call() {
+                return field().type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, customFieldDefinitionJson);
+            }
+        });
     }
 
     /**
