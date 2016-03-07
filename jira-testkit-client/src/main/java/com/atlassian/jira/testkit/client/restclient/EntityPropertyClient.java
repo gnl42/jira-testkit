@@ -85,7 +85,14 @@ public class EntityPropertyClient extends RestApiClient<EntityPropertyClient>
 
     protected WebResource resource(final Option<String> entityKeyOrId, final Option<String> propertyKey)
     {
-        final WebResource webResource = createResource().path(entityName).path(entityKeyOrId.getOrElse("")).path("properties");
-        return webResource.path(propertyKey.getOrElse(""));
+        WebResource webResource = createResource().path(entityName);
+
+        if ("user".equals(entityName)) {
+            webResource = webResource.queryParam("username", entityKeyOrId.getOrElse(""));
+        } else {
+            webResource = webResource.path(entityKeyOrId.getOrElse(""));
+        }
+
+        return webResource.path("properties").path(propertyKey.getOrElse(""));
     }
 }
