@@ -272,9 +272,17 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     }
 
     public IssuesControl addFixVersion(String issueKey, String version) {
+        return addVersionField(issueKey, "fixVersions", version);
+    }
+
+    public IssuesControl addAffectsVersion(String issueKey, String version) {
+        return addVersionField(issueKey, "versions", version);
+    }
+
+    private IssuesControl addVersionField(String issueKey, String fieldId, String version) {
         final Map<String, Map<String, String>> add = MapBuilder.<String, Map<String, String>>newBuilder().add("add", MapBuilder.<String, String>newBuilder().add("name", version).toMap()).toMap();
         final List<Map<String, Map<String, String>>> addList = Collections.singletonList(add);
-        final Map<String, List<Map<String, Map<String, String>>>> versions = MapBuilder.<String, List<Map<String, Map<String, String>>>>newBuilder().add("fixVersions", addList).toMap();
+        final Map<String, List<Map<String, Map<String, String>>>> versions = MapBuilder.<String, List<Map<String, Map<String, String>>>>newBuilder().add(fieldId, addList).toMap();
         final Map<String, Map<String, List<Map<String, Map<String, String>>>>> update = MapBuilder.<String, Map<String, List<Map<String, Map<String, String>>>>>newBuilder().add("update", versions).toMap();
         final Response response = issueClient.update(issueKey, update);
 
