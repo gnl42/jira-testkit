@@ -23,13 +23,13 @@ import com.atlassian.jira.testkit.client.restclient.Visibility;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withId;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withKey;
@@ -269,5 +269,16 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     public Issue getIssue(String key)
     {
         return issueClient.get(key);
+    }
+
+    public IssuesControl addFixVersion(String issueKey, String version) {
+        final Map<String, Map<String, String>> add = MapBuilder.<String, Map<String, String>>newBuilder().add("add", MapBuilder.<String, String>newBuilder().add("name", version).toMap()).toMap();
+        final List<Map<String, Map<String, String>>> addList = Collections.singletonList(add);
+        final Map<String, List<Map<String, Map<String, String>>>> versions = MapBuilder.<String, List<Map<String, Map<String, String>>>>newBuilder().add("fixVersions", addList).toMap();
+        final Map<String, Map<String, List<Map<String, Map<String, String>>>>> update = MapBuilder.<String, Map<String, List<Map<String, Map<String, String>>>>>newBuilder().add("update", versions).toMap();
+        final Response response = issueClient.update(issueKey, update);
+
+        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
+        return this;
     }
 }
