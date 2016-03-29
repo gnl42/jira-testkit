@@ -151,6 +151,10 @@ public class VersionClient extends RestApiClient<VersionClient>
         return versionWithID(versionID).type(APPLICATION_JSON_TYPE).put(Version.class, new Version().archived(true));
     }
 
+    public Version unarchive(String versionID) {
+        return versionWithID(versionID).type(APPLICATION_JSON_TYPE).put(Version.class, new Version().archived(false));
+    }
+
     public VersionIssueCounts getVersionIssueCounts(String versionID) throws UniformInterfaceException
     {
         return versionWithID(versionID).path("relatedIssueCounts").get(VersionIssueCounts.class);
