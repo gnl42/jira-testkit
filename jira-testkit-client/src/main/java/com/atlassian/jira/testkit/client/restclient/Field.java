@@ -26,6 +26,9 @@ public class Field
     private String id;
 
     @JsonProperty
+    private String key;
+
+    @JsonProperty
     private String name;
 
     @JsonProperty
@@ -48,10 +51,15 @@ public class Field
     {
     }
 
-    public Field(String id, String name, boolean custom, IssueCreateMeta.JsonType schema, boolean orderable, boolean navigable, boolean searchable)
+    public Field(String id, String name, boolean custom, IssueCreateMeta.JsonType schema, boolean orderable, boolean navigable, boolean searchable) {
+        this(id, name, id, custom, schema, orderable, navigable, searchable);
+    }
+
+    public Field(String id, String name, String key, boolean custom, IssueCreateMeta.JsonType schema, boolean orderable, boolean navigable, boolean searchable)
     {
         this.id = id;
         this.name = name;
+        this.key = key;
         this.custom = custom;
         this.schema = schema;
         this.orderable = orderable;
@@ -66,7 +74,7 @@ public class Field
 
     public Field id(String id)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     public String name()
@@ -76,7 +84,15 @@ public class Field
 
     public Field name(String name)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
+    }
+
+    public String key() {
+        return key;
+    }
+
+    public Field key(String key) {
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     public boolean orderable()
@@ -86,7 +102,7 @@ public class Field
 
     public Field orderable(boolean orderable)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     public boolean navigable()
@@ -96,7 +112,7 @@ public class Field
 
     public Field navigable(boolean navigable)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     public boolean searchable()
@@ -106,7 +122,7 @@ public class Field
 
     public Field searchable(boolean searchable)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     public boolean custom()
@@ -116,7 +132,7 @@ public class Field
 
     public Field custom(boolean custom)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     public IssueCreateMeta.JsonType schema()
@@ -126,7 +142,7 @@ public class Field
 
     public Field description(IssueCreateMeta.JsonType schema)
     {
-        return new Field(id, name, custom, schema, orderable, navigable, searchable);
+        return new Field(id, name, key, custom, schema, orderable, navigable, searchable);
     }
 
     @Override
