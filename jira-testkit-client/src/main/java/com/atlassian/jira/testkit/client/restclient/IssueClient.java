@@ -191,6 +191,22 @@ public class IssueClient extends RestApiClient<IssueClient>
         });
     }
 
+    public Response updateResponse(final String issueKey, final IssueUpdateRequest update, final boolean notifyUsers)
+    {
+        return toResponse(new Method()
+        {
+            @Override
+            public ClientResponse call()
+            {
+                return createResource()
+                        .path(issueKey)
+                        .queryParam("notifyUsers", Boolean.toString(notifyUsers))
+                        .type(APPLICATION_JSON_TYPE)
+                        .put(ClientResponse.class, update);
+            }
+        });
+    }
+
     public Response update(final String issueKey, final Map update)
     {
         return toResponse(new Method()
