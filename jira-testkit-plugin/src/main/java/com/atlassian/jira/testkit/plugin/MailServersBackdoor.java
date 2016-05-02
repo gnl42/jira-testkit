@@ -114,7 +114,7 @@ public class MailServersBackdoor
                 mailQueue.toString(),
                 mailQueue.getClass().getClassLoader().toString());
 
-        mailQueue.sendBuffer();
+        mailQueue.sendBufferBlocking();
         return Response.ok().build();
     }
 
