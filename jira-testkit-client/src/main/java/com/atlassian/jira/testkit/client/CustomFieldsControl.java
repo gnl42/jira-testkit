@@ -81,6 +81,27 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     }
 
     /**
+     * Creates custom field option. Method will just silently exit if custom field can't contain any options.
+     * @param customFieldId is of the custom field to create option.
+     * @param optionValue option value. May fail in case if such option already exists
+     */
+    public void addOption(String customFieldId, String optionValue)
+    {
+        createResource().path("customFields/addOption").path(customFieldId).post(optionValue);
+    }
+
+    /**
+     * Deletes custom field option. Method will just silently exit if custom field can't contain any options
+     * or it doesn't contain deleted one.
+     * @param customFieldId is of the custom field which holds deleted option.
+     * @param optionValue value of option to delete.
+     */
+    public void deleteOption(String customFieldId, String optionValue)
+    {
+        createResource().path("customFields/deleteOption").path(customFieldId).delete(optionValue);
+    }
+
+    /**
      * List the non-config custom fields registered in the system.
      *
      * @return see above
