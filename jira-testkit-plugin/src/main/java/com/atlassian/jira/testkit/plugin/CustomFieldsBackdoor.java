@@ -167,6 +167,57 @@ public class CustomFieldsBackdoor
         return Response.ok().build();
     }
 
+    @POST
+    @AnonymousAllowed
+    @Path("addOption/{id}")
+    public Response addOption(@PathParam("id") String customFieldId, String optionValue)
+    {
+        if(customFieldId == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field id").build();
+        }
+
+        final CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
+        if(customField == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Custom field with id " + customFieldId + " does not exist").build();
+        }
+
+        final Options options = customField.getOptions(null, GlobalIssueContext.getInstance());
+        if (options != null) {
+            options.addOption(options.getOptionById(null), optionValue);
+        }
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @AnonymousAllowed
+    @Path("deleteOption/{id}")
+    public Response deleteOption(@PathParam("id") String customFieldId, String optionValue)
+    {
+        if(customFieldId == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field id").build();
+        }
+
+        final CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
+        if(customField == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Custom field with id " + customFieldId + " does not exist").build();
+        }
+
+        final Options options = customField.getOptions(null, GlobalIssueContext.getInstance());
+        if (options != null)
+        {
+            Option toDelete = options.getOptionForValue(optionValue, null);
+            if (toDelete != null)
+            {
+                options.removeOption(toDelete);
+            }
+        }
+        return Response.ok().build();
+    }
+
     @GET
     @AnonymousAllowed
     @Path("get")
