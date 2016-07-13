@@ -90,13 +90,9 @@ public class IssueLinkingBackdoorResource
 	@Path("delete")
 	public Response deleteLink(@QueryParam ("name") String name) {
 		final User sysadmin = Iterables.get(userUtil.getJiraSystemAdministrators(), 0);
-		try {
-			for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
-				issueLinkTypeDestroyer.removeIssueLinkType(issueLink.getId(), null, sysadmin);
-			}
-		} catch (RemoveException e) {
-			throw new RuntimeException(e);
-		}
+        for (IssueLinkType issueLink : issueLinkTypeManager.getIssueLinkTypesByName(name)) {
+            issueLinkTypeDestroyer.removeIssueLinkType(issueLink.getId(), null, sysadmin);
+        }
 		return Response.ok(null).build();
 	}
 }
