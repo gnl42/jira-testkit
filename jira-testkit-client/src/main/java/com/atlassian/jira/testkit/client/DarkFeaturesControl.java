@@ -28,6 +28,8 @@ import com.atlassian.jira.testkit.client.rules.FeatureFlagUserRule;
  * <p>
  * Alternatively, the rules {@link FeatureFlagRule} and {@link FeatureFlagUserRule} exist to assist with the usage of this
  * control.
+ *
+ * @since v5.0
  */
 public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl> {
 
