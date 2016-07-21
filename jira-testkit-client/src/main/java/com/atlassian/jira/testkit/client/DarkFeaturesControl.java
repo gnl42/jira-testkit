@@ -14,7 +14,7 @@ import com.atlassian.jira.testkit.client.rules.FeatureFlagRule;
 import com.atlassian.jira.testkit.client.rules.FeatureFlagUserRule;
 
 /**
- * Use this class from func/selenium/page-object tests that need to manipulate legacy Dark Features that are managed
+ * Use this class from func/selenium/page-object tests that need to manipulate Dark Features that are managed
  * by JIRAs Feature Manager component.
  * <p>
  * See <code>com.atlassian.jira.testkit.plugin.DarkFeaturesBackdoor</code> in jira-testkit-plugin for backend.
