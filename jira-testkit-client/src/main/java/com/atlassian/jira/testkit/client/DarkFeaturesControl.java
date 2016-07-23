@@ -46,7 +46,7 @@ public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl> {
      * For example, a feature of "my.feature.enabled" will do the following for the provided user:
      * - create "my.feature.enabled"
      *
-     * @deprecated We should prefer to create new features in code using the Feature Flag approach, and therefore should
+     * @deprecated since v7.2.15 we should prefer to create new features in code using the Feature Flag approach, and therefore should
      * be using {@link #enableForUser(String, FeatureFlag)} or {@link #disableForUser(String, FeatureFlag)} instead.
      */
     @Deprecated
@@ -63,7 +63,7 @@ public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl> {
      * For example, a feature of "my.feature.enabled" will do the following for the provided user:
      * - remove "my.feature.enabled"
      *
-     * @deprecated We should prefer to create new features in code using the Feature Flag approach, and therefore should
+     * @deprecated since v7.2.15 we should prefer to create new features in code using the Feature Flag approach, and therefore should
      * be using {@link #enableForUser(String, FeatureFlag)} or {@link #disableForUser(String, FeatureFlag)} instead.
      */
     @Deprecated
@@ -80,7 +80,7 @@ public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl> {
      * For example, a feature of "my.feature.enabled" will do the following for the provided user:
      * - create "my.feature.enabled"
      *
-     * @deprecated We should prefer to create new features in code using the Feature Flag approach, and therefore should
+     * @deprecated since v7.2.15 we should prefer to create new features in code using the Feature Flag approach, and therefore should
      * be using {@link #enableForSite(FeatureFlag)} or {@link #disableForSite(FeatureFlag)} instead.
      */
     @Deprecated
@@ -97,7 +97,7 @@ public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl> {
      * For example, a feature of "my.feature.enabled" will do the following for the provided user:
      * - remove "my.feature.enabled"
      *
-     * @deprecated We should prefer to create new features in code using the Feature Flag approach, and therefore should
+     * @deprecated since v7.2.15 we should prefer to create new features in code using the Feature Flag approach, and therefore should
      * be using {@link #enableForUser(String, FeatureFlag)} or {@link #disableForUser(String, FeatureFlag)} instead.
      */
     @Deprecated
@@ -112,7 +112,7 @@ public class DarkFeaturesControl extends BackdoorControl<DarkFeaturesControl> {
      * you have created it for the site, perhaps by calling {@link #enableForSite(String)} then this would return true.
      *
      * @return True if enabled for the site, false if not enabled or only for current user
-     * @deprecated We should prefer to create new features in code using the Feature Flag approach, and therefore should
+     * @deprecated since v7.2.15 we should prefer to create new features in code using the Feature Flag approach, and therefore should
      * be using {@link #isGlobalEnabled(FeatureFlag)} instead.
      */
     @Deprecated
