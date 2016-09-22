@@ -270,6 +270,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     @Override
     public IssuesControl loginAs(String username)
     {
+        commentClient.loginAs(username);
         issueClient.loginAs(username);
         return super.loginAs(username);
     }
@@ -277,6 +278,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     @Override
     public IssuesControl loginAs(String username, String password)
     {
+        commentClient.loginAs(username, password);
         issueClient.loginAs(username, password);
         return super.loginAs(username, password);
     }
