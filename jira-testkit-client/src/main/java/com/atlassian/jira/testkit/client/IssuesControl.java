@@ -36,6 +36,7 @@ import static com.atlassian.jira.rest.api.issue.ResourceRef.withKey;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withName;
 import static com.google.common.collect.Iterables.find;
 import static org.apache.commons.lang.StringUtils.isNumeric;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -182,6 +183,20 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         newComment.body = comment;
         newComment.visibility = new Visibility(restrictedType, restrictedParam);
         return commentClient.post(issueKey, newComment);
+    }
+
+    public Response<Comment> updateComment(String issueKey, String commentId, String comment, String restrictedType, String restrictedParam) {
+        Comment update = new Comment();
+        update.id = commentId;
+        update.body = comment;
+        if (!isEmpty(restrictedType) && !isEmpty(restrictedParam)) {
+            update.visibility = new Visibility(restrictedType, restrictedParam);
+        }
+        return commentClient.put(issueKey, update);
+    }
+
+    public Response deleteComment(String issueKey, String commentId) {
+        return commentClient.delete(issueKey, commentId);
     }
 
     public void assignIssue(String issueKey, String username)
