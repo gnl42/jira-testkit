@@ -27,4 +27,13 @@ public class I18nControl extends BackdoorControl<UsersAndGroupsControl>
                 .queryParam("key", key)
                 .queryParam("locale", locale).get(String.class);
     }
+
+    public String getText(String key, String value1, String locale)
+    {
+        return createResource().path("i18n")
+                .queryParam("key", key)
+                .queryParam("locale", locale)
+                .queryParam("value1", value1)
+                .get(String.class);
+    }
 }
