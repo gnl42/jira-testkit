@@ -33,7 +33,8 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -56,7 +57,7 @@ import javax.ws.rs.core.Response;
 @AnonymousAllowed
 public class ProjectBackdoor
 {
-    private final Logger log = Logger.getLogger(ProjectBackdoor.class);
+    private final Logger log = LoggerFactory.getLogger(ProjectBackdoor.class);
     private final ProjectService projectService;
     private final PermissionSchemeManager permissionSchemeManager;
     private final UserUtil userUtil;

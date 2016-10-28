@@ -35,7 +35,8 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.GET;
@@ -60,7 +61,7 @@ import static javax.ws.rs.core.Response.Status;
 @Path ("usersAndGroups")
 public class UsersAndGroupsBackdoor
 {
-    private static final Logger log = Logger.getLogger(UsersAndGroupsBackdoor.class);
+    private static final Logger log = LoggerFactory.getLogger(UsersAndGroupsBackdoor.class);
     private static final Response NOT_FOUND = Response.status(Status.NOT_FOUND).build();
     private static final Response OK = Response.ok().build();
 

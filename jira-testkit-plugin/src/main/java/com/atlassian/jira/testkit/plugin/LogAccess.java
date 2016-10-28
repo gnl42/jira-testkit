@@ -10,13 +10,13 @@
 package com.atlassian.jira.testkit.plugin;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-
 
 /**
  * Allows access
@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
 @Path ("log")
 public class LogAccess
 {
-    private static final Logger log = Logger.getLogger(LogAccess.class);
+    private static final Logger log = LoggerFactory.getLogger(LogAccess.class);
 
     /**
      * Causes an error log message to be placed in the JIRA log.
