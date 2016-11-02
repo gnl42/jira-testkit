@@ -22,9 +22,10 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.multipart.impl.MultiPartWriter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -42,7 +43,7 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
     /**
      * Logger for this client.
      */
-    private static final Logger log = Logger.getLogger(RestApiClient.class);
+    private static final Logger log = LoggerFactory.getLogger(RestApiClient.class);
 
     /**
      * The REST plugin version to test.
