@@ -68,6 +68,9 @@ public class Screen implements Iterable<Screen.Tab>
         private String name;
 
         @JsonProperty
+        private Long id;
+
+        @JsonProperty
         private List<Field> fields;
 
         public Tab()
@@ -76,9 +79,16 @@ public class Screen implements Iterable<Screen.Tab>
 
         public Tab(final String name, final Iterable<? extends Field> fields)
         {
+            this(null, name, fields);
+        }
+
+        public Tab(final Long id, final String name, final Iterable<? extends Field> fields)
+        {
             this.fields = copyOf(fields);
             this.name = name;
+            this.id = id;
         }
+
 
         public List<Field> getFields()
         {
@@ -88,6 +98,10 @@ public class Screen implements Iterable<Screen.Tab>
         public String getName()
         {
             return name;
+        }
+
+        public Long getId() {
+            return id;
         }
 
         @Override

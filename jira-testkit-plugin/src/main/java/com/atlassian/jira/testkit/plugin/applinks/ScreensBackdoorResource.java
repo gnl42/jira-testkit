@@ -83,7 +83,7 @@ public class ScreensBackdoorResource
                         return new Field(field.getId(), field.getName());
                     }
                 });
-                return new Screen.Tab(input.getName(), fields);
+                return new Screen.Tab(input.getId(), input.getName(), fields);
             }
         };
     }
@@ -198,8 +198,7 @@ public class ScreensBackdoorResource
     @Path ("addTab")
     public Response addTab(@QueryParam ("screen") String screen, @QueryParam ("name") String name)
     {
-        getScreenByName(screen).addTab(name);
-        return Response.ok().cacheControl(CacheControl.never()).build();
+        return ok(convertToTab().apply(getScreenByName(screen).addTab(name)));
     }
 
     @GET

@@ -10,6 +10,8 @@
 package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.beans.Screen;
+import com.atlassian.jira.testkit.client.restclient.Response;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 
@@ -41,6 +43,14 @@ public class ScreensControl extends BackdoorControl<ScreensControl>
                 .queryParam("screen", "" + screenName)
                 .queryParam("name", name));
         return this;
+    }
+
+    public Response<Screen.Tab> addTabToScreenResponse(final String screenName, final String name)
+    {
+        return toResponse(() -> createResource().path("addTab")
+                .queryParam("screen", "" + screenName)
+                .queryParam("name", name)
+                .get(ClientResponse.class), Screen.Tab.class);
     }
 
     public ScreensControl deleteTabFromScreen(final String screenName, final String name)
