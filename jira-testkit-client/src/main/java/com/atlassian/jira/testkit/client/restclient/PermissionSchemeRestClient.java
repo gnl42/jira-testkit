@@ -1,5 +1,6 @@
 package com.atlassian.jira.testkit.client.restclient;
 
+import com.atlassian.jira.testkit.beans.PermissionSchemeAttributeBean;
 import com.atlassian.jira.testkit.beans.PermissionSchemeBean;
 import com.atlassian.jira.testkit.beans.PermissionGrantBean;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
@@ -171,6 +172,23 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
             }
         }, PermissionSchemeBean.class);
     }
+
+    public Response<PermissionSchemeAttributeBean> getAttribute(final Long schemeId, final String attributeKey) {
+        return toResponse(() -> resource()
+                .path(schemeId.toString())
+                .path("attribute")
+                .path(attributeKey)
+                .get(ClientResponse.class), PermissionSchemeAttributeBean.class);
+    }
+
+    public Response<PermissionSchemeAttributeBean> setAttribute(final Long schemeId, final PermissionSchemeAttributeBean attribute) {
+        return toResponse(() -> resource()
+                .path(schemeId.toString())
+                .path("attribute")
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .put(ClientResponse.class, attribute), PermissionSchemeAttributeBean.class);
+    }
+
 
     private WebResource resource()
     {
