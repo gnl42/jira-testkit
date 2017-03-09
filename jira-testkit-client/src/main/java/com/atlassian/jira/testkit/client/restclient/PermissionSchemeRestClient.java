@@ -181,12 +181,13 @@ public final class PermissionSchemeRestClient extends RestApiClient<PermissionSc
                 .get(ClientResponse.class), PermissionSchemeAttributeBean.class);
     }
 
-    public Response<PermissionSchemeAttributeBean> setAttribute(final Long schemeId, final PermissionSchemeAttributeBean attribute) {
+    public Response<?> setAttribute(final Long schemeId, final PermissionSchemeAttributeBean attribute) {
         return toResponse(() -> resource()
                 .path(schemeId.toString())
                 .path("attribute")
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .put(ClientResponse.class, attribute), PermissionSchemeAttributeBean.class);
+                .path(attribute.getKey())
+                .type(MediaType.TEXT_PLAIN)
+                .put(ClientResponse.class, attribute.getValue()));
     }
 
 
