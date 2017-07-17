@@ -44,10 +44,9 @@ import static org.junit.Assert.assertTrue;
  *
  * @since v5.0
  */
-@SuppressWarnings ("unused" /* used in JIRA's func tests */)
+@SuppressWarnings("unused" /* used in JIRA's func tests */)
 @ParametersAreNonnullByDefault
-public class IssuesControl extends BackdoorControl<IssuesControl>
-{
+public class IssuesControl extends BackdoorControl<IssuesControl> {
     // Ids of projects pre-imported from testkit-blankprojects.xml; should be present in most tests.
     public static final long HSP_PROJECT_ID = 10000;
     public static final long MKY_PROJECT_ID = 10001;
@@ -57,23 +56,22 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     private CommentClient commentClient;
     private final IssueTypeControl issueTypeControl;
 
-    public IssuesControl(JIRAEnvironmentData environmentData, IssueTypeControl issueTypeControl)
-    {
+    public IssuesControl(JIRAEnvironmentData environmentData, IssueTypeControl issueTypeControl) {
         super(environmentData);
         this.issueTypeControl = issueTypeControl;
         issueClient = new IssueClient(environmentData);
         commentClient = new CommentClient(environmentData);
     }
 
-    /** @deprecated use createIssue(projectKey,...); since 7.0 */
+    /**
+     * @deprecated use createIssue(projectKey,...); since 7.0
+     */
     @Deprecated
-    public IssueCreateResponse createIssue(long projectId, String summary)
-    {
+    public IssueCreateResponse createIssue(long projectId, String summary) {
         return createIssue(projectId, summary, null);
     }
 
-    public IssueCreateResponse createSubtask(String projectId, String parentKey, String summary)
-    {
+    public IssueCreateResponse createSubtask(String projectId, String parentKey, String summary) {
         IssueType issueType = find(issueTypeControl.getIssueTypes(), type -> type.getName().equals("Sub-task"));
 
         IssueFields fields = new IssueFields();
@@ -87,59 +85,53 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return issueClient.create(issue.fields(fields));
     }
 
-    public IssuesControl setDescription(String issueKey, String description)
-    {
+    public IssuesControl setDescription(String issueKey, String description) {
         IssueUpdateRequest fields = new IssueUpdateRequest().fields(new IssueFields().description(description));
         issueClient.update(issueKey, fields);
         return this;
     }
 
-    public IssueCreateResponse createIssue(String projectKey, String summary)
-    {
+    public IssueCreateResponse createIssue(String projectKey, String summary) {
         return createIssue(projectKey, summary, null, DEFAULT_PRIORITY, getBestGuessIssueType(Optional.of(projectKey)));
     }
 
-    /** @deprecated use createIssue(projectKey,...); since 7.0 */
+    /**
+     * @deprecated use createIssue(projectKey,...); since 7.0
+     */
     @Deprecated
-    public IssueCreateResponse createIssue(long projectId, String summary, @Nullable String assignee)
-    {
+    public IssueCreateResponse createIssue(long projectId, String summary, @Nullable String assignee) {
         IssueFields fields = new IssueFields();
         fields.project(withId(String.valueOf(projectId)));
         fields.issueType(withId(getBestGuessIssueType(Optional.of(Long.toString(projectId)))));
         fields.priority(withId(DEFAULT_PRIORITY));
         fields.summary(summary);
-        if (assignee != null)
-        {
+        if (assignee != null) {
             fields.assignee(withName(assignee));
         }
 
         return issueClient.create(new IssueUpdateRequest().fields(fields));
     }
 
-    public IssueCreateResponse createIssue(String projectKey, String summary, String assignee)
-    {
+    public IssueCreateResponse createIssue(String projectKey, String summary, String assignee) {
         return createIssue(projectKey, summary, assignee, DEFAULT_PRIORITY, getBestGuessIssueType(Optional.of(projectKey)));
     }
 
     /**
-     *
      * @param projectKey - project key for project that issue will be linked to
-     * @param summary - summary of issue
-     * @param assignee - name of user to assign issue
-     * @param priority - priority of issue can be ether id or name (eg. "Major")
-     * @param issueType - type of issue can be ether id or name (eg. "Bug")
+     * @param summary    - summary of issue
+     * @param assignee   - name of user to assign issue
+     * @param priority   - priority of issue can be ether id or name (eg. "Major")
+     * @param issueType  - type of issue can be ether id or name (eg. "Bug")
      * @return
      */
     public IssueCreateResponse createIssue(String projectKey, String summary, @Nullable String assignee,
-            String priority, String issueType)
-    {
+                                           String priority, String issueType) {
         IssueFields fields = new IssueFields();
         fields.project(withKey(projectKey));
         fields.issueType(isNumeric(issueType) ? withId(issueType) : withName(issueType));
         fields.priority(isNumeric(priority) ? withId(priority) : withName(priority));
         fields.summary(summary);
-        if (assignee != null)
-        {
+        if (assignee != null) {
             fields.assignee(withName(assignee));
         }
 
@@ -152,8 +144,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
      * returning the first issue type found. Fails fast if no issue types found.
      */
     @Nonnull
-    private String getBestGuessIssueType(Optional<String> projectIdOrKey)
-    {
+    private String getBestGuessIssueType(Optional<String> projectIdOrKey) {
         final List<IssueType> issueTypes = projectIdOrKey
                 .map(issueTypeControl::getIssueTypesForProject)
                 .orElse(issueTypeControl.getIssueTypes());
@@ -162,8 +153,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
                 .filter(type -> !type.isSubtask() && !type.getName().equals("Epic"))
                 .findFirst();
 
-        if (!issueType.isPresent())
-        {
+        if (!issueType.isPresent()) {
             // no other issue types, so fail fast on the client rather than returning the error response to make it
             // easier to debug.
             throw new UnsupportedOperationException("Can't create issue due to no default issue types");
@@ -172,13 +162,11 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return issueType.get().getId();
     }
 
-    public Response<Comment> commentIssue(String issueKey, String comment)
-    {
+    public Response<Comment> commentIssue(String issueKey, String comment) {
         return commentIssueWithVisibility(issueKey, comment, "group", "jira-administrators");
     }
 
-    public Response<Comment> commentIssueWithVisibility(String issueKey, String comment, String restrictedType, String restrictedParam)
-    {
+    public Response<Comment> commentIssueWithVisibility(String issueKey, String comment, String restrictedType, String restrictedParam) {
         Comment newComment = new Comment();
         newComment.body = comment;
         newComment.visibility = new Visibility(restrictedType, restrictedParam);
@@ -199,8 +187,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return commentClient.delete(issueKey, commentId);
     }
 
-    public void assignIssue(String issueKey, String username)
-    {
+    public void assignIssue(String issueKey, String username) {
         IssueUpdateRequest updateSummaryRequest = new IssueUpdateRequest().fields(new IssueFields()
                 .assignee(withName(username))
         );
@@ -208,20 +195,17 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         issueClient.update(issueKey, updateSummaryRequest);
     }
 
-    public Issue getIssue(String issueKey, Issue.Expand... expand)
-    {
+    public Issue getIssue(String issueKey, Issue.Expand... expand) {
         return issueClient.get(issueKey, expand);
     }
 
-    public void transitionIssue(String issueKey, int transitionId)
-    {
+    public void transitionIssue(String issueKey, int transitionId) {
         ResourceRef transition = ResourceRef.withId(String.valueOf(transitionId));
         IssueUpdateRequest updateSummaryRequest = new IssueUpdateRequest().transition(transition);
         issueClient.transition(issueKey, updateSummaryRequest);
     }
 
-    public IssuesControl addLabel(String issueKey, String label)
-    {
+    public IssuesControl addLabel(String issueKey, String label) {
         final Map<String, String> add = MapBuilder.<String, String>newBuilder().add("add", label).toMap();
         final List<Map<String, String>> addList = Collections.singletonList(add);
         final Map<String, List<Map<String, String>>> labels = MapBuilder.<String, List<Map<String, String>>>newBuilder().add("labels", addList).toMap();
@@ -232,8 +216,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return this;
     }
 
-    public IssuesControl setSummary(String issueKey, String summary)
-    {
+    public IssuesControl setSummary(String issueKey, String summary) {
         IssueUpdateRequest updateSummaryRequest = new IssueUpdateRequest().fields(new IssueFields()
                 .summary(summary));
 
@@ -243,8 +226,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
         return this;
     }
 
-    public IssuesControl setIssueFields(String issueKey, IssueFields issueFields)
-    {
+    public IssuesControl setIssueFields(String issueKey, IssueFields issueFields) {
         IssueUpdateRequest updateRequest = new IssueUpdateRequest().fields(issueFields);
 
         final Response response = issueClient.updateResponse(issueKey, updateRequest);
@@ -256,48 +238,49 @@ public class IssuesControl extends BackdoorControl<IssuesControl>
     /**
      * Deletes an issue. If the issue has subtasks you must set the parameter deleteSubtasks=true to delete the issue.
      * You cannot delete an issue without its subtasks also being deleted.
-     * @param issueKey a key of the issue
+     *
+     * @param issueKey       a key of the issue
      * @param deleteSubtasks true to delete also subtasks. If this params is false, and issue has subtasks, then
-     *                          delete operation will fail.
+     *                       delete operation will fail.
      * @return Response from the server (to check the status code)
      * @throws UniformInterfaceException if there's a problem deleting the issue
      */
-    public Response deleteIssue(String issueKey, boolean deleteSubtasks) throws UniformInterfaceException
-    {
+    public Response deleteIssue(String issueKey, boolean deleteSubtasks) throws UniformInterfaceException {
         return issueClient.delete(issueKey, Boolean.toString(deleteSubtasks));
     }
 
     @Override
-    public IssuesControl loginAs(String username)
-    {
+    public IssuesControl loginAs(String username) {
         commentClient.loginAs(username);
         issueClient.loginAs(username);
         return super.loginAs(username);
     }
 
     @Override
-    public IssuesControl loginAs(String username, String password)
-    {
+    public IssuesControl loginAs(String username, String password) {
         commentClient.loginAs(username, password);
         issueClient.loginAs(username, password);
         return super.loginAs(username, password);
     }
-    
-    public Issue getIssue(String key)
-    {
+
+    public Issue getIssue(String key) {
         return issueClient.get(key);
     }
 
     public IssuesControl addFixVersion(String issueKey, String version) {
-        return addVersionField(issueKey, "fixVersions", version);
+        return updateVersionField(issueKey, "fixVersions", version, "add");
+    }
+
+    public IssuesControl removeFixVersion(String issueKey, String version) {
+        return updateVersionField(issueKey, "fixVersions", version, "remove");
     }
 
     public IssuesControl addAffectsVersion(String issueKey, String version) {
-        return addVersionField(issueKey, "versions", version);
+        return updateVersionField(issueKey, "versions", version, "add");
     }
 
-    private IssuesControl addVersionField(String issueKey, String fieldId, String version) {
-        final Map<String, Map<String, String>> add = MapBuilder.<String, Map<String, String>>newBuilder().add("add", MapBuilder.<String, String>newBuilder().add("name", version).toMap()).toMap();
+    private IssuesControl updateVersionField(String issueKey, String fieldId, String version, String operation) {
+        final Map<String, Map<String, String>> add = MapBuilder.<String, Map<String, String>>newBuilder().add(operation, MapBuilder.<String, String>newBuilder().add("name", version).toMap()).toMap();
         final List<Map<String, Map<String, String>>> addList = Collections.singletonList(add);
         final Map<String, List<Map<String, Map<String, String>>>> versions = MapBuilder.<String, List<Map<String, Map<String, String>>>>newBuilder().add(fieldId, addList).toMap();
         final Map<String, Map<String, List<Map<String, Map<String, String>>>>> update = MapBuilder.<String, Map<String, List<Map<String, Map<String, String>>>>>newBuilder().add("update", versions).toMap();
