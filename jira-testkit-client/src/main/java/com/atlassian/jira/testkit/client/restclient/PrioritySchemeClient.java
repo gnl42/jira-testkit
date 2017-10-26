@@ -23,7 +23,7 @@ public class PrioritySchemeClient extends RestApiClient<PrioritySchemeClient> {
         );
     }
 
-    public Response<PrioritySchemeBean> updateWithDefaulyMapping(PrioritySchemeUpdateBean bean) {
+    public Response<PrioritySchemeBean> updateWithDefaultMapping(PrioritySchemeUpdateBean bean) {
         return toResponse(
                 () -> schemeResource(bean.getId())
                         .accept(MediaType.APPLICATION_JSON_TYPE)
