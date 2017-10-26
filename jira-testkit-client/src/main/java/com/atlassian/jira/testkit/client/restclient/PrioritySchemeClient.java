@@ -6,6 +6,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 import javax.ws.rs.core.MediaType;
+import java.util.Objects;
 
 public class PrioritySchemeClient extends RestApiClient<PrioritySchemeClient> {
 
@@ -44,9 +45,18 @@ public class PrioritySchemeClient extends RestApiClient<PrioritySchemeClient> {
         );
     }
 
-    public Response<PrioritySchemeGetAllResponseBean> getAll(boolean includeProjectKeys) {
+    public Response<PrioritySchemeGetAllResponseBean> getAll(final Long startAt, final Integer maxResults, final boolean includeProjectKeys) {
         return toResponse(
-                () -> resource().queryParam("expand", includeProjectKeys ? "projectKeys" : "").get(ClientResponse.class),
+                () -> {
+                    WebResource webResource = resource().queryParam("expand", includeProjectKeys ? "projectKeys" : "");
+                    if (Objects.nonNull(startAt)) {
+                        webResource = webResource.queryParam("startAt", startAt.toString());
+                    }
+                    if (Objects.nonNull(maxResults)) {
+                        webResource = webResource.queryParam("maxResults", maxResults.toString());
+                    }
+                    return webResource.get(ClientResponse.class);
+                },
                 PrioritySchemeGetAllResponseBean.class
         );
     }
