@@ -81,6 +81,11 @@ no additional modifications.
   [jiraapi]: https://developer.atlassian.com/static/javadoc/jira/5.0/reference/packages.html
   [promise]: https://developer.atlassian.com/display/JIRADEV/Java+API+Policy+for+JIRA
 
+## Branches
+- master - JIRA 7.6+
+- testkit_for_jira_7_2 - JIRA 7.2 - 7.5
+
+
 # Development
 
 This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs will contain a stacktrace about "unsupported major.minor version 52.0".
