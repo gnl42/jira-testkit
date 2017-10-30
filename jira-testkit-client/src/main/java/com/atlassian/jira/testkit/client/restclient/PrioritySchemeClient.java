@@ -2,6 +2,7 @@ package com.atlassian.jira.testkit.client.restclient;
 
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
@@ -24,9 +25,9 @@ public class PrioritySchemeClient extends RestApiClient<PrioritySchemeClient> {
         );
     }
 
-    public Response<PrioritySchemeBean> updateWithDefaultMapping(PrioritySchemeUpdateBean bean) {
+    public Response<PrioritySchemeBean> updateWithDefaultMapping(PrioritySchemeUpdateBean bean, PrioritySchemeBean.Expand... expand) {
         return toResponse(
-                () -> schemeResource(bean.getId())
+                () -> schemeResource(bean.getId(), expand)
                         .accept(MediaType.APPLICATION_JSON_TYPE)
                         .type(MediaType.APPLICATION_JSON_TYPE)
                         .put(ClientResponse.class, bean),
@@ -38,17 +39,17 @@ public class PrioritySchemeClient extends RestApiClient<PrioritySchemeClient> {
         return toResponse(() -> schemeResource(schemeId).delete(ClientResponse.class));
     }
 
-    public Response<PrioritySchemeBean> get(long schemeId) {
+    public Response<PrioritySchemeBean> get(long schemeId, PrioritySchemeBean.Expand... expand) {
         return toResponse(
-                () -> schemeResource(schemeId).get(ClientResponse.class),
+                () -> schemeResource(schemeId, expand).get(ClientResponse.class),
                 PrioritySchemeBean.class
         );
     }
 
-    public Response<PrioritySchemeGetAllResponseBean> getAll(final Long startAt, final Integer maxResults, final boolean includeProjectKeys) {
+    public Response<PrioritySchemeGetAllResponseBean> getAll(final Long startAt, final Integer maxResults, PrioritySchemeGetAllResponseBean.Expand... expand) {
         return toResponse(
                 () -> {
-                    WebResource webResource = resource().queryParam("expand", includeProjectKeys ? "projectKeys" : "");
+                    WebResource webResource = expandedResource(expand);
                     if (Objects.nonNull(startAt)) {
                         webResource = webResource.queryParam("startAt", startAt.toString());
                     }
@@ -61,32 +62,47 @@ public class PrioritySchemeClient extends RestApiClient<PrioritySchemeClient> {
         );
     }
 
-    public Response<PrioritySchemeBean> assign(long schemeId, String projectKey) {
+    public Response<PrioritySchemeBean> assign(long schemeId, String projectKey, PrioritySchemeBean.Expand... expand) {
         return toResponse(
-                () -> schemeResource(schemeId).path(projectKey).put(ClientResponse.class),
+                () -> expanded(projectSchemeResource(projectKey), setOf(PrioritySchemeBean.Expand.class, expand))
+                        .accept(MediaType.APPLICATION_JSON_TYPE)
+                        .type(MediaType.APPLICATION_JSON_TYPE)
+                        .put(ClientResponse.class, ImmutableMap.of("id", schemeId)),
                 PrioritySchemeBean.class
         );
     }
 
-    public Response<PrioritySchemeBean> unassign(long schemeId, String projectKey) {
+    public Response<PrioritySchemeBean> unassign(long schemeId, String projectKey, PrioritySchemeBean.Expand... expand) {
         return toResponse(
-                () -> schemeResource(schemeId).path(projectKey).delete(ClientResponse.class),
+                () -> expanded(projectSchemeResource(projectKey).path(Long.toString(schemeId)), setOf(PrioritySchemeBean.Expand.class, expand)).delete(ClientResponse.class),
                 PrioritySchemeBean.class
         );
     }
 
-    public Response<PrioritySchemeBean> getForProject(String projectKey) {
+    public Response<PrioritySchemeBean> getForProject(String projectKey, PrioritySchemeBean.Expand... expand) {
         return toResponse(
-                () -> resource().path("project").path(projectKey).get(ClientResponse.class),
+                () -> expanded(projectSchemeResource(projectKey), setOf(PrioritySchemeBean.Expand.class, expand)).get(ClientResponse.class),
                 PrioritySchemeBean.class
         );
+    }
+
+    private WebResource expandedResource(PrioritySchemeBean.Expand... expand) {
+        return expanded(resource(), setOf(PrioritySchemeBean.Expand.class, expand));
+    }
+
+    private WebResource expandedResource(PrioritySchemeGetAllResponseBean.Expand... expand) {
+        return expanded(resource(), setOf(PrioritySchemeGetAllResponseBean.Expand.class, expand));
     }
 
     private WebResource resource() {
         return createResource().path("priorityschemes");
     }
 
-    private WebResource schemeResource(long schemeId) {
-        return resource().path(Long.toString(schemeId));
+    private WebResource schemeResource(long schemeId, PrioritySchemeBean.Expand... expand) {
+        return expanded(resource().path(Long.toString(schemeId)), setOf(PrioritySchemeBean.Expand.class, expand));
+    }
+
+    private WebResource projectSchemeResource(String projectKey) {
+        return createResource().path("project").path(projectKey).path("priorityscheme");
     }
 }

@@ -5,6 +5,9 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import java.util.List;
 
 public class PrioritySchemeGetAllResponseBean {
+
+    private String expand;
+
     @JsonProperty
     private List<PrioritySchemeBean> schemes;
 
@@ -41,6 +44,15 @@ public class PrioritySchemeGetAllResponseBean {
 
     public Integer getTotal() {
         return total;
+    }
+
+    public enum Expand {
+        projectKeys;
+
+        @Override
+        public String toString() {
+            return "schemes." + super.toString();
+        }
     }
 }
 

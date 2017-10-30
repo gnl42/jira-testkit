@@ -6,6 +6,9 @@ import java.net.URI;
 import java.util.List;
 
 public class PrioritySchemeBean {
+
+    @JsonProperty
+    private String expand;
     @JsonProperty
     private URI self;
     @JsonProperty
@@ -67,5 +70,9 @@ public class PrioritySchemeBean {
 
     public List<String> getProjectKeys() {
         return projectKeys;
+    }
+
+    public enum Expand {
+        projectKeys
     }
 }
