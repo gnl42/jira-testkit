@@ -2,7 +2,7 @@
     <parent>
         <groupId>com.atlassian.jira.tests</groupId>
         <artifactId>jira-testkit-plugin-parent</artifactId>
-        <version>7.6.2-jira02</version>
+        <version>7.6.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jira-testkit-common</artifactId>
