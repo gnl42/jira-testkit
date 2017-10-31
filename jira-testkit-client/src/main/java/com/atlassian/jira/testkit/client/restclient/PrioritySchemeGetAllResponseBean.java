@@ -46,6 +46,10 @@ public class PrioritySchemeGetAllResponseBean {
         return total;
     }
 
+    public String getExpand() {
+        return expand;
+    }
+
     public enum Expand {
         projectKeys;
 

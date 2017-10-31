@@ -72,6 +72,10 @@ public class PrioritySchemeBean {
         return projectKeys;
     }
 
+    public String getExpand() {
+        return expand;
+    }
+
     public enum Expand {
         projectKeys
     }
