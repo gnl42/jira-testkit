@@ -18,6 +18,7 @@ import com.atlassian.jira.testkit.client.restclient.Comment;
 import com.atlassian.jira.testkit.client.restclient.CommentClient;
 import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.IssueClient;
+import com.atlassian.jira.testkit.client.restclient.IssuesExtClient;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.atlassian.jira.testkit.client.restclient.Visibility;
 import com.atlassian.jira.util.collect.MapBuilder;
@@ -27,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,15 +54,17 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
     public static final long MKY_PROJECT_ID = 10001;
     private static final String DEFAULT_PRIORITY = "1"; // presumed to be "Blocker"
 
-    private IssueClient issueClient;
-    private CommentClient commentClient;
+    private final IssueClient issueClient;
+    private final CommentClient commentClient;
     private final IssueTypeControl issueTypeControl;
+    private final IssuesExtClient issuesExtClient;
 
     public IssuesControl(JIRAEnvironmentData environmentData, IssueTypeControl issueTypeControl) {
         super(environmentData);
         this.issueTypeControl = issueTypeControl;
         issueClient = new IssueClient(environmentData);
         commentClient = new CommentClient(environmentData);
+        issuesExtClient = new IssuesExtClient(environmentData);
     }
 
     /**
@@ -247,6 +251,18 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
      */
     public Response deleteIssue(String issueKey, boolean deleteSubtasks) throws UniformInterfaceException {
         return issueClient.delete(issueKey, Boolean.toString(deleteSubtasks));
+    }
+
+    public void touch(final String key) {
+        issuesExtClient.touch(key);
+    }
+
+    public void changeUpdated(final String key, final Date date) {
+        issuesExtClient.changeUpdated(key, date);
+    }
+
+    public void changeCreated(final String key, final Date date) {
+        issuesExtClient.changeCreated(key, date);
     }
 
     @Override
