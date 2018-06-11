@@ -86,13 +86,9 @@ no additional modifications.
 - testkit_for_jira_7_6 - JIRA 7.6
 - testkit_for_jira_7_2 - JIRA 7.2 - 7.5
 
-
 # Development
 
 This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs will contain a stacktrace about "unsupported major.minor version 52.0".
-
-## Continuous Integration ##
-* There is a Bamboo [CI plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TC) on JBAC (only accessible within Atlassian). Create any feature branches from this plan.
 
 ## Releasing ##
 * As there is no Bamboo plan for that you have to release this plugin manually: 
