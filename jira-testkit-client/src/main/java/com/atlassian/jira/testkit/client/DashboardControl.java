@@ -81,7 +81,57 @@ public class DashboardControl extends BackdoorControl<DashboardControl>
 
         return resource.get(Dashboard.class);
     }
-    
+
+    /**
+     * Removes dashboard with specified id for given user.
+     *
+     * @param username User for which delete dashboard.
+     * @param id       Id of the dashboard to be deleted.
+     */
+    public void deleteDashboard(String username, Long id) {
+        WebResource resource = createResource()
+                .path("dashboard")
+                .path("delete")
+                .queryParam("username", username)
+                .queryParam("id", Long.toString(id));
+        resource.get(String.class);
+    }
+
+    /**
+     * Updates dashboard with specified id for given user.
+     *
+     * @param username       User for which update the dashboard.
+     * @param id             Id of the dashboard to be updated.
+     * @param name           Name of the dashboard. This is shown in the drop down containing all visible dashboards
+     *                       and in the dashboard management view.
+     * @param ownername      Name of the user who owns the dashboard.
+     * @param description    Description of the dashboard.
+     * @param shareGroupName Group name with which dashboard will be shared with rights to view
+     * @param favorite       If <code>true</code> the dashboard will be added to the favorite list,
+     *                       if <code>false</code> it will be removed from it.
+     * @return The information about the updated dashboard.
+     */
+    public Dashboard updateDashboard(String username, Long id, String name, String ownername,
+                                     String description, String shareGroupName,
+                                     boolean favorite) {
+        WebResource resource = createResource().path("dashboard").path("update")
+                .queryParam("username", username)
+                .queryParam("id", Long.toString(id))
+                .queryParam("ownername", ownername)
+                .queryParam("favorite", favorite ? "true" : "false");
+
+        if (description != null) {
+            resource = resource.queryParam("description", description);
+        }
+        if (name != null) {
+            resource = resource.queryParam("name", name);
+        }
+        if (shareGroupName != null) {
+            resource = resource.queryParam("shareGroupName", shareGroupName);
+        }
+        return resource.get(Dashboard.class);
+    }
+
     @JsonAutoDetect
     public static class Dashboard
     {

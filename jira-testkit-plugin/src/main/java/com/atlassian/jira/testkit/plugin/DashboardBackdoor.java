@@ -17,7 +17,11 @@ import com.atlassian.jira.bc.portal.PortalPageService;
 import com.atlassian.jira.portal.PortalPage;
 import com.atlassian.jira.portal.PortletConfiguration;
 import com.atlassian.jira.portal.PortletConfigurationManager;
+import com.atlassian.jira.sharing.SharePermissionImpl;
 import com.atlassian.jira.sharing.SharedEntity;
+import com.atlassian.jira.sharing.type.ShareType;
+import com.atlassian.jira.testkit.plugin.util.CacheControl;
+import com.atlassian.jira.testkit.plugin.util.Errors;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.SimpleErrorCollection;
@@ -27,6 +31,7 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -168,6 +173,92 @@ public class DashboardBackdoor
 				.entity(new PortalPageBean(portal, favouritesService
 						.isFavourite(user, portal))).build();
 	}
+
+    /**
+     * Removes dashboard with specified id for given user.
+     *
+     * @param username User for which delete dashboard.
+     * @param id       Id of the dashboard to be deleted.
+     */
+    @GET
+    @Path("delete")
+    public Response deleteDashboard(@QueryParam("username") String username, @QueryParam("id") Long id) {
+        ApplicationUser user = userUtil.getUserByName(username);
+        SimpleErrorCollection errorCollection = new SimpleErrorCollection();
+        JiraServiceContext context = new JiraServiceContextImpl(user, errorCollection);
+
+        portalPageService.deletePortalPage(context, id);
+        if (errorCollection.hasAnyErrors()) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .cacheControl(never())
+                    .entity(Errors.of(errorCollection)).build();
+        }
+        return Response
+                .ok()
+                .cacheControl(never()).build();
+    }
+
+    /**
+     * Updates dashboard with specified id for given user.
+     *
+     * @param username       User for which update the dashboard.
+     * @param id             Id of the dashboard to be updated.
+     * @param name           Name of the dashboard. This is shown in the drop down containing all visible dashboards
+     *                       and in the dashboard management view.
+     * @param ownername      Name of the user who owns the dashboard.
+     * @param description    Description of the dashboard.
+     * @param shareGroupName Group name with which dashboard will be shared with rights to view
+     * @param favorite       If <code>true</code> the dashboard will be added to the favorite list,
+     *                       if <code>false</code> it will be removed from it.
+     * @return The information about the updated dashboard.
+     */
+    @GET
+    @Path("update")
+    public Response updateDashboard(@QueryParam("username") String username, @QueryParam("id") Long id,
+                                    @QueryParam("name") String name, @QueryParam("ownername") String ownername,
+                                    @QueryParam("description") String description,
+                                    @QueryParam("shareGroupName") String shareGroupName,
+                                    @QueryParam("favorite") boolean favorite) {
+        ApplicationUser user = userUtil.getUserByName(username);
+        SimpleErrorCollection errorCollection = new SimpleErrorCollection();
+        JiraServiceContext context = new JiraServiceContextImpl(user,
+                errorCollection);
+
+        PortalPage.Builder builder = PortalPage.id(id).owner(userUtil.getUserByName(ownername));
+
+        if (description != null) {
+            builder.description(description);
+        }
+        if (name != null) {
+            builder.name(name);
+        }
+        SharedEntity.SharePermissions permissions;
+        if (shareGroupName != null) {
+            permissions = new SharedEntity.SharePermissions(Collections.singleton(
+                    new SharePermissionImpl(ShareType.Name.GROUP, shareGroupName, null)));
+            builder.permissions(permissions);
+        } else {
+            permissions = SharedEntity.SharePermissions.PRIVATE;
+        }
+        builder.permissions(permissions);
+
+        PortalPage portalPage = builder.build();
+        portalPageService.updatePortalPage(context, portalPage, favorite);
+        if (errorCollection.hasAnyErrors()) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .cacheControl(never())
+                    .entity(Errors.of(errorCollection)).build();
+        }
+
+        return Response
+                .ok()
+                .cacheControl(never())
+                .entity(new PortalPageBean(portalPage, favouritesService
+                        .isFavourite(user, portalPage))).build();
+    }
+
 
     private Iterable<PortalPageBean> asBeans(final ApplicationUser user, Iterable<? extends PortalPage> portalPages)
     {
