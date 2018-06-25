@@ -198,22 +198,12 @@ public class FilterClient extends RestApiClient<FilterClient>
         public String projectId;
         public String projectRoleId;
         public String groupname;
-        public String userKey;
-        public boolean view;
-        public boolean edit;
 
         public FilterPermissionInputBean(String type, String projectId, String projectRoleId, String groupname) {
             this.type = type;
             this.projectId = projectId;
             this.projectRoleId = projectRoleId;
             this.groupname = groupname;
-        }
-
-        public FilterPermissionInputBean(String type, String projectId, String projectRoleId, String groupname, String userKey, boolean view, boolean edit) {
-            this(type, projectId, projectRoleId, groupname);
-            this.userKey = userKey;
-            this.view = view;
-            this.edit = edit;
         }
     }
 
