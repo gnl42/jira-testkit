@@ -11,6 +11,7 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 /**
@@ -19,7 +20,6 @@ import com.sun.jersey.api.client.WebResource;
  * 
  *  @since 5.0
  */
-
 public class PluginsControl extends BackdoorControl<PluginsControl>
 {
     public PluginsControl(JIRAEnvironmentData environmentData)
@@ -32,6 +32,8 @@ public class PluginsControl extends BackdoorControl<PluginsControl>
      * 
      * @param pluginKey the plugin key
      * @return state
+     * @throws UniformInterfaceException with a {@value java.net.HttpURLConnection#HTTP_NOT_FOUND} status code if no
+     * such plugin is installed
      */
     public String getPluginState(final String pluginKey)
     {
