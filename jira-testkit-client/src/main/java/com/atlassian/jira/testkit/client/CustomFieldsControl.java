@@ -11,9 +11,12 @@ package com.atlassian.jira.testkit.client;
 
 import com.atlassian.jira.testkit.beans.CustomFieldRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 
 import java.util.List;
+
+import com.sun.jersey.api.client.WebResource;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Custom fields.
@@ -124,4 +127,33 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
                 .get(new GenericType<List<CustomFieldResponse>>(){});
     }
 
+    /**
+     * Creates configuration context for given customField
+     * @return id of created custom field
+     */
+    public long createCustomFieldContext(String customFieldId, List<Long> projectIds, List<Long> issueTypeIds) {
+        WebResource r = createResource()
+                .path("customFields")
+                .path("addCustomFieldContext")
+                .queryParam("customFieldId", String.valueOf(customFieldId));
+
+        for (Long projectId : projectIds) {
+            r = r.queryParam("projectIds", String.valueOf(projectId));
+        }
+
+        for (Long id : issueTypeIds) {
+            r = r.queryParam("issueTypeIds", String.valueOf(id));
+        }
+
+        return r.post(ClientResponse.class).getEntity(Long.class);
+    }
+
+    public void deleteCustomFieldContext(String contextId) {
+        WebResource r = createResource()
+                .path("customFields")
+                .path("deleteCustomFieldContext")
+                .queryParam("contextId", String.valueOf(contextId));
+
+        r.delete(ClientResponse.class);
+    }
 }
