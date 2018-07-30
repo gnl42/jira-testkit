@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>com.atlassian.jira.tests</groupId>
 		<artifactId>jira-testkit-plugin-parent</artifactId>
-		<version>7.12-JRASERVER-17783-Milestone-1.1-SNAPSHOT</version>
+		<version>7.7.9-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jira-testkit-client</artifactId>
@@ -84,6 +84,18 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+		</dependency>
 		<dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-testkit-common</artifactId>

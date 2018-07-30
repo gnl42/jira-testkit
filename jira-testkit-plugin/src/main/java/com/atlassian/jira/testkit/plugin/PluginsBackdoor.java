@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.plugin;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
@@ -21,26 +22,33 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
+
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
- * TODO: Document this class / interface here
+ * A REST resource that implements the server-side component of the plugins backdoor.
+ * For the client-side code, see the <code>PluginsControl</code> class.
  *
  * @since v5.0
  */
-
 @Path ("plugins")
 public class PluginsBackdoor
 {
-
-    private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
+    private final PluginController pluginController;
     private final PluginSettingsFactory pluginSettingsFactory;
 
-    public PluginsBackdoor(PluginController pluginController, PluginAccessor pluginAccessor, final PluginSettingsFactory pluginSettingsFactory)
+    public PluginsBackdoor(final PluginController pluginController,
+                           final PluginAccessor pluginAccessor,
+                           final PluginSettingsFactory pluginSettingsFactory)
     {
-        this.pluginController = pluginController;
-        this.pluginAccessor = pluginAccessor;
-        this.pluginSettingsFactory = pluginSettingsFactory;
+        this.pluginController = requireNonNull(pluginController);
+        this.pluginAccessor = requireNonNull(pluginAccessor);
+        this.pluginSettingsFactory = requireNonNull(pluginSettingsFactory);
     }
 
     @GET
@@ -48,8 +56,20 @@ public class PluginsBackdoor
     @Path ("state")
     public Response getStatePlugin(@QueryParam ("key") String key)
     {
-        PluginState state = pluginAccessor.getPlugin(key).getPluginState();
-        return Response.ok(state.name()).build();
+        return Optional.ofNullable(pluginAccessor.getPlugin(key))
+                .map(Plugin::getPluginState)
+                .map(PluginState::name)
+                .map(stateName -> Response.ok(stateName, TEXT_PLAIN_TYPE).build())
+                .orElseGet(() -> notFoundResponse(key));
+    }
+
+    private static Response notFoundResponse(final String pluginKey) {
+        final String message = format("Unknown plugin key '%s'", pluginKey);
+        return Response
+                .status(NOT_FOUND)
+                .type(TEXT_PLAIN_TYPE)
+                .entity(message)
+                .build();
     }
 
     @GET
