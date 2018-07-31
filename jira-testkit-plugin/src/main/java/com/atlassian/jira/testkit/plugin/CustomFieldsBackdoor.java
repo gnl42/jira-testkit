@@ -16,6 +16,7 @@ import com.atlassian.jira.issue.context.GlobalIssueContext;
 import com.atlassian.jira.issue.context.JiraContextNode;
 import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
+import com.atlassian.jira.issue.customfields.CustomFieldUtils;
 import com.atlassian.jira.issue.customfields.config.item.SettableOptionsConfigItem;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
@@ -23,8 +24,10 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.config.FieldConfigItem;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
+import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.testkit.beans.CustomFieldConfig;
 import com.atlassian.jira.testkit.beans.CustomFieldOption;
 import com.atlassian.jira.testkit.beans.CustomFieldRequest;
@@ -70,12 +73,19 @@ import static com.google.common.collect.Iterables.transform;
 public class CustomFieldsBackdoor
 {
     private final CustomFieldManager customFieldManager;
-    private final ConstantsManager manager;
+    private final ConstantsManager constantsManager;
+    private final FieldConfigSchemeManager fieldConfigSchemeManager;
+    private final ProjectManager projectManager;
 
-    public CustomFieldsBackdoor(CustomFieldManager customFieldManager, ConstantsManager manager)
+    public CustomFieldsBackdoor(CustomFieldManager customFieldManager,
+                                ConstantsManager constantsManager,
+                                FieldConfigSchemeManager fieldConfigSchemeManager,
+                                ProjectManager projectManager)
     {
         this.customFieldManager = customFieldManager;
-        this.manager = manager;
+        this.constantsManager = constantsManager;
+        this.fieldConfigSchemeManager = fieldConfigSchemeManager;
+        this.projectManager = projectManager;
     }
 
     @POST
@@ -261,6 +271,36 @@ public class CustomFieldsBackdoor
 
     }
 
+    @Path("addCustomFieldContext")
+    @POST
+    public Response addContext(@QueryParam("customFieldId") final Long customFieldId,
+                               @QueryParam("projectIds") final List<Long> projectIds,
+                               @QueryParam("issueTypeIds") final List<String> issueTypeIds) {
+        Long[] projectIdArray = projectIds.toArray(new Long[0]);
+
+        String[] issueTypeIdArray = issueTypeIds.isEmpty() ? new String[]{null} : issueTypeIds.toArray(new String[0]);
+
+        final FieldConfigScheme configScheme = new FieldConfigScheme.Builder(null)
+                .setName("New Scheme")
+                .setDescription("Dummy description")
+                .toFieldConfigScheme();
+
+        final List<JiraContextNode> contexts = CustomFieldUtils.buildJiraIssueContexts(false, projectIdArray, projectManager);
+        final List<IssueType> issueTypes = CustomFieldUtils.buildIssueTypes(constantsManager, issueTypeIdArray);
+        final CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
+
+        FieldConfigScheme result = fieldConfigSchemeManager.createFieldConfigScheme(configScheme, contexts, issueTypes, customField);
+
+        return Response.ok(result.getId().toString()).build();
+    }
+
+    @Path("deleteCustomFieldContext")
+    @DELETE
+    public Response deleteContext(@QueryParam("contextId") final Long contextId) {
+        fieldConfigSchemeManager.removeFieldConfigScheme(contextId);
+        return Response.noContent().build();
+    }
+
     private CustomFieldResponse asResponse(final CustomField input, final boolean config)
     {
         final CustomFieldSearcher customFieldSearcher = input.getCustomFieldSearcher();
@@ -351,7 +391,7 @@ public class CustomFieldsBackdoor
             @Override
             public String apply(final String input)
             {
-                return manager.getIssueTypeObject(input).getName();
+                return constantsManager.getIssueTypeObject(input).getName();
             }
         });
     }
