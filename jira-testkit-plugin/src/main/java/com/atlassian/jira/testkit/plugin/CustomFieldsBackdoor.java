@@ -163,6 +163,24 @@ public class CustomFieldsBackdoor
         return Response.ok().build();
     }
 
+    @GET
+    @Path ("{id}")
+    public Response updateCustomField(@PathParam ("id") final String customFieldId, @QueryParam("config") final boolean config)
+    {
+        if (customFieldId == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field id").build();
+        }
+
+        CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
+        if (customField == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Custom field with id " + customFieldId + " does not exist").build();
+        }
+
+        return Response.ok(asResponse(customField, config)).build();
+    }
+
     @POST
     @AnonymousAllowed
     @Path("addOption/{id}")
@@ -222,7 +240,6 @@ public class CustomFieldsBackdoor
         final List<CustomFieldResponse> result = customFieldManager.getCustomFieldObjects().stream()
                 .map(input -> asResponse(input, config))
                 .collect(Collectors.toList());
-
 
         return Response.ok(result).cacheControl(never()).build();
     }

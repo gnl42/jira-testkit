@@ -127,6 +127,16 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
                 .get(new GenericType<List<CustomFieldResponse>>(){});
     }
 
+    public CustomFieldResponse getCustomField(final String id) {
+        return getCustomField(id, false);
+    }
+
+    public CustomFieldResponse getCustomField(final String id, final boolean config) {
+        return createResource().path("customFields").path(id)
+                .queryParam("config", String.valueOf(config))
+                .get(new GenericType<CustomFieldResponse>(){});
+    }
+
     /**
      * Creates configuration context for given customField
      * @return id of created custom field
