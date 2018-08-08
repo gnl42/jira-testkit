@@ -33,19 +33,15 @@ import com.atlassian.jira.testkit.beans.CustomFieldOption;
 import com.atlassian.jira.testkit.beans.CustomFieldRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.ofbiz.core.entity.GenericEntityException;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -59,8 +55,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 
 /**
  * A backdoor for manipulating custom fields.
@@ -103,14 +97,10 @@ public class CustomFieldsBackdoor
         {
             final List<CustomFieldSearcher> searchers = customFieldManager.getCustomFieldSearchers(type);
             try{
-                searcher = Iterables.find(searchers, new Predicate<CustomFieldSearcher>()
-                {
-                    @Override
-                    public boolean apply(CustomFieldSearcher customFieldSearcher)
-                    {
-                        return field.searcherKey.equals(customFieldSearcher.getDescriptor().getCompleteKey());
-                    }
-                });
+                searcher = searchers.stream()
+                        .filter(customFieldSearcher -> field.searcherKey.equals(customFieldSearcher.getDescriptor().getCompleteKey()))
+                        .findFirst()
+                        .orElseThrow(NoSuchElementException::new);
             }
             catch (NoSuchElementException e)
             {
@@ -157,14 +147,10 @@ public class CustomFieldsBackdoor
             final List<CustomFieldSearcher> searchers = customFieldManager.getCustomFieldSearchers(customField.getCustomFieldType());
             try
             {
-                searcher = Iterables.find(searchers, new Predicate<CustomFieldSearcher>()
-                {
-                    @Override
-                    public boolean apply(CustomFieldSearcher customFieldSearcher)
-                    {
-                        return field.searcherKey.equals(customFieldSearcher.getDescriptor().getCompleteKey());
-                    }
-                });
+                searcher = searchers.stream()
+                        .filter(customFieldSearcher -> field.searcherKey.equals(customFieldSearcher.getDescriptor().getCompleteKey()))
+                        .findFirst()
+                        .orElseThrow(NoSuchElementException::new);
             }
             catch (NoSuchElementException e)
             {
@@ -233,14 +219,12 @@ public class CustomFieldsBackdoor
     @Path("get")
     public Response getCustomFields(@QueryParam("config") final boolean config)
     {
-        return Response.ok(Lists.newArrayList(transform(customFieldManager.getCustomFieldObjects(), new Function<CustomField, Object>()
-        {
-            @Override
-            public CustomFieldResponse apply(final CustomField input)
-            {
-                return asResponse(input, config);
-            }
-        }))).cacheControl(never()).build();
+        final List<CustomFieldResponse> result = customFieldManager.getCustomFieldObjects().stream()
+                .map(input -> asResponse(input, config))
+                .collect(Collectors.toList());
+
+
+        return Response.ok(result).cacheControl(never()).build();
     }
 
     @DELETE
@@ -324,14 +308,14 @@ public class CustomFieldsBackdoor
             if (onlyConfig != null)
             {
                 CustomFieldConfig bean = new CustomFieldConfig();
-                bean.setProjects(asSet(getProjectNames(fieldConfigScheme.getAssociatedProjectObjects())));
-                bean.setIssueTypes(asSet(getIssueTypeNames(fieldConfigScheme.getConfigs().keySet())));
+                bean.setProjects(getProjectNames(fieldConfigScheme.getAssociatedProjectObjects()));
+                bean.setIssueTypes(getIssueTypeNames(fieldConfigScheme.getConfigs().keySet()));
 
                 for (FieldConfigItem item : onlyConfig.getConfigItems())
                 {
                     if (item.getType() instanceof SettableOptionsConfigItem)
                     {
-                        bean.setOptions(asList(convertOptions((Options) item.getConfigurationObject(null))));
+                        bean.setOptions(convertOptions((Options) item.getConfigurationObject(null)));
                     }
                 }
                 config.add(bean);
@@ -340,16 +324,11 @@ public class CustomFieldsBackdoor
         return config;
     }
 
-    private Iterable<CustomFieldOption> convertOptions(Iterable<Option> options)
+    private List<CustomFieldOption> convertOptions(List<Option> options)
     {
-        return transform(options, new Function<Option, CustomFieldOption>()
-        {
-            @Override
-            public CustomFieldOption apply(@Nullable final Option input)
-            {
-                return convertOption(input);
-            }
-        });
+        return options.stream()
+                .map(this::convertOption)
+                .collect(Collectors.toList());
     }
 
     private CustomFieldOption convertOption(Option option)
@@ -357,42 +336,24 @@ public class CustomFieldsBackdoor
         final CustomFieldOption customFieldOption = new CustomFieldOption();
         customFieldOption.setId(option.getOptionId());
         customFieldOption.setName(option.getValue());
-        customFieldOption.setChildren(asList(convertOptions(option.getChildOptions())));
+        customFieldOption.setChildren(convertOptions(option.getChildOptions()));
 
         return customFieldOption;
     }
 
-    private <T> List<T> asList(Iterable<? extends T> iterable)
+    private Set<String> getProjectNames(List<Project> projects)
     {
-        return Lists.newArrayList(iterable);
+        return projects.stream()
+                .filter(Objects::nonNull)
+                .map(Project::getName)
+                .collect(Collectors.toSet());
     }
 
-    private <T> Set<T> asSet(Iterable<? extends T> iterable)
+    private Set<String> getIssueTypeNames(Set<String> ids)
     {
-        return Sets.newHashSet(iterable);
-    }
-
-    private Iterable<String> getProjectNames(Iterable<Project> projects)
-    {
-        return transform(filter(projects, Predicates.notNull()), new Function<Project, String>()
-        {
-            @Override
-            public String apply(final Project input)
-            {
-                return input.getName();
-            }
-        });
-    }
-
-    private Iterable<String> getIssueTypeNames(Iterable<String> ids)
-    {
-        return transform(filter(ids, Predicates.notNull()), new Function<String, String>()
-        {
-            @Override
-            public String apply(final String input)
-            {
-                return constantsManager.getIssueTypeObject(input).getName();
-            }
-        });
+        return ids.stream()
+                .filter(Objects::nonNull)
+                .map(id -> constantsManager.getIssueTypeObject(id).getName())
+                .collect(Collectors.toSet());
     }
 }
