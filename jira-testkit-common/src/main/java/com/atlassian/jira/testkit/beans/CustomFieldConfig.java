@@ -28,9 +28,19 @@ public class CustomFieldConfig
         };
     }
 
+    private Long id = 0L;
     private Set<String> projects = Sets.newHashSet();
     private Set<String> issueTypes = Sets.newHashSet();
     private List<CustomFieldOption> options = Lists.newArrayList();
+
+    @JsonProperty
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @JsonProperty
     public Set<String> getIssueTypes()
