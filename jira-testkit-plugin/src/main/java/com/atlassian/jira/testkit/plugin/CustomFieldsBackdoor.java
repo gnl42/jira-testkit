@@ -308,6 +308,7 @@ public class CustomFieldsBackdoor
             if (onlyConfig != null)
             {
                 CustomFieldConfig bean = new CustomFieldConfig();
+                bean.setId(onlyConfig.getId());
                 bean.setProjects(getProjectNames(fieldConfigScheme.getAssociatedProjectObjects()));
                 bean.setIssueTypes(getIssueTypeNames(fieldConfigScheme.getConfigs().keySet()));
 
