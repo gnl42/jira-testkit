@@ -68,7 +68,6 @@
         <rest.version>2.7.1</rest.version>
         <sal.version>2.7.1</sal.version>
         <spring.version>2.5.6.SEC01</spring.version>
-        <jaxb.version>2.3.0</jaxb.version>
     </properties>
 
     <profiles>
@@ -166,21 +165,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>${jaxb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb.version}</version>
-            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
