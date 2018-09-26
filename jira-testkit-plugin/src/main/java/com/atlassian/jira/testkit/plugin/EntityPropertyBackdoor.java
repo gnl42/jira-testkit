@@ -1,16 +1,16 @@
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Suppliers;
+import io.atlassian.fugue.Option;
+import io.atlassian.fugue.Suppliers;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.JsonEntityPropertyManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Backdoor for accessing entity properties

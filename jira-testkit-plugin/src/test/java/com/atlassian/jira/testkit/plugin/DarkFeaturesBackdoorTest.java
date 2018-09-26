@@ -12,8 +12,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ws.rs.core.Response;
 
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import static io.atlassian.fugue.Option.none;
+import static io.atlassian.fugue.Option.some;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.hamcrest.CoreMatchers.is;
