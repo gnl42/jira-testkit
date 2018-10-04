@@ -49,26 +49,12 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
 
     public WorkflowSchemeData getWorkflowSchemeByNameNullIfNotFound(final String schemeName)
     {
-        return nullIfNotFound(new Function<Void, WorkflowSchemeData>()
-        {
-            @Override
-            public WorkflowSchemeData get(Void input)
-            {
-                return getWorkflowSchemeByName(schemeName);
-            }
-        });
+        return nullIfNotFound(input -> getWorkflowSchemeByName(schemeName));
     }
 
     public WorkflowSchemeData getWorkflowSchemeDraftByProjectNameNullIfNotFound(final String projectName)
     {
-        return nullIfNotFound(new Function<Void, WorkflowSchemeData>()
-        {
-            @Override
-            public WorkflowSchemeData get(Void input)
-            {
-                return getWorkflowSchemeDraftByProjectName(projectName);
-            }
-        });
+        return nullIfNotFound(input -> getWorkflowSchemeDraftByProjectName(projectName));
     }
 
     public WorkflowSchemeData getWorkflowSchemeDraftByProjectName(String projectName)
@@ -100,14 +86,7 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
 
     public WorkflowSchemeData getWorkflowSchemeForParentNullIfNotFound(final long id)
     {
-        return nullIfNotFound(new Function<Void, WorkflowSchemeData>()
-        {
-            @Override
-            public WorkflowSchemeData get(Void aVoid)
-            {
-                return getWorkflowSchemeForParent(id);
-            }
-        });
+        return nullIfNotFound(input -> getWorkflowSchemeForParent(id));
     }
 
     public WorkflowSchemeData createDraft(WorkflowSchemeData scheme)
@@ -182,7 +161,7 @@ public class WorkflowSchemesControl extends BackdoorControl<WorkflowSchemesContr
     {
         try
         {
-            return function.get(null);
+            return function.apply(null);
         }
         catch (UniformInterfaceException e)
         {

@@ -8,7 +8,7 @@
 
     <groupId>com.atlassian.jira.tests</groupId>
     <artifactId>jira-testkit-plugin-parent</artifactId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>JIRA TestKit</name>
 
@@ -47,7 +47,7 @@
         <clover.version>3.0.2</clover.version>
         <common.lang.version>2.5</common.lang.version>
         <crowd.version>2.4.3</crowd.version>
-        <fp.version>0.3</fp.version>
+        <fp.version>0.7.3</fp.version>
         <guava.version>10.0.1</guava.version>
         <hallelujah.version>3.1-alpha-4</hallelujah.version>
         <hamcrest.version>1.2</hamcrest.version>
@@ -58,7 +58,7 @@
         <jira.amps.version>${jira.version}</jira.amps.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.rest.version>6.8.6</jira.rest.version>
-        <jira.version>8.0.0-QR-20180925202022</jira.version>
+        <jira.version>8.0.0-QR-20181005060358</jira.version>
         <joda.time.version>2.0</joda.time.version>
         <jsr311.version>1.1</jsr311.version>
         <junit.version>4.10</junit.version>

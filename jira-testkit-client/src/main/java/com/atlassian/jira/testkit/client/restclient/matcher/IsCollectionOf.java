@@ -50,14 +50,7 @@ public class IsCollectionOf<T> extends TypeSafeMatcher<Collection<T>> {
 
     public static Matcher<Collection<String>> ofProjectKeys(List<Project> projects)
     {
-        final Collection<String> projectKeys = Transformed.collection(projects, new Function<Project, String>()
-        {
-            @Override
-            public String get(Project project)
-            {
-                return project.key;
-            }
-        });
+        final Collection<String> projectKeys = Transformed.collection(projects, project -> project.key);
 
         return new IsCollectionOf<String>(projectKeys);
     }
