@@ -1,6 +1,6 @@
 package com.atlassian.jira.testkit.client.util;
 
-import com.atlassian.fugue.Option;
+import io.atlassian.fugue.Option;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -13,8 +13,8 @@ import org.json.JSONObject;
 
 import java.util.LinkedList;
 
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import static io.atlassian.fugue.Option.none;
+import static io.atlassian.fugue.Option.some;
 
 /**
  * Class that contain static factory methods for JSON matchers.

@@ -1,6 +1,6 @@
 package com.atlassian.jira.testkit.client.restclient;
 
-import com.atlassian.fugue.Option;
+import io.atlassian.fugue.Option;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
 import com.atlassian.jira.util.json.JSONObject;

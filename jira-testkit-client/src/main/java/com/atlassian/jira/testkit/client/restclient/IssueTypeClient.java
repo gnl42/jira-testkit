@@ -9,17 +9,17 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
-import com.atlassian.fugue.Option;
+import io.atlassian.fugue.Option;
 import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
 import com.atlassian.jira.testkit.client.RestApiClient;
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 
@@ -81,22 +81,12 @@ public class IssueTypeClient extends RestApiClient<IssueTypeClient>
     public void delete(final String issueTypeId, final Option<String> alternativeIssueTypeId)
     {
         final WebResource webResource = issueTypeWithID(issueTypeId);
-        alternativeIssueTypeId.fold(new Supplier<Void>()
-        {
-            @Override
-            public Void get()
-            {
-                webResource.delete();
-                return null;
-            }
-        }, new Function<String, Void>()
-        {
-            @Override
-            public Void apply(final String alternativeId)
-            {
-                webResource.queryParam("alternativeIssueTypeId", alternativeId).delete();
-                return null;
-            }
+        alternativeIssueTypeId.fold(() -> {
+            webResource.delete();
+            return null;
+        }, (Function<String, Void>) alternativeId -> {
+            webResource.queryParam("alternativeIssueTypeId", alternativeId).delete();
+            return null;
         });
     }
 

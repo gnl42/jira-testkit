@@ -9,19 +9,20 @@
 
 package com.atlassian.jira.testkit.plugin;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.FeatureFlag;
 import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Supplier;
+import io.atlassian.fugue.Option;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+
+import java.util.function.Supplier;
 
 import static com.atlassian.jira.component.ComponentAccessor.getUserUtil;
 
