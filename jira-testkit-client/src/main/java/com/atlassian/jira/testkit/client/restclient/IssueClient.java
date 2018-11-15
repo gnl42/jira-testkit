@@ -592,6 +592,52 @@ public class IssueClient extends RestApiClient<IssueClient>
     }
 
     /**
+     * Archives the issue associated with the passed id or key
+     *
+     * @param issueIdOrKey Issue id or issue key
+     * @return no content response
+     * @response.representation.204.mediaType application/json
+     * @response.representation.204.doc Returned if the issue is successfully archived.
+     * @response.representation.401.doc Returned if the user is not logged in.
+     * @response.representation.403.doc Returned if the currently authenticated user does not have permission to archive the issue or
+     * doesn't have DC license or issue is already archived.
+     * @response.representation.404.doc Returned if the issue does not exist.
+     */
+    public ClientResponse archive(final String issueIdOrKey)
+    {
+        final ClientResponse response = createResource()
+                .path(issueIdOrKey)
+                .path("archive")
+                .put(ClientResponse.class);
+        response.close();
+
+        return response;
+    }
+
+    /**
+     * Restores the issue associated with the passed id or key
+     *
+     * @param issueIdOrKey Issue id or issue key
+     * @return no content response
+     * @response.representation.204.mediaType application/json
+     * @response.representation.204.doc Returned if the issue is successfully restored.
+     * @response.representation.401.doc Returned if the user is not logged in.
+     * @response.representation.403.doc Returned if the currently authenticated user does not have permission to restore the issue or
+     * doesn't have DC license or issue is not archived.
+     * @response.representation.404.doc Returned if the issue does not exist.
+     */
+    public ClientResponse restore(final String issueIdOrKey)
+    {
+        final ClientResponse response = createResource()
+                .path(issueIdOrKey)
+                .path("restore")
+                .put(ClientResponse.class);
+        response.close();
+
+        return response;
+    }
+
+    /**
      * Returns WebResource, containing remote link info.
      *
      * @param issueKey the issue key

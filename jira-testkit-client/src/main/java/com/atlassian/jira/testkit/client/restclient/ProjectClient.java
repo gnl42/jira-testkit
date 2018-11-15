@@ -318,6 +318,52 @@ public class ProjectClient extends RestApiClient<ProjectClient>
     }
 
     /**
+     * Marks the project associated with the passed id or key as archived
+     *
+     * @param projectIdOrKey the key or id of the project
+     * @return no content response
+     * @response.representation.204.mediaType application/json
+     * @response.representation.204.doc Returned if the project is successfully archived.
+     * @response.representation.401.doc Returned if the user is not logged in.
+     * @response.representation.403.doc Returned if the currently authenticated user does not have permission to archive the project or
+     * doesn't have DC license or project is already archived.
+     * @response.representation.404.doc Returned if the project does not exist.
+     */
+    public ClientResponse archive(final String projectIdOrKey)
+    {
+        final ClientResponse response = projects()
+                .path(projectIdOrKey)
+                .path("archive")
+                .put(ClientResponse.class);
+        response.close();
+
+        return response;
+    }
+
+    /**
+     * Restores the project associated with the passed id or key
+     *
+     * @param projectIdOrKey the key or id of the project
+     * @return no content response
+     * @response.representation.202.mediaType application/json
+     * @response.representation.202.doc Returned if the project is successfully restored.
+     * @response.representation.401.doc Returned if the user is not logged in.
+     * @response.representation.403.doc Returned if the currently authenticated user does not have permission to restore the project or
+     * doesn't have DC license or project is already restored.
+     * @response.representation.404.doc Returned if the project does not exist.
+     */
+    public ClientResponse restore(final String projectIdOrKey)
+    {
+        final ClientResponse response = projects()
+                .path(projectIdOrKey)
+                .path("restore")
+                .put(ClientResponse.class);
+        response.close();
+
+        return response;
+    }
+
+    /**
      * Returns a WebResource for the project having the given key.
      *
      * @param projectKey a String containing the project key
