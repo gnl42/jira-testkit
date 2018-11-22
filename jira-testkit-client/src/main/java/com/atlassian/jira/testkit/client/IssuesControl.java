@@ -22,6 +22,7 @@ import com.atlassian.jira.testkit.client.restclient.IssuesExtClient;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.atlassian.jira.testkit.client.restclient.Visibility;
 import com.atlassian.jira.util.collect.MapBuilder;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import javax.annotation.Nonnull;
@@ -253,6 +254,14 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
         return issueClient.delete(issueKey, Boolean.toString(deleteSubtasks));
     }
 
+    public ClientResponse archiveIssue(String issueIdOrKey) {
+        return issueClient.archive(issueIdOrKey);
+    }
+
+    public ClientResponse restoreIssue(String issueIdOrKey) {
+        return issueClient.restore(issueIdOrKey);
+    }
+
     public void touch(final String key) {
         issuesExtClient.touch(key);
     }
@@ -277,6 +286,14 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
         commentClient.loginAs(username, password);
         issueClient.loginAs(username, password);
         return super.loginAs(username, password);
+    }
+
+    @Override
+    public IssuesControl anonymous() {
+        super.anonymous();
+        issueClient.anonymous();
+
+        return this;
     }
 
     public Issue getIssue(String key) {
