@@ -103,9 +103,17 @@ public class IssueClient extends RestApiClient<IssueClient>
 
     public IssueCreateResponse create(IssueUpdateRequest issue)
     {
+        return create(issue, false);
+    }
+
+    public IssueCreateResponse create(IssueUpdateRequest issue, boolean updateHistory)
+    {
         try
         {
-            return createResource().type(APPLICATION_JSON_TYPE).post(IssueCreateResponse.class, issue);
+            return createResource()
+                    .queryParam("updateHistory", Boolean.toString(updateHistory))
+                    .type(APPLICATION_JSON_TYPE)
+                    .post(IssueCreateResponse.class, issue);
         }
         catch (UniformInterfaceException e)
         {
