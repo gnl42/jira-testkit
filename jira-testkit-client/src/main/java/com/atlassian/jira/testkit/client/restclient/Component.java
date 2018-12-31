@@ -40,6 +40,7 @@ public class Component
     public User realAssignee;
     public boolean isAssigneeTypeValid;
     public long projectId;
+    public boolean archived;
 
     public Component self(URI self)
     {
@@ -125,6 +126,12 @@ public class Component
         return this;
     }
 
+    public Component archived(boolean archived)
+    {
+        this.archived = archived;
+        return this;
+    }
+
     @Override
     public String toString()
     {
@@ -148,7 +155,7 @@ public class Component
         PROJECT_DEFAULT,
         COMPONENT_LEAD,
         PROJECT_LEAD,
-        UNASSIGNED;
+        UNASSIGNED
     }
 
 }
