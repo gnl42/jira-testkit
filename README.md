@@ -82,7 +82,8 @@ no additional modifications.
   [promise]: https://developer.atlassian.com/display/JIRADEV/Java+API+Policy+for+JIRA
 
 ## Branches
-- master - Jira 8.0+
+- master - Jira 8.1+
+- testkit_for_jira_8_0
 - testkit_for_jira_7_12
 - testkit_for_jira_7_11 - JIRA 7.7 - 7.11
 - testkit_for_jira_7_6 - JIRA 7.6
