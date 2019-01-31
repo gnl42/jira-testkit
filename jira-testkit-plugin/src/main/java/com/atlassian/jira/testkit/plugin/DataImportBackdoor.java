@@ -85,7 +85,9 @@ public class DataImportBackdoor
             if (!importResult.isValid())
             {
                 // Something went wrong. Die!
-                throw new IllegalStateException("Restore failed!: " + importResult.getSpecificErrorMessage());
+                throw new IllegalStateException("Restore failed!: " + importResult.getImportError() +
+                        ". More Info: " + importResult.getSpecificErrorMessage());
+
             }
 
             if (StringUtils.isNotBlank(importBean.baseUrl))
