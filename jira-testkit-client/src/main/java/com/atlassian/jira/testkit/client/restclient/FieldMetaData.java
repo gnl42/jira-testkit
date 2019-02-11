@@ -30,6 +30,7 @@ public class FieldMetaData
     public List<Object> allowedValues;
     public String name;
     public String key;
+    public Object defaultValue;
 
     @Override
     public boolean equals(Object o)
