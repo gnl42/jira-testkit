@@ -9,6 +9,7 @@
 
 package com.atlassian.jira.testkit.client;
 
+import com.atlassian.jira.testkit.beans.CustomFieldDefaultValue;
 import com.atlassian.jira.testkit.beans.CustomFieldRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.sun.jersey.api.client.ClientResponse;
@@ -165,5 +166,21 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
                 .queryParam("contextId", String.valueOf(contextId));
 
         r.delete(ClientResponse.class);
+    }
+
+    /**
+     * Updates a custom field context default value
+     *
+     * @param contextId contextId (field config scheme id) to update default value for
+     * @param value default field value for passed context
+     */
+    public void setDefaultValueForContext(Long contextId, Object value)
+    {
+        CustomFieldDefaultValue request = new CustomFieldDefaultValue();
+        request.value = value;
+
+        createResource().path("customFields").path("setDefaultValueForContext")
+                .queryParam("contextId", contextId.toString())
+                .put(request);
     }
 }
