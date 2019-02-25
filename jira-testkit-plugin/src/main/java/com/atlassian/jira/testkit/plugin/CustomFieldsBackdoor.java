@@ -20,6 +20,7 @@ import com.atlassian.jira.issue.customfields.CustomFieldUtils;
 import com.atlassian.jira.issue.customfields.config.item.SettableOptionsConfigItem;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
+import com.atlassian.jira.issue.fields.ConfigurableField;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.config.FieldConfigItem;
@@ -29,6 +30,7 @@ import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.testkit.beans.CustomFieldConfig;
+import com.atlassian.jira.testkit.beans.CustomFieldDefaultValue;
 import com.atlassian.jira.testkit.beans.CustomFieldOption;
 import com.atlassian.jira.testkit.beans.CustomFieldRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
@@ -36,12 +38,6 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.collect.Lists;
 import org.ofbiz.core.entity.GenericEntityException;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -53,6 +49,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
 
@@ -300,6 +302,28 @@ public class CustomFieldsBackdoor
     public Response deleteContext(@QueryParam("contextId") final Long contextId) {
         fieldConfigSchemeManager.removeFieldConfigScheme(contextId);
         return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("setDefaultValueForContext")
+    public Response updateCustomFieldDefaultValue(@QueryParam("contextId") Long fieldConfigSchemeId,
+                                                  final CustomFieldDefaultValue defaultValue) {
+        if (fieldConfigSchemeId == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field context id (field config scheme id)").build();
+        }
+
+        FieldConfigScheme fieldConfigScheme = fieldConfigSchemeManager.getFieldConfigScheme(fieldConfigSchemeId);
+        if (fieldConfigScheme == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Field config scheme not found").build();
+        }
+        final ConfigurableField<?> field = fieldConfigScheme.getField();
+        if (!(field instanceof CustomField)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("ConfigurableField associated with field config scheme is not CustomField").build();
+        }
+        final CustomField customField = (CustomField) field;
+
+        customField.getCustomFieldType().setDefaultValue(fieldConfigScheme.getOneAndOnlyConfig(), defaultValue.value);
+        return Response.ok().build();
     }
 
     private CustomFieldResponse asResponse(final CustomField input, final boolean config)
