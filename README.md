@@ -1,14 +1,14 @@
-JIRA TestKit
+Jira TestKit
 ============
 
-The JIRA TestKit was created to make it easier for plugin developers to set
-up integration tests for JIRA. 
+The Jira TestKit was created to make it easier for plugin developers to set
+up integration tests for Jira. 
 
 Using the TestKit
 -----------------
 
 The TestKit has two components: the `jira-testkit-plugin` and the
-`jira-testkit-client`. The plugin component is a JIRA plugin that should be
+`jira-testkit-client`. The plugin component is a Jira plugin that should be
 installed when running integration tests, and the client component contains the
 classes that you will interact with in your test code.
 
@@ -65,15 +65,15 @@ integration test that disabled WebSudo and enabled Subtasks during its setup.
 
 There's a lot more things that the TestKit can do. Have a look at the code!
 
-Compatibility across JIRA versions
+Compatibility across Jira versions
 ----------------------------------
 
-The TestKit version numbering scheme mirrors the JIRA version that it is
-compatible with. For example, TestKit 5.0 is compatible with JIRA 5.0. But
-because the TestKit builds on the [official JIRA Java API] [jiraapi], TestKit
-5.0 is also compatible with any 5.x version of JIRA, as per the
-[Java API Policy for JIRA] [promise]. This means you can use TestKit 5.0 in
-your integration tests that run against JIRA 5.0, JIRA 5.1, and JIRA 5.2, with
+The TestKit version numbering scheme mirrors the Jira version that it is
+compatible with. For example, TestKit 5.0 is compatible with Jira 5.0. But
+because the TestKit builds on the [official Jira Java API] [jiraapi], TestKit
+5.0 is also compatible with any 5.x version of Jira, as per the
+[Java API Policy for Jira] [promise]. This means you can use TestKit 5.0 in
+your integration tests that run against Jira 5.0, Jira 5.1, and Jira 5.2, with
 no additional modifications.
 
 
@@ -82,8 +82,8 @@ no additional modifications.
   [promise]: https://developer.atlassian.com/display/JIRADEV/Java+API+Policy+for+JIRA
 
 ## Branches
-- master - JIRA 7.6+
-- testkit_for_jira_7_2 - JIRA 7.2 - 7.5
+- master - Jira 7.6+
+- testkit_for_jira_7_2 - Jira 7.2 - 7.5
 
 
 # Development
@@ -94,4 +94,4 @@ This project requires JDK 8 in order to build without error. Maven builds will a
 * There is a Bamboo [CI plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TC) on JBAC (only accessible within Atlassian). Create any feature branches from this plan.
 
 ## Releasing ##
-* Releasing is via another [Bamboo plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TR) on JBAC. This plan has branches for each supported JIRA version. Do not create feature branches of this plan.
+* Releasing is via another [Bamboo plan](https://jira-bamboo.internal.atlassian.com/browse/JT-TR) on JBAC. This plan has branches for each supported Jira version. Do not create feature branches of this plan.
