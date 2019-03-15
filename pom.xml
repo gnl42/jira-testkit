@@ -8,9 +8,13 @@
 
     <groupId>com.atlassian.jira.tests</groupId>
     <artifactId>jira-testkit-plugin-parent</artifactId>
+<<<<<<< HEAD
     <version>7.12.4-SNAPSHOT</version>
+=======
+    <version>7.7.11-SNAPSHOT</version>
+>>>>>>> origin/testkit_for_jira_7_11
     <packaging>pom</packaging>
-    <name>JIRA TestKit</name>
+    <name>Jira TestKit</name>
 
     <scm>
         <connection>scm:git:ssh://git@bitbucket.org/atlassian/jira-testkit.git</connection>
@@ -131,7 +135,7 @@
                     <productVersion>${jira.amps.version}</productVersion>
                     <productDataVersion>${jira.data.version}</productDataVersion>
                     <jvmArgs>-Xmx768m -XX:MaxPermSize=300m -XX:CompileCommand=exclude,org/apache/velocity/runtime/directive/Foreach,render</jvmArgs>
-                    <!-- In JIRA 5.0 GH will not be bundled, so we'll have to install it to JIRA, using following syntax -->
+                    <!-- In Jira 5.0 GH will not be bundled, so we'll have to install it to Jira, using following syntax -->
                     <!--pluginArtifacts>
                                                              <pluginArtifact>
                                                                  <groupId>com.atlassian.activeobjects</groupId>
