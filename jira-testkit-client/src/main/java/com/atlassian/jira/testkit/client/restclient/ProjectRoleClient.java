@@ -29,7 +29,7 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
 {
     protected final ProjectRoleClient2 projectRoleClient2;
 
-    public GenericType<Map<String, String>> TYPE = new GenericType<Map<String, String>>(HashMap.class);
+    public GenericType<Map<String, String>> TYPE = new GenericType<>(HashMap.class);
 
     public ProjectRoleClient(JIRAEnvironmentData environmentData)
     {
@@ -53,27 +53,22 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
     }
 
     public Response addActors(final String projectKey, final String role, @Nullable final String[] groupNames,
-            @Nullable final String[] userNames)
+            @Nullable final String[] userKeys)
     {
         final ProjectRole projectRole = get(projectKey, role);
 
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
+        return toResponse(() -> {
+            final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString());
+            final Map<String, String[]> parameter = Maps.newHashMap();
+            if(groupNames != null)
             {
-                final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString());
-                final Map<String, String[]> parameter = Maps.newHashMap();
-                if(groupNames != null)
-                {
-                    parameter.put("group", groupNames);
-                }
-                if(userNames != null)
-                {
-                    parameter.put("user", userNames);
-                }
-                return webResource.type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, parameter);
+                parameter.put("group", groupNames);
             }
+            if(userKeys != null)
+            {
+                parameter.put("user", userKeys);
+            }
+            return webResource.type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, parameter);
         });
     }
 
@@ -81,14 +76,9 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
     {
         final ProjectRole projectRole = get(projectKey, role);
 
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString()).queryParam("group", groupName);
-                return webResource.delete(ClientResponse.class);
-            }
+        return toResponse(() -> {
+            final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString()).queryParam("group", groupName);
+            return webResource.delete(ClientResponse.class);
         });
     }
 
@@ -96,14 +86,9 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
     {
         final ProjectRole projectRole = get(projectKey, role);
 
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString()).queryParam("user", userName);
-                return webResource.delete(ClientResponse.class);
-            }
+        return toResponse(() -> {
+            final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString()).queryParam("user", userName);
+            return webResource.delete(ClientResponse.class);
         });
     }
 
@@ -116,17 +101,12 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
     {
         final ProjectRole projectRole = get(projectKey, role);
 
-        return toResponse(new Method()
-        {
-            @Override
-            public ClientResponse call()
-            {
-                final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString());
-                final ProjectRoleActorsUpdate projectRoleActorsUpdate = new ProjectRoleActorsUpdate(
-                        projectRole.id, actors
-                );
-                return webResource.type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, projectRoleActorsUpdate);
-            }
+        return toResponse(() -> {
+            final WebResource webResource = rolesWithProjectKey(projectKey).path(projectRole.id.toString());
+            final ProjectRoleActorsUpdate projectRoleActorsUpdate = new ProjectRoleActorsUpdate(
+                    projectRole.id, actors
+            );
+            return webResource.type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, projectRoleActorsUpdate);
         });
     }
 }
