@@ -6,7 +6,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jira-testkit-client</artifactId>
-	<name>JIRA TestKit - Client</name>
+	<name>Jira TestKit - Client</name>
 	<packaging>jar</packaging>
 
 	<profiles>
