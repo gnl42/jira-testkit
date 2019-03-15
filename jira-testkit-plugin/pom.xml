@@ -8,8 +8,8 @@
 	<artifactId>jira-testkit-plugin</artifactId>
 	<packaging>atlassian-plugin</packaging>
 
-    <name>JIRA TestKit - Plugin</name>
-	<description>The TestKit plugin makes it easy to set up your JIRA test cases. Do not use in production.</description>
+    <name>Jira TestKit - Plugin</name>
+	<description>The TestKit plugin makes it easy to set up your Jira test cases. Do not use in production.</description>
     <url>https://bitbucket.org/atlassian/jira-testkit/</url>
 
 	<build>
@@ -26,7 +26,7 @@
                             com.atlassian.jira.testkit*
                         </Export-Package>
                         <!--
-                            Some JIRA upgrade tasks use XPath. We need to import JAXP from Xalan,
+                            Some Jira upgrade tasks use XPath. We need to import JAXP from Xalan,
                             otherwise data importing will fail under Java 8.
                         -->
                         <Import-Package>
