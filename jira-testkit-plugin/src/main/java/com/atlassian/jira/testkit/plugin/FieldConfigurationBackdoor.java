@@ -91,6 +91,43 @@ public class FieldConfigurationBackdoor
         }
         return Response.ok().build();
     }
+
+    @GET
+    @AnonymousAllowed
+    @Path("makeFieldOptional")
+    public Response makeOptional(@QueryParam("name") String fieldConfigName, @QueryParam("fieldId") String fieldId)
+    {
+        EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
+
+        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+            final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
+            editableDefaultFieldLayout.makeOptional(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
+        } else {
+            fieldLayout.makeOptional(fieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableFieldLayout(fieldLayout);
+        }
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("makeFieldRequired")
+    public Response makeRequired(@QueryParam("name") String fieldConfigName, @QueryParam("fieldId") String fieldId)
+    {
+        EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
+
+        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+            final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
+            editableDefaultFieldLayout.makeRequired(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
+        } else {
+            fieldLayout.makeRequired(fieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableFieldLayout(fieldLayout);
+        }
+        return Response.ok().build();
+    }
     
     @POST
     @AnonymousAllowed
