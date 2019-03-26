@@ -41,6 +41,8 @@ import java.util.List;
 @Path("fieldConfiguration")
 public class FieldConfigurationBackdoor
 {
+    private static final int DEFAULT_FIELD_LAYOUT_ID = 10000;
+
     private final FieldLayoutManager fieldLayoutManager;
     private final CustomFieldManager customFieldManager;
     private final ProjectManager projectManager;
@@ -62,7 +64,7 @@ public class FieldConfigurationBackdoor
     {
         EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
 
-        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
             final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
             editableDefaultFieldLayout.hide(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
@@ -81,7 +83,7 @@ public class FieldConfigurationBackdoor
     {
         EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
 
-        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
             final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
             editableDefaultFieldLayout.show(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
@@ -99,7 +101,7 @@ public class FieldConfigurationBackdoor
     {
         EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
 
-        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
             final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
             editableDefaultFieldLayout.makeOptional(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
@@ -118,7 +120,7 @@ public class FieldConfigurationBackdoor
     {
         EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
 
-        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
             final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
             editableDefaultFieldLayout.makeRequired(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
