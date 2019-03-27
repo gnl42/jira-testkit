@@ -68,4 +68,28 @@ public class FieldConfigurationControl extends BackdoorControl<FieldConfiguratio
         );
     }
 
+    /**
+     * Makes field optional in given configuration
+     *
+     * @param name    the name of the existing field configuration
+     * @param fieldId the field id
+     */
+    public void makeFieldOptional(String name, String fieldId) {
+        get(createResource().path("fieldConfiguration/makeFieldOptional")
+            .queryParam("name", name)
+            .queryParam("fieldId", fieldId));
+    }
+
+    /**
+     * Makes field required in given configuration
+     *
+     * @param name    the name of the existing field configuration
+     * @param fieldId the field id
+     */
+    public void makeFieldRequired(String name, String fieldId) {
+        get(createResource().path("fieldConfiguration/makeFieldRequired")
+            .queryParam("name", name)
+            .queryParam("fieldId", fieldId));
+    }
+
 }
