@@ -53,7 +53,7 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
     }
 
     public Response addActors(final String projectKey, final String role, @Nullable final String[] groupNames,
-            @Nullable final String[] userKeys)
+            @Nullable final String[] userNames)
     {
         final ProjectRole projectRole = get(projectKey, role);
 
@@ -64,9 +64,9 @@ public class ProjectRoleClient extends RestApiClient<ProjectRoleClient>
             {
                 parameter.put("group", groupNames);
             }
-            if(userKeys != null)
+            if(userNames != null)
             {
-                parameter.put("user", userKeys);
+                parameter.put("user", userNames);
             }
             return webResource.type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, parameter);
         });
