@@ -41,6 +41,8 @@ import java.util.List;
 @Path("fieldConfiguration")
 public class FieldConfigurationBackdoor
 {
+    private static final int DEFAULT_FIELD_LAYOUT_ID = 10000;
+
     private final FieldLayoutManager fieldLayoutManager;
     private final CustomFieldManager customFieldManager;
     private final ProjectManager projectManager;
@@ -62,7 +64,7 @@ public class FieldConfigurationBackdoor
     {
         EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
 
-        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
             final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
             editableDefaultFieldLayout.hide(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
@@ -81,12 +83,49 @@ public class FieldConfigurationBackdoor
     {
         EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
 
-        if (fieldLayout.getId() == null || fieldLayout.getId() == 10000) {
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
             final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
             editableDefaultFieldLayout.show(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
         } else {
             fieldLayout.show(fieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableFieldLayout(fieldLayout);
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("makeFieldOptional")
+    public Response makeOptional(@QueryParam("name") String fieldConfigName, @QueryParam("fieldId") String fieldId)
+    {
+        EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
+
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
+            final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
+            editableDefaultFieldLayout.makeOptional(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
+        } else {
+            fieldLayout.makeOptional(fieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableFieldLayout(fieldLayout);
+        }
+
+        return Response.ok().build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("makeFieldRequired")
+    public Response makeRequired(@QueryParam("name") String fieldConfigName, @QueryParam("fieldId") String fieldId)
+    {
+        EditableFieldLayout fieldLayout = getFieldLayout(fieldConfigName);
+
+        if (fieldLayout.getId() == null || fieldLayout.getId() == DEFAULT_FIELD_LAYOUT_ID) {
+            final EditableDefaultFieldLayout editableDefaultFieldLayout = fieldLayoutManager.getEditableDefaultFieldLayout();
+            editableDefaultFieldLayout.makeRequired(editableDefaultFieldLayout.getFieldLayoutItem(fieldId));
+            fieldLayoutManager.storeEditableDefaultFieldLayout(editableDefaultFieldLayout);
+        } else {
+            fieldLayout.makeRequired(fieldLayout.getFieldLayoutItem(fieldId));
             fieldLayoutManager.storeEditableFieldLayout(fieldLayout);
         }
         return Response.ok().build();
