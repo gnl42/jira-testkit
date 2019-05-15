@@ -75,6 +75,10 @@ public class UserDTO
         );
     }
 
+    public long getId() {
+        return id;
+    }
+
     @SuppressWarnings("unused")
     public long getDirectoryId()
     {

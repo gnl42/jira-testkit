@@ -390,7 +390,7 @@ public class UsersAndGroupsBackdoor
     public Response numberOfUsers()
     {
         String count = Long.toString(userUtil.getTotalUserCount());
-        
+
         return Response.ok(count).build();
     }
 
@@ -448,6 +448,20 @@ public class UsersAndGroupsBackdoor
         if (user == null)
         {
             return NOT_FOUND;
+        }
+        return Response.ok(new UserDTO(user)).build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Path("user/byNameEvenWhenUnknown")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserByNameEvenWhenUnknown(@QueryParam("userName") String userName)
+    {
+        final ApplicationUser user = userManager.getUserByNameEvenWhenUnknown(userName);
+        if (user == null)
+        {
+            return Response.status(Status.BAD_REQUEST).entity("Passed username was null").build();
         }
         return Response.ok(new UserDTO(user)).build();
     }

@@ -228,6 +228,11 @@ public class UsersAndGroupsControl extends BackdoorControl<UsersAndGroupsControl
         return createResource().path("user").path("byName").queryParam("userName", username).get(UserDTO.class);
     }
 
+    public UserDTO getUserByNameEvenWhenUnknown(final String username)
+    {
+        return createResource().path("user").path("byNameEvenWhenUnknown").queryParam("userName", username).get(UserDTO.class);
+    }
+
     public void updateUser(final UserDTO user)
     {
         createResource().path("user").path("byName").entity(user, APPLICATION_JSON_TYPE).post();
