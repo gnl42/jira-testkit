@@ -58,7 +58,7 @@ public class UserDTO
         this.key = key;
         this.name = name;
         this.username = username;
-        this.id = id;
+        this.id = id != null ? id : 0L;
     }
 
     public UserDTO(final ApplicationUser user)
