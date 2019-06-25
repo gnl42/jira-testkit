@@ -115,6 +115,8 @@ public class ChangeLog
     public static class History
     {
         public long id;
+        public String created;
+        public Author author;
         public List<HistoryItem> items;
 
         @Override
@@ -154,6 +156,23 @@ public class ChangeLog
         public void setItems(List<HistoryItem> items)
         {
             this.items = items;
+        }
+
+        public History setAuthor(Author author) {
+            this.author = author;
+            return this;
+        }
+
+        public Author getAuthor() {
+            return author;
+        }
+
+        public String getCreated() {
+            return created;
+        }
+
+        public void setCreated(String created) {
+            this.created = created;
         }
 
         public HistoryItem addHistory()
@@ -257,6 +276,56 @@ public class ChangeLog
         public boolean equals(Object obj)
         {
             return EqualsBuilder.reflectionEquals(this, obj);
+        }
+    }
+
+    @JsonIgnoreProperties (ignoreUnknown = true)
+    public static class Author
+    {
+        public String key;
+        public String name;
+        public String emailAddress;
+
+        @Override
+        public String toString()
+        {
+            return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            return EqualsBuilder.reflectionEquals(this, obj);
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getEmailAddress() {
+            return emailAddress;
+        }
+
+        public void setEmailAddress(String emailAddress) {
+            this.emailAddress = emailAddress;
         }
     }
 }
