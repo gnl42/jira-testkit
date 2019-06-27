@@ -160,7 +160,13 @@ public class ProjectClient extends RestApiClient<ProjectClient>
      */
     public ClientResponse delete(String keyOrId)
     {
-        return registerResponse(projectWithKey(keyOrId).type(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class));
+        ClientResponse response = registerResponse(projectWithKey(keyOrId)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .delete(ClientResponse.class));
+        response.close();
+
+        return response;
     }
 
     /**
