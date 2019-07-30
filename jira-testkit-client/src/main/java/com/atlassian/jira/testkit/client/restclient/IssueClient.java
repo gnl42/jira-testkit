@@ -18,9 +18,11 @@ import com.atlassian.jira.rest.api.issue.RemoteIssueLinkCreateOrUpdateResponse;
 import com.atlassian.jira.rest.api.util.StringList;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -393,6 +395,76 @@ public class IssueClient extends RestApiClient<IssueClient>
         resource = expanded(resource, expand);
 
         return resource;
+    }
+
+    /**
+     * Returns issue types for creating issues.
+     *
+     * @param projectIdOrKey project for filtering
+     * @param startAt the index of the first issue type to return (0-based)
+     * @param maxResults the maximum number of issue types to return in a single request
+     * @return a WebResource
+     */
+    public PageBean<IssueType> getCreateIssueMetaProjectIssueTypes(@Nonnull final String projectIdOrKey,
+                                                               @Nullable final Long startAt,
+                                                               @Nullable final Integer maxResults)
+    {
+        return getCreateIssueMetaProjectIssueTypesResource(projectIdOrKey, startAt, maxResults)
+                        .get(new GenericType<PageBean<IssueType>>(){});
+    }
+
+    /**
+     * Returns WebResource, containing the issue types for creating issues.
+     *
+     * @param projectIdOrKey project for filtering
+     * @param startAt the index of the first issue type to return (0-based)
+     * @param maxResults the maximum number of issue types to return in a single request
+     * @return a WebResource
+     */
+    private WebResource getCreateIssueMetaProjectIssueTypesResource(@Nonnull final String projectIdOrKey,
+                                                                    @Nullable final Long startAt,
+                                                                    @Nullable final Integer maxResults)
+    {
+        WebResource resource = createResource().path("createmeta").path(projectIdOrKey).path("issuetypes");
+        resource = resource.queryParam("startAt", startAt == null ? null : startAt.toString());
+        resource = resource.queryParam("maxResults", maxResults == null ? null : maxResults.toString());
+
+        return resource;
+    }
+
+    /**
+     * Returns WebResource, containing the fields for creating issues.
+     *
+     * @param projectIdOrKey project for filtering
+     * @param issueTypeId issue type for filtering
+     * @param startAt the index of the first issue type to return (0-based)
+     * @param maxResults the maximum number of issue types to return in a single request
+     * @return a WebResource
+     */
+    public PageBean<FieldMetaData> getCreateIssueMetaFields(@Nonnull final String projectIdOrKey,
+                                                         @Nonnull final String issueTypeId,
+                                                         @Nullable final Long startAt,
+                                                         @Nullable final Integer maxResults)
+    {
+        return getCreateIssueMetaFieldsResource(projectIdOrKey, issueTypeId, startAt, maxResults)
+                .get(new GenericType<PageBean<FieldMetaData>>(){});
+    }
+
+    /**
+     * Returns WebResource, containing the fields for creating issues.
+     *
+     * @param projectIdOrKey project for filtering
+     * @param issueTypeId issue type for filtering
+     * @param startAt the index of the first issue type to return (0-based)
+     * @param maxResults the maximum number of issue types to return in a single request
+     * @return a WebResource
+     */
+    private WebResource getCreateIssueMetaFieldsResource(@Nonnull final String projectIdOrKey,
+                                                         @Nonnull final String issueTypeId,
+                                                         @Nullable final Long startAt,
+                                                         @Nullable final Integer maxResults)
+    {
+        return getCreateIssueMetaProjectIssueTypesResource(projectIdOrKey, startAt, maxResults).path(issueTypeId);
     }
 
     /**
