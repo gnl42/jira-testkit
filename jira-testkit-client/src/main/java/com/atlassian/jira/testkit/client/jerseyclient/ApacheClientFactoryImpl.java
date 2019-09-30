@@ -63,9 +63,8 @@ public class ApacheClientFactoryImpl implements JerseyClientFactory
         connectionManager.getParams().setMaxTotalConnections(100);
 
         HttpClient httpClient = new HttpClient(connectionManager);
-        ApacheHttpClientHandler clientHandler = new ApacheHttpClientHandler(httpClient);
-        ClientHandler root = new ApacheHttpClient(clientHandler);
+        ApacheHttpClientHandler clientHandler = new ApacheHttpClientHandler(httpClient, config);
 
-        return new Client(root, config);
+        return new ApacheHttpClient(clientHandler);
     }
 }
