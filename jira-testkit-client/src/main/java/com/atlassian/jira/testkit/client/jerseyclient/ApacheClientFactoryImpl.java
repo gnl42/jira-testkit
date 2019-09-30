@@ -10,9 +10,13 @@
 package com.atlassian.jira.testkit.client.jerseyclient;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandler;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.apache.ApacheHttpClient;
+import com.sun.jersey.client.apache.ApacheHttpClientHandler;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
 /**
@@ -54,6 +58,14 @@ public class ApacheClientFactoryImpl implements JerseyClientFactory
     @Override
     public Client create()
     {
-        return ApacheHttpClient.create(config);
+        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+        connectionManager.getParams().setDefaultMaxConnectionsPerHost(20);
+        connectionManager.getParams().setMaxTotalConnections(100);
+
+        HttpClient httpClient = new HttpClient(connectionManager);
+        ApacheHttpClientHandler clientHandler = new ApacheHttpClientHandler(httpClient);
+        ClientHandler root = new ApacheHttpClient(clientHandler);
+
+        return new Client(root, config);
     }
 }
