@@ -13,6 +13,9 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.apache.ApacheHttpClient;
+import com.sun.jersey.client.apache.ApacheHttpClientHandler;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
 /**
@@ -54,6 +57,13 @@ public class ApacheClientFactoryImpl implements JerseyClientFactory
     @Override
     public Client create()
     {
-        return ApacheHttpClient.create(config);
+        final MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+        connectionManager.getParams().setDefaultMaxConnectionsPerHost(20);
+        connectionManager.getParams().setMaxTotalConnections(100);
+
+        final HttpClient httpClient = new HttpClient(connectionManager);
+        final ApacheHttpClientHandler clientHandler = new ApacheHttpClientHandler(httpClient, config);
+
+        return new ApacheHttpClient(clientHandler);
     }
 }
