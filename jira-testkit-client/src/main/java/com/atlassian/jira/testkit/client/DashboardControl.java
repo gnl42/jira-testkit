@@ -10,30 +10,67 @@
 package com.atlassian.jira.testkit.client;
 
 import com.atlassian.gadgets.dashboard.Layout;
+import com.sun.jersey.api.Responses;
 import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * See <code>com.atlassian.jira.testkit.plugin.DashboardBackdoor</code> in jira-testkit-plugin for backend.
  *
  * @since v5.0
  */
-public class DashboardControl extends BackdoorControl<DashboardControl>
-{
-    private static final GenericType<List<Dashboard>> DASHBOARD_LIST_GENERIC_TYPE = new GenericType<List<Dashboard>>(){};
+public class DashboardControl extends BackdoorControl<DashboardControl> {
+    private static final GenericType<List<Dashboard>> DASHBOARD_LIST_GENERIC_TYPE = new GenericType<List<Dashboard>>() {
+    };
+    private static final GenericType<Dashboard> DASHBOARD_GENERIC_TYPE = new GenericType<Dashboard>() {
+    };
 
-    public DashboardControl(JIRAEnvironmentData environmentData)
-    {
+    public DashboardControl(JIRAEnvironmentData environmentData) {
         super(environmentData);
     }
-    
-    public List<Dashboard> getOwnedDashboard(String username)
-    {
+
+    /**
+     * Gets a dashboard with given id, without passing the user context.
+     * {@link Dashboard#isFavourite} will always return false.
+     *
+     * @return Optional with dashboard object or empty if a dashboard with the given id was not found
+     */
+    public Optional<Dashboard> getDashboard(long id) {
+        return getDashboard(id, null);
+    }
+
+    /**
+     * Gets a dashboard with given id.
+     *
+     * @param id
+     * @param username check if the dashboard is favourite for user with this username; the favourite
+     *                 field will be set to false if null passed
+     * @return Optional with dashboard object or empty if a dashboard with given id was not found
+     */
+    public Optional<Dashboard> getDashboard(long id, @Nullable String username) {
+        try {
+            final WebResource resource = createResource().path("dashboard").path(Long.toString(id));
+            if (username != null) {
+                resource.queryParam("username", username);
+            }
+            return Optional.of(resource.get(DASHBOARD_GENERIC_TYPE));
+        } catch (UniformInterfaceException ex) {
+            if (ex.getResponse() != null && Responses.NOT_FOUND == ex.getResponse().getStatus()) {
+                return Optional.empty();
+            }
+            throw ex;
+        }
+    }
+
+    public List<Dashboard> getOwnedDashboard(String username) {
         return createResource().path("dashboard").path("my").queryParam("username", username).get(DASHBOARD_LIST_GENERIC_TYPE);
     }
 
@@ -44,28 +81,22 @@ public class DashboardControl extends BackdoorControl<DashboardControl>
 
     /**
      * Creates a dashboard for the given user.
-     * 
-     * @param username
-     *            user for which to create the dashboard.
-     * @param name
-     *            Name of the dashboard. This is shown in the drop down
-     *            containing all visible dashboards and in the dashboard
-     *            management view.
-     * @param description
-     *            Description of the dashboard.
-     * @param layout
-     *            A layout to choose for the new dashboard. Valid values are the
-     *            names of the {@link Layout} enumerations.
-     * @param global
-     *            If <code>true</code> a public dashboard viewable by all is
-     *            created, otherwise the new dashboard will be private.
-     * @param favorite
-     *            If <code>true</code> the new dashboard will be added to the
-     *            favorite list.
+     *
+     * @param username    user for which to create the dashboard.
+     * @param name        Name of the dashboard. This is shown in the drop down
+     *                    containing all visible dashboards and in the dashboard
+     *                    management view.
+     * @param description Description of the dashboard.
+     * @param layout      A layout to choose for the new dashboard. Valid values are the
+     *                    names of the {@link Layout} enumerations.
+     * @param global      If <code>true</code> a public dashboard viewable by all is
+     *                    created, otherwise the new dashboard will be private.
+     * @param favorite    If <code>true</code> the new dashboard will be added to the
+     *                    favorite list.
      * @return The information about the new dashboard.
      */
     public Dashboard createDashboard(String username, String name,
-            String description, Layout layout, boolean global, boolean favorite) {
+                                     String description, Layout layout, boolean global, boolean favorite) {
         WebResource resource = createResource().path("dashboard").path("add")
                 .queryParam("username", username).queryParam("name", name)
                 .queryParam("global", global ? "true" : "false")
@@ -133,8 +164,7 @@ public class DashboardControl extends BackdoorControl<DashboardControl>
     }
 
     @JsonAutoDetect
-    public static class Dashboard
-    {
+    public static class Dashboard {
         private long id;
         private String name;
         private String owner;
@@ -142,79 +172,65 @@ public class DashboardControl extends BackdoorControl<DashboardControl>
         private long favouriteCount;
         private boolean favourite;
 
-        public Dashboard()
-        {
+        public Dashboard() {
         }
 
-        public Long getId()
-        {
+        public Long getId() {
             return id;
         }
 
-        public Dashboard setId(Long id)
-        {
+        public Dashboard setId(Long id) {
             this.id = id;
             return this;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public Dashboard setName(String name)
-        {
+        public Dashboard setName(String name) {
             this.name = name;
             return this;
         }
 
-        public String getOwner()
-        {
+        public String getOwner() {
             return owner;
         }
 
-        public Dashboard setOwner(String owner)
-        {
+        public Dashboard setOwner(String owner) {
             this.owner = owner;
             return this;
         }
 
-        public String getDescription()
-        {
+        public String getDescription() {
             return description;
         }
 
-        public Dashboard setDescription(String description)
-        {
+        public Dashboard setDescription(String description) {
             this.description = description;
             return this;
         }
 
-        public long getFavouriteCount()
-        {
+        public long getFavouriteCount() {
             return favouriteCount;
         }
 
-        public Dashboard setFavouriteCount(long favouriteCount)
-        {
+        public Dashboard setFavouriteCount(long favouriteCount) {
             this.favouriteCount = favouriteCount;
             return this;
         }
 
-        public boolean isFavourite()
-        {
+        public boolean isFavourite() {
             return favourite;
         }
 
-        public Dashboard setFavourite(boolean favourite)
-        {
+        public Dashboard setFavourite(boolean favourite) {
             this.favourite = favourite;
             return this;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
         }
     }

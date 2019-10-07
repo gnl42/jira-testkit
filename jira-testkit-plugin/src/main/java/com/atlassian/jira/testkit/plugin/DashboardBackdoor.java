@@ -15,15 +15,15 @@ import com.atlassian.jira.bc.JiraServiceContextImpl;
 import com.atlassian.jira.bc.favourites.FavouritesService;
 import com.atlassian.jira.bc.portal.PortalPageService;
 import com.atlassian.jira.portal.PortalPage;
+import com.atlassian.jira.portal.PortalPageManager;
 import com.atlassian.jira.portal.PortletConfiguration;
 import com.atlassian.jira.portal.PortletConfigurationManager;
 import com.atlassian.jira.sharing.SharePermissionImpl;
 import com.atlassian.jira.sharing.SharedEntity;
 import com.atlassian.jira.sharing.type.ShareType;
-import com.atlassian.jira.testkit.plugin.util.CacheControl;
 import com.atlassian.jira.testkit.plugin.util.Errors;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.util.UserUtil;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
@@ -31,54 +31,82 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 
-import java.util.Collections;
-import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.List;
 
 import static com.atlassian.jira.testkit.plugin.util.CacheControl.never;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
  * @since v5.0.3
  */
 @AnonymousAllowed
-@Consumes ({ MediaType.APPLICATION_JSON })
-@Produces ({ MediaType.APPLICATION_JSON })
-@Path ("/dashboard")
-public class DashboardBackdoor
-{
+@Consumes({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON})
+@Path("/dashboard")
+public class DashboardBackdoor {
     private final PortalPageService portalPageService;
     private final FavouritesService favouritesService;
-	private final PortletConfigurationManager portletConfigurationManager;
-	private final UserUtil userUtil;
+    private final PortletConfigurationManager portletConfigurationManager;
+    private final PortalPageManager portalPageManager;
+    private final UserManager userManager;
 
-    public DashboardBackdoor(PortalPageService portalPageService, UserUtil userUtil, FavouritesService favouritesService, PortletConfigurationManager portletConfigurationManager)
-    {
+    public DashboardBackdoor(
+            PortalPageService portalPageService,
+            UserManager userManager,
+            FavouritesService favouritesService,
+            PortletConfigurationManager portletConfigurationManager,
+            PortalPageManager portalPageManager) {
         this.portalPageService = portalPageService;
-        this.userUtil = userUtil;
+        this.userManager = userManager;
         this.favouritesService = favouritesService;
-		this.portletConfigurationManager = portletConfigurationManager;
-	}
+        this.portletConfigurationManager = portletConfigurationManager;
+        this.portalPageManager = portalPageManager;
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response getDashboardById(@PathParam("id") Long id, @QueryParam("username") String username) {
+        final PortalPage portalPage = portalPageManager.getPortalPageById(id);
+
+        if (portalPage != null) {
+            boolean isFavourite = calculateIsFavourite(username, portalPage);
+            return Response.ok().cacheControl(never())
+                    .entity(new PortalPageBean(portalPage, isFavourite)).build();
+        } else {
+            return Response.status(NOT_FOUND).cacheControl(never())
+                    .entity("Portal page with given ID does not exist.").build();
+        }
+    }
+
+    private boolean calculateIsFavourite(String username, PortalPage portalPage) {
+        username = StringUtils.trimToNull(username);
+        if(username != null) {
+            final ApplicationUser user = userManager.getUserByName(username);
+            return favouritesService.isFavourite(user, portalPage);
+        }
+        return false;
+    }
 
     @GET
     @Path("my")
-    public Response getMyDasbhoards(@QueryParam("username") String username)
-    {
+    public Response getMyDasbhoards(@QueryParam("username") String username) {
         username = StringUtils.trimToNull(username);
-        if (username == null)
-        {
+        if (username == null) {
             return Response.status(Response.Status.BAD_REQUEST).cacheControl(never())
                     .entity("No user passed.").build();
         }
-        
-        ApplicationUser user = userUtil.getUserByName(username);
-        if (user == null)
-        {
+
+        ApplicationUser user = userManager.getUserByName(username);
+        if (user == null) {
             return Response.status(Response.Status.BAD_REQUEST).cacheControl(never())
                     .entity("User '" + username + "' does not exist.").build();
         }
@@ -87,92 +115,86 @@ public class DashboardBackdoor
                 .entity(asBeans(user, portalPageService.getOwnedPortalPages(user))).build();
     }
 
-	@GET
-	@Path("emptySystemDashboard")
-	public Response emptySystemDashboard() {
-		final PortalPage systemDashboard = portalPageService.getSystemDefaultPortalPage();
-		final List<PortletConfiguration> portlets = portletConfigurationManager.getByPortalPage(systemDashboard.getId());
-		for (PortletConfiguration pc : portlets) {
-			portletConfigurationManager.delete(pc);
-		}
-		return Response.ok().cacheControl(never()).build();
-	}
-	
-	/**
-	 * Creates a dashboard for the given user.
-	 * 
-	 * @param username
-	 *            user for which to create the dashboard.
-	 * @param name
-	 *            Name of the dashboard. This is shown in the drop down
-	 *            containing all visible dashboards and in the dashboard
-	 *            management view.
-	 * @param description
-	 *            Description of the dashboard.
-	 * @param global
-	 *            If <code>true</code> a public dashboard viewable by all is
-	 *            created, otherwise the new dashboard will be private.
-	 * @param layoutString
-	 *            A layout to choose for the new dashboard. Valid values are the
-	 *            names of the {@link Layout} enumerations.
-	 * @param favorite
-	 *            If <code>true</code> the new dashboard will be added to the
-	 *            favorite list.
-	 * @return The information about the new dashboard.
-	 */
-	@GET
-	@Path("add")
-	public Response createNewDashboard(@QueryParam("username") String username,
-			@QueryParam("name") String name,
-			@QueryParam("description") String description,
-			@QueryParam("global") boolean global,
-			@QueryParam("layout") String layoutString,
-			@QueryParam("favorite") boolean favorite) {
-		ApplicationUser user = userUtil.getUserByName(username);
-		SimpleErrorCollection errorCollection = new SimpleErrorCollection();
-		JiraServiceContext context = new JiraServiceContextImpl(user,
-				errorCollection);
+    @GET
+    @Path("emptySystemDashboard")
+    public Response emptySystemDashboard() {
+        final PortalPage systemDashboard = portalPageService.getSystemDefaultPortalPage();
+        final List<PortletConfiguration> portlets = portletConfigurationManager.getByPortalPage(systemDashboard.getId());
+        for (PortletConfiguration pc : portlets) {
+            portletConfigurationManager.delete(pc);
+        }
+        return Response.ok().cacheControl(never()).build();
+    }
 
-		PortalPage.Builder builder = PortalPage.name(name).owner(user);
+    /**
+     * Creates a dashboard for the given user.
+     *
+     * @param username     user for which to create the dashboard.
+     * @param name         Name of the dashboard. This is shown in the drop down
+     *                     containing all visible dashboards and in the dashboard
+     *                     management view.
+     * @param description  Description of the dashboard.
+     * @param global       If <code>true</code> a public dashboard viewable by all is
+     *                     created, otherwise the new dashboard will be private.
+     * @param layoutString A layout to choose for the new dashboard. Valid values are the
+     *                     names of the {@link Layout} enumerations.
+     * @param favorite     If <code>true</code> the new dashboard will be added to the
+     *                     favorite list.
+     * @return The information about the new dashboard.
+     */
+    @GET
+    @Path("add")
+    public Response createNewDashboard(@QueryParam("username") String username,
+                                       @QueryParam("name") String name,
+                                       @QueryParam("description") String description,
+                                       @QueryParam("global") boolean global,
+                                       @QueryParam("layout") String layoutString,
+                                       @QueryParam("favorite") boolean favorite) {
+        ApplicationUser user = userManager.getUserByName(username);
+        SimpleErrorCollection errorCollection = new SimpleErrorCollection();
+        JiraServiceContext context = new JiraServiceContextImpl(user,
+                errorCollection);
 
-		if (description != null) {
-			builder.description(description);
-		}
+        PortalPage.Builder builder = PortalPage.name(name).owner(user);
 
-		if (layoutString != null) {
-			try {
-				Layout layout = Layout.valueOf(layoutString);
-				builder.layout(layout);
-			} catch (RuntimeException e) {
-				return Response
-						.status(Response.Status.BAD_REQUEST)
-						.cacheControl(never())
-						.entity("'" + layoutString
-								+ "' is not a valid layout name.").build();
-			}
-		}
+        if (description != null) {
+            builder.description(description);
+        }
 
-		SharedEntity.SharePermissions permissions;
-		if (global) {
-			permissions = SharedEntity.SharePermissions.GLOBAL;
-		} else {
-			permissions = SharedEntity.SharePermissions.PRIVATE;
-		}
-		builder.permissions(permissions);
+        if (layoutString != null) {
+            try {
+                Layout layout = Layout.valueOf(layoutString);
+                builder.layout(layout);
+            } catch (RuntimeException e) {
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .cacheControl(never())
+                        .entity("'" + layoutString
+                                + "' is not a valid layout name.").build();
+            }
+        }
 
-		PortalPage portal = portalPageService.createPortalPage(context,
-				builder.build());
+        SharedEntity.SharePermissions permissions;
+        if (global) {
+            permissions = SharedEntity.SharePermissions.GLOBAL;
+        } else {
+            permissions = SharedEntity.SharePermissions.PRIVATE;
+        }
+        builder.permissions(permissions);
 
-		if (favorite) {
-			favouritesService.addFavourite(context, portal);
-		}
+        PortalPage portal = portalPageService.createPortalPage(context,
+                builder.build());
 
-		return Response
-				.ok()
-				.cacheControl(never())
-				.entity(new PortalPageBean(portal, favouritesService
-						.isFavourite(user, portal))).build();
-	}
+        if (favorite) {
+            favouritesService.addFavourite(context, portal);
+        }
+
+        return Response
+                .ok()
+                .cacheControl(never())
+                .entity(new PortalPageBean(portal, favouritesService
+                        .isFavourite(user, portal))).build();
+    }
 
     /**
      * Removes dashboard with specified id for given user.
@@ -183,7 +205,7 @@ public class DashboardBackdoor
     @GET
     @Path("delete")
     public Response deleteDashboard(@QueryParam("username") String username, @QueryParam("id") Long id) {
-        ApplicationUser user = userUtil.getUserByName(username);
+        ApplicationUser user = userManager.getUserByName(username);
         SimpleErrorCollection errorCollection = new SimpleErrorCollection();
         JiraServiceContext context = new JiraServiceContextImpl(user, errorCollection);
 
@@ -220,12 +242,12 @@ public class DashboardBackdoor
                                     @QueryParam("description") String description,
                                     @QueryParam("shareGroupName") String shareGroupName,
                                     @QueryParam("favorite") boolean favorite) {
-        ApplicationUser user = userUtil.getUserByName(username);
+        ApplicationUser user = userManager.getUserByName(username);
         SimpleErrorCollection errorCollection = new SimpleErrorCollection();
         JiraServiceContext context = new JiraServiceContextImpl(user,
                 errorCollection);
 
-        PortalPage.Builder builder = PortalPage.id(id).owner(userUtil.getUserByName(ownername));
+        PortalPage.Builder builder = PortalPage.id(id).owner(userManager.getUserByName(ownername));
 
         if (description != null) {
             builder.description(description);
@@ -259,22 +281,17 @@ public class DashboardBackdoor
                         .isFavourite(user, portalPage))).build();
     }
 
-
-    private Iterable<PortalPageBean> asBeans(final ApplicationUser user, Iterable<? extends PortalPage> portalPages)
-    {
-        return Iterables.transform(portalPages, new Function<PortalPage, PortalPageBean>()
-        {
+    private Iterable<PortalPageBean> asBeans(final ApplicationUser user, Iterable<? extends PortalPage> portalPages) {
+        return Iterables.transform(portalPages, new Function<PortalPage, PortalPageBean>() {
             @Override
-            public PortalPageBean apply(PortalPage input)
-            {
+            public PortalPageBean apply(PortalPage input) {
                 return new PortalPageBean(input, favouritesService.isFavourite(user, input));
             }
         });
     }
 
     @JsonAutoDetect
-    public static class PortalPageBean
-    {
+    public static class PortalPageBean {
         private Long id;
         private String name;
         private String owner;
@@ -282,12 +299,10 @@ public class DashboardBackdoor
         private Long favouriteCount;
         private boolean favourite;
 
-        public PortalPageBean()
-        {
+        public PortalPageBean() {
         }
 
-        public PortalPageBean(PortalPage page, boolean favourite)
-        {
+        public PortalPageBean(PortalPage page, boolean favourite) {
             this.id = page.getId();
             this.name = page.getName();
             this.description = page.getDescription();
@@ -296,63 +311,51 @@ public class DashboardBackdoor
             this.favourite = favourite;
         }
 
-        public Long getId()
-        {
+        public Long getId() {
             return id;
         }
 
-        public void setId(Long id)
-        {
+        public void setId(Long id) {
             this.id = id;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public void setName(String name)
-        {
+        public void setName(String name) {
             this.name = name;
         }
 
-        public String getOwner()
-        {
+        public String getOwner() {
             return owner;
         }
 
-        public void setOwner(String owner)
-        {
+        public void setOwner(String owner) {
             this.owner = owner;
         }
 
-        public String getDescription()
-        {
+        public String getDescription() {
             return description;
         }
 
-        public void setDescription(String description)
-        {
+        public void setDescription(String description) {
             this.description = description;
         }
 
-        public Long getFavouriteCount()
-        {
+        public Long getFavouriteCount() {
             return favouriteCount;
         }
 
-        public void setFavouriteCount(Long favouriteCount)
-        {
+        public void setFavouriteCount(Long favouriteCount) {
             this.favouriteCount = favouriteCount;
         }
 
-        public boolean isFavourite()
-        {
+        public boolean isFavourite() {
             return favourite;
         }
 
-        public void setFavourite(boolean favourite)
-        {
+        public void setFavourite(boolean favourite) {
             this.favourite = favourite;
         }
     }
