@@ -145,6 +145,22 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
      */
     public IssueCreateResponse createIssue(String projectKey, String summary, @Nullable String description,
                                            @Nullable String assignee, String priority, String issueType) {
+        return createIssue(projectKey, summary, description, assignee, priority, issueType, false);
+    }
+
+    /**
+     * @param projectKey    - project key for project that issue will be linked to
+     * @param summary       - summary of issue
+     * @param description   - description of issue
+     * @param assignee      - name of user to assign issue
+     * @param priority      - priority of issue can be ether id or name (eg. "Major")
+     * @param issueType     - type of issue can be ether id or name (eg. "Bug")
+     * @param updateHistory - if true then the user's project history is updated
+     * @return an {@link IssueCreateResponse}
+     */
+    public IssueCreateResponse createIssue(String projectKey, String summary, @Nullable String description,
+                                           @Nullable String assignee, String priority, String issueType,
+                                           boolean updateHistory) {
         IssueFields fields = new IssueFields();
         fields.project(withKey(projectKey));
         fields.issueType(isNumeric(issueType) ? withId(issueType) : withName(issueType));
@@ -157,7 +173,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
             fields.assignee(withName(assignee));
         }
 
-        return issueClient.create(new IssueUpdateRequest().fields(fields));
+        return issueClient.create(new IssueUpdateRequest().fields(fields), updateHistory);
     }
 
     /**
