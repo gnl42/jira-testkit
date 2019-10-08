@@ -234,7 +234,11 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
     }
 
     public Issue getIssue(String issueKey, Issue.Expand... expand) {
-        return issueClient.get(issueKey, expand);
+        return getIssue(issueKey, false, expand);
+    }
+
+    public Issue getIssue(String issueKey, boolean updateHistory, Issue.Expand... expand) {
+        return issueClient.get(issueKey, updateHistory, expand);
     }
 
     public void transitionIssue(String issueKey, int transitionId) {
