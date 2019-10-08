@@ -9,13 +9,13 @@
 
 package com.atlassian.jira.testkit.client.restclient;
 
-import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
-import com.atlassian.jira.testkit.client.RestApiClient;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
 import com.atlassian.jira.rest.api.issue.RemoteIssueLinkCreateOrUpdateRequest;
 import com.atlassian.jira.rest.api.issue.RemoteIssueLinkCreateOrUpdateResponse;
 import com.atlassian.jira.rest.api.util.StringList;
+import com.atlassian.jira.testkit.client.JIRAEnvironmentData;
+import com.atlassian.jira.testkit.client.RestApiClient;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
@@ -59,16 +59,35 @@ public class IssueClient extends RestApiClient<IssueClient>
      */
     public Issue get(String issueKey, Issue.Expand... expand) throws UniformInterfaceException
     {
-        return issueResource(issueKey, expand).get(Issue.class);
+        return get(issueKey, false, expand);
+    }
+
+    /**
+     * GETs the issue with the given key.
+     *
+     * @param issueKey a String containing an issue key
+     * @param updateHistory if true then issue will be added to the user's history
+     * @param expand the attributes to expand
+     * @return an Issue
+     * @throws UniformInterfaceException if there's a problem getting the issue
+     */
+    public Issue get(String issueKey, boolean updateHistory, Issue.Expand... expand) throws UniformInterfaceException
+    {
+        return issueResource(issueKey, updateHistory, expand).get(Issue.class);
     }
 
     public Issue getWithProperties(String issueKey, List<String> properties, Issue.Expand... expand) {
-        return issueResource(issueKey, expand).queryParam("properties", String.join(",", properties)).get(Issue.class);
+        return issueResource(issueKey, false, expand).queryParam("properties", String.join(",", properties)).get(Issue.class);
     }
 
     public WebResource issueResource(String issueKey, Issue.Expand... expand)
     {
-        return issueWithKey(issueKey, Collections.<StringList>emptyList(), setOf(Issue.Expand.class, expand));
+        return issueWithKey(issueKey, Collections.<StringList>emptyList(), setOf(Issue.Expand.class, expand), false);
+    }
+
+    public WebResource issueResource(String issueKey, boolean updateHistory, Issue.Expand... expand)
+    {
+        return issueWithKey(issueKey, Collections.<StringList>emptyList(), setOf(Issue.Expand.class, expand), updateHistory);
     }
 
     /**
@@ -86,7 +105,7 @@ public class IssueClient extends RestApiClient<IssueClient>
 
     public Issue getPartially(String issueKey, EnumSet<Issue.Expand> expand, StringList... fields) throws UniformInterfaceException
     {
-        return issueWithKey(issueKey, Arrays.asList(fields), expand).get(Issue.class);
+        return issueWithKey(issueKey, Arrays.asList(fields), expand, false).get(Issue.class);
     }
 
     /**
@@ -309,7 +328,7 @@ public class IssueClient extends RestApiClient<IssueClient>
             @Override
             public ClientResponse call()
             {
-                return issueWithKey(issueKey, null, setOf(Issue.Expand.class)).get(ClientResponse.class);
+                return issueWithKey(issueKey, null, setOf(Issue.Expand.class), false).get(ClientResponse.class);
             }
         });
     }
@@ -320,12 +339,14 @@ public class IssueClient extends RestApiClient<IssueClient>
      * @param issueKey a String containing an issue key
      * @param fields the list of fields to return for the issue
      * @param expand what to expand
+     * @param updateHistory if true then issue will be added to the user's history
      * @return a WebResource
      */
-    protected WebResource issueWithKey(String issueKey, @Nullable List<StringList> fields, EnumSet<Issue.Expand> expand)
+    protected WebResource issueWithKey(String issueKey, @Nullable List<StringList> fields, EnumSet<Issue.Expand> expand, boolean updateHistory)
     {
         WebResource resource = createResource().path(issueKey);
         resource = addStringListsToQueryParams(resource, "fields", fields);
+        resource = resource.queryParam("updateHistory", Boolean.toString(updateHistory));
 
         return expanded(resource, expand);
     }
