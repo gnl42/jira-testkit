@@ -38,9 +38,12 @@ import static com.atlassian.jira.rest.api.issue.ResourceRef.withId;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withKey;
 import static com.atlassian.jira.rest.api.issue.ResourceRef.withName;
 import static com.google.common.collect.Iterables.find;
+import static javax.servlet.http.HttpServletResponse.SC_CREATED;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.apache.commons.lang.StringUtils.isNumeric;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Issues.
@@ -208,7 +211,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
         Comment newComment = new Comment();
         newComment.body = comment;
         newComment.visibility = new Visibility(restrictedType, restrictedParam);
-        return commentClient.post(issueKey, newComment);
+        return assertStatusCode(SC_CREATED, commentClient.post(issueKey, newComment));
     }
 
     public Response<Comment> updateComment(String issueKey, String commentId, String comment, String restrictedType, String restrictedParam) {
@@ -218,11 +221,11 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
         if (!isEmpty(restrictedType) && !isEmpty(restrictedParam)) {
             update.visibility = new Visibility(restrictedType, restrictedParam);
         }
-        return commentClient.put(issueKey, update);
+        return assertStatusCode(SC_OK, commentClient.put(issueKey, update));
     }
 
     public Response deleteComment(String issueKey, String commentId) {
-        return commentClient.delete(issueKey, commentId);
+        return assertStatusCode(SC_NO_CONTENT, commentClient.delete(issueKey, commentId));
     }
 
     public void assignIssue(String issueKey, String username) {
@@ -244,7 +247,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
     public void transitionIssue(String issueKey, int transitionId) {
         ResourceRef transition = ResourceRef.withId(String.valueOf(transitionId));
         IssueUpdateRequest updateSummaryRequest = new IssueUpdateRequest().transition(transition);
-        issueClient.transition(issueKey, updateSummaryRequest);
+        assertStatusCode(SC_NO_CONTENT, issueClient.transition(issueKey, updateSummaryRequest));
     }
 
     public IssuesControl addLabel(String issueKey, String label) {
@@ -254,7 +257,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
         final Map<String, Map<String, List<Map<String, String>>>> update = MapBuilder.<String, Map<String, List<Map<String, String>>>>newBuilder().add("update", labels).toMap();
         final Response response = issueClient.update(issueKey, update);
 
-        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
+        assertStatusCode(204, response);
         return this;
     }
 
@@ -264,7 +267,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
 
         final Response response = issueClient.updateResponse(issueKey, updateSummaryRequest);
 
-        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
+        assertStatusCode(204, response);
         return this;
     }
 
@@ -273,7 +276,7 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
 
         final Response response = issueClient.updateResponse(issueKey, updateRequest);
 
-        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
+        assertStatusCode(204, response);
         return this;
     }
 
@@ -288,15 +291,15 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
      * @throws UniformInterfaceException if there's a problem deleting the issue
      */
     public Response deleteIssue(String issueKey, boolean deleteSubtasks) throws UniformInterfaceException {
-        return issueClient.delete(issueKey, Boolean.toString(deleteSubtasks));
+        return assertStatusCode(SC_NO_CONTENT, issueClient.delete(issueKey, Boolean.toString(deleteSubtasks)));
     }
 
     public ClientResponse archiveIssue(String issueIdOrKey) {
-        return issueClient.archive(issueIdOrKey);
+        return assertStatusCode(SC_NO_CONTENT, issueClient.archive(issueIdOrKey));
     }
 
     public ClientResponse restoreIssue(String issueIdOrKey) {
-        return issueClient.restore(issueIdOrKey);
+        return assertStatusCode(SC_NO_CONTENT, issueClient.restore(issueIdOrKey));
     }
 
     public void touch(final String key) {
@@ -356,7 +359,17 @@ public class IssuesControl extends BackdoorControl<IssuesControl> {
         final Map<String, Map<String, List<Map<String, Map<String, String>>>>> update = MapBuilder.<String, Map<String, List<Map<String, Map<String, String>>>>>newBuilder().add("update", versions).toMap();
         final Response response = issueClient.update(issueKey, update);
 
-        assertTrue("Update failed. " + response.toString(), response.statusCode == 204);
+        assertStatusCode(SC_NO_CONTENT, response);
         return this;
+    }
+
+    private <T extends Response> T assertStatusCode(int expectedStatusCode, T response) {
+        assertEquals("Request failed: " + response, expectedStatusCode, response.statusCode);
+        return response;
+    }
+
+    private <T extends ClientResponse> T assertStatusCode(int expectedStatusCode, T response) {
+        assertEquals("Request failed: " + response, expectedStatusCode, response.getStatus());
+        return response;
     }
 }
