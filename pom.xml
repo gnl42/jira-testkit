@@ -52,6 +52,7 @@
         <hallelujah.version>3.1-alpha-4</hallelujah.version>
         <hamcrest.version>1.2</hamcrest.version>
         <jackson.version>1.9.1</jackson.version>
+        <awaitility.version>1.6.3</awaitility.version>
         <jdkLevel>1.8</jdkLevel>
         <jersey.contrib.version>1.19</jersey.contrib.version>
         <jersey.version>1.19</jersey.version>
