@@ -322,7 +322,7 @@ public class CustomFieldsBackdoor
         }
         final CustomField customField = (CustomField) field;
 
-        customField.getCustomFieldType().setDefaultValue(fieldConfigScheme.getOneAndOnlyConfig(), defaultValue.value);
+        customField.getCustomFieldType().setDefaultValue(fieldConfigScheme.getOneAndOnlyConfig(), customField.getCustomFieldType().getSingularObjectFromString(defaultValue.value));
         return Response.ok().build();
     }
 

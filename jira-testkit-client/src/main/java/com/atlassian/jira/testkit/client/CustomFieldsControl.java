@@ -177,7 +177,7 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     public void setDefaultValueForContext(Long contextId, Object value)
     {
         CustomFieldDefaultValue request = new CustomFieldDefaultValue();
-        request.value = value;
+        request.value = value.toString();
 
         createResource().path("customFields").path("setDefaultValueForContext")
                 .queryParam("contextId", contextId.toString())
