@@ -169,7 +169,7 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     }
 
     /**
-     * Updates a custom field context default value
+     * Updates a custom field context default value. This will only work for single value custom fields
      *
      * @param contextId contextId (field config scheme id) to update default value for
      * @param value default field value for passed context
@@ -177,7 +177,7 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     public void setDefaultValueForContext(Long contextId, Object value)
     {
         CustomFieldDefaultValue request = new CustomFieldDefaultValue();
-        request.value = value;
+        request.value = value == null ? null : value.toString();
 
         createResource().path("customFields").path("setDefaultValueForContext")
                 .queryParam("contextId", contextId.toString())
