@@ -109,6 +109,6 @@ public class MockEnvironmentData implements JIRAEnvironmentData
 
     @Override
     public String getProperty(String key) {
-        throw new UnsupportedOperationException("Not implemented");
+       return null;
     }
 }

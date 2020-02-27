@@ -27,7 +27,10 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
@@ -89,10 +92,13 @@ public abstract class RestApiClient<T extends RestApiClient<T>>
 
     private final Set<ClientResponse> responses = Sets.newHashSet();
 
+    private final WebResourceAuthProvider authProvider;
+
     /**
      * The version of the REST plugin to test.
      */
     private String version;
+
 
     /**
      * Constructs a new RestApiClient for a JIRA instance.
@@ -114,6 +120,7 @@ g     */
     {
         this.environmentData = environmentData;
         this.version = version;
+        this.authProvider = new WebResourceAuthProvider(environmentData);
     }
 
     /**
@@ -202,14 +209,14 @@ g     */
     protected WebResource resourceRoot(String url)
     {
         WebResource resource = client().resource(url);
-        if (loginAs != null)
-        {
-            resource = resource.queryParam("os_authType", "basic")
-                    .queryParam("os_username", percentEncode(loginAs))
-                    .queryParam("os_password", percentEncode(loginPassword));
-        }
+        return authProvider.withAuthentication(resource, getCredentials());
+    }
 
-        return resource;
+    private Map<WebResourceAuthProvider.ClientCredentials, String> getCredentials() {
+        final Map<WebResourceAuthProvider.ClientCredentials, String> credentials = new HashMap<>();
+        credentials.put(WebResourceAuthProvider.ClientCredentials.LOGIN, loginAs);
+        credentials.put(WebResourceAuthProvider.ClientCredentials.PASSWORD, loginPassword);
+        return Collections.unmodifiableMap(credentials);
     }
 
     /**
