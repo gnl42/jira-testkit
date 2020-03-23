@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -304,9 +305,20 @@ public class CustomFieldsBackdoor
         return Response.noContent().build();
     }
 
+    /**
+     * @deprecated Use {@link CustomFieldsBackdoor#updateCustomFieldDefaultValue(java.lang.Long, com.atlassian.jira.testkit.beans.CustomFieldDefaultValue)}
+     */
+    @Deprecated
     @PUT
     @Path("setDefaultValueForContext")
-    public Response updateCustomFieldDefaultValue(@QueryParam("contextId") Long fieldConfigSchemeId,
+    public Response updateCustomFieldDefaultValueDeprecated(@QueryParam("contextId") Long fieldConfigSchemeId,
+                                                  final CustomFieldDefaultValue defaultValue) {
+        return updateCustomFieldDefaultValue(fieldConfigSchemeId, defaultValue);
+    }
+
+    @PUT
+    @Path("defaultValueForContext/{contextId}")
+    public Response updateCustomFieldDefaultValue(@PathParam("contextId") Long fieldConfigSchemeId,
                                                   final CustomFieldDefaultValue defaultValue) {
         if (fieldConfigSchemeId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field context id (field config scheme id)").build();
@@ -324,6 +336,32 @@ public class CustomFieldsBackdoor
 
         customField.getCustomFieldType().setDefaultValue(fieldConfigScheme.getOneAndOnlyConfig(), customField.getCustomFieldType().getSingularObjectFromString(defaultValue.value));
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("defaultValueForContext/{contextId}")
+    public Response getCustomFieldDefaultValue(@PathParam("contextId") Long fieldConfigSchemeId) {
+        if (fieldConfigSchemeId == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Please supply custom field context id (field config scheme id)").build();
+        }
+
+        FieldConfigScheme fieldConfigScheme = fieldConfigSchemeManager.getFieldConfigScheme(fieldConfigSchemeId);
+        if (fieldConfigScheme == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Field config scheme not found").build();
+        }
+        final ConfigurableField<?> field = fieldConfigScheme.getField();
+        if (!(field instanceof CustomField)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("ConfigurableField associated with field config scheme is not CustomField").build();
+        }
+        final CustomField customField = (CustomField) field;
+
+        final FieldConfig fieldConfig = fieldConfigScheme.getOneAndOnlyConfig();
+        if (fieldConfig == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Couldn't find single field configuration for field configuration scheme").build();
+        }
+
+        final Optional<Object> defaultValue = Optional.ofNullable(customField.getCustomFieldType().getDefaultValue(fieldConfig));
+        return Response.ok(defaultValue.map(Object::toString).orElse(null)).build();
     }
 
     private CustomFieldResponse asResponse(final CustomField input, final boolean config)

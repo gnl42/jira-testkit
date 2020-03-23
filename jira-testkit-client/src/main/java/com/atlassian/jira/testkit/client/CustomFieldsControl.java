@@ -14,10 +14,9 @@ import com.atlassian.jira.testkit.beans.CustomFieldRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.WebResource;
 
 import java.util.List;
-
-import com.sun.jersey.api.client.WebResource;
 
 /**
  * Use this class from func/selenium/page-object tests that need to manipulate Custom fields.
@@ -179,8 +178,20 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
         CustomFieldDefaultValue request = new CustomFieldDefaultValue();
         request.value = value == null ? null : value.toString();
 
-        createResource().path("customFields").path("setDefaultValueForContext")
-                .queryParam("contextId", contextId.toString())
+        createResource().path("customFields").path("defaultValueForContext").path(contextId.toString())
                 .put(request);
+    }
+
+    /**
+     * Gets custom field context default value.
+     * Returns string representation {@link Object#toString()} of default value for given field config scheme id.
+     *
+     * @param contextId contextId (field config scheme id) to get default value for
+     * @return String representation {@link Object#toString()} of default value for given field config scheme id.
+     */
+    public String getDefaultValueForContext(Long contextId)
+    {
+        return createResource().path("customFields").path("defaultValueForContext").path(contextId.toString())
+                .get(String.class);
     }
 }
