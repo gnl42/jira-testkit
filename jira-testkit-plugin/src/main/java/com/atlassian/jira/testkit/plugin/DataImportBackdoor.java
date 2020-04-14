@@ -86,7 +86,8 @@ public class DataImportBackdoor
             {
                 // Something went wrong. Die!
                 throw new IllegalStateException("Restore failed!: " + importResult.getImportError() +
-                        ". More Info: " + importResult.getSpecificErrorMessage());
+                        ". More Info: " + importResult.getSpecificErrorMessage() +
+                        "\nErrors: " + importResult.getErrorCollection());
 
             }
 
