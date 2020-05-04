@@ -38,6 +38,7 @@ public class User
     public String key;
     public String displayName;
     public boolean active;
+    public Boolean deleted;
     public Map<String, String> avatarUrls;
     public String emailAddress;
     public Expando<Group> groups;
@@ -90,6 +91,12 @@ public class User
     public User active(boolean active)
     {
         this.active = active;
+        return this;
+    }
+
+    public User deleted(Boolean deleted)
+    {
+        this.deleted = deleted;
         return this;
     }
 

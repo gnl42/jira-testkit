@@ -15,10 +15,10 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.lang.StringUtils;
 
+import javax.ws.rs.core.MediaType;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
 
 /**
  * Client for the user resource.
@@ -41,24 +41,50 @@ public class UserClient extends RestApiClient<UserClient>
      * GETs the user with the given username.
      *
      * @param username a String containing the username
-     * @param expand a set of attributes to expand
+     * @param expand   a set of attributes to expand
      * @return a User
      */
     public User get(String username, User.Expand... expand)
     {
-        return userWithUsername(username, setOf(User.Expand.class, expand)).get(User.class);
+        return get(username, false, expand);
+    }
+
+    /**
+     * GETs the user with the given username.
+     *
+     * @param username       a String containing the username
+     * @param includeDeleted Whether deleted user should be returned
+     * @param expand         a set of attributes to expand
+     * @return a User
+     */
+    public User get(String username, boolean includeDeleted, User.Expand... expand)
+    {
+        return userWithUsername(username, includeDeleted, setOf(User.Expand.class, expand)).get(User.class);
     }
 
     /**
      * GETs the user with the given key.
      *
-     * @param key a String containing the key
+     * @param key    a String containing the key
      * @param expand a set of attributes to expand
      * @return a User
      */
     public User getByKey(String key, User.Expand... expand)
     {
-        return userWithKey(key, setOf(User.Expand.class, expand)).get(User.class);
+        return getByKey(key, false, expand);
+    }
+
+    /**
+     * GETs the user with the given key.
+     *
+     * @param key            a String containing the key
+     * @param includeDeleted Whether deleted user should be returned
+     * @param expand         a set of attributes to expand
+     * @return a User
+     */
+    public User getByKey(String key, boolean includeDeleted, User.Expand... expand)
+    {
+        return userWithKey(key, includeDeleted, setOf(User.Expand.class, expand)).get(User.class);
     }
 
     public List<User> searchAssignable(String query, String issueKey, String startAt, String maxResults)
@@ -72,7 +98,7 @@ public class UserClient extends RestApiClient<UserClient>
         WebResource resource = getMultiProjectSearchAssignableResource(query, projectKeys, startAt, maxResults);
         return Arrays.asList(resource.get(User[].class));
     }
-    
+
     public List<User> searchViewableIssue(String query, String issueKey, String startAt, String maxResults)
     {
         WebResource resource = getSearchViewableIssueResource(query, issueKey, startAt, maxResults);
@@ -183,7 +209,7 @@ public class UserClient extends RestApiClient<UserClient>
         resource = resource.queryParam("projectKeys", projectKeys);
         return resource;
     }
-    
+
     public WebResource getSearchViewableIssueResource(String query, String issueKey, String startAt, String maxResults)
     {
         WebResource resource = applyPagingParams(query, startAt, maxResults, createResource().path("user").path("viewissue").path("search"));
@@ -249,7 +275,19 @@ public class UserClient extends RestApiClient<UserClient>
      */
     public Response getUserResponse(final String username)
     {
-        return getResponse(userWithUsername(username, setOf(User.Expand.class)));
+        return getUserResponse(username, false);
+    }
+
+    /**
+     * GETs the user with the given username, returning a Response object.
+     *
+     * @param username       a String containing the username
+     * @param includeDeleted Whether deleted user should be returned
+     * @return a Response
+     */
+    public Response getUserResponse(final String username, boolean includeDeleted)
+    {
+        return getResponse(userWithUsername(username, includeDeleted, setOf(User.Expand.class)));
     }
 
     /**
@@ -260,9 +298,22 @@ public class UserClient extends RestApiClient<UserClient>
      */
     public Response getUserResponseByKey(final String key)
     {
-        return getResponse(userWithKey(key, setOf(User.Expand.class)));
+        return getUserResponseByKey(key, false);
     }
-    
+
+    /**
+     * GETs the user with the given key, returning a Response object.
+     *
+     * @param key            a String containing the key
+     * @param includeDeleted Whether deleted user should be returned
+     * @return a Response
+     */
+    public Response getUserResponseByKey(final String key, final boolean includeDeleted)
+    {
+        return getResponse(userWithKey(key, includeDeleted, setOf(User.Expand.class)));
+    }
+
+
     public Response getResponse(final WebResource resource)
     {
         return toResponse(() -> resource.get(ClientResponse.class));
@@ -282,15 +333,18 @@ public class UserClient extends RestApiClient<UserClient>
      * Returns a WebResource for the user with the given username.
      *
      * @param username a String containing the username
-     * @param expands an EnumSet indicating what attributes to expand
+     * @param expands  an EnumSet indicating what attributes to expand
      * @return a WebResource
      */
-    private WebResource userWithUsername(String username, EnumSet<User.Expand> expands)
+    private WebResource userWithUsername(String username, boolean includeDeleted, EnumSet<User.Expand> expands)
     {
         WebResource result = createResource().path("user");
         if (username != null)
         {
             result = result.queryParam("username", percentEncode(username));
+        }
+        if (includeDeleted) {
+            result = result.queryParam("includeDeleted", "true");
         }
 
         return expanded(result, expands);
@@ -299,16 +353,19 @@ public class UserClient extends RestApiClient<UserClient>
     /**
      * Returns a WebResource for the user with the given key.
      *
-     * @param key a String containing the key
+     * @param key     a String containing the key
      * @param expands an EnumSet indicating what attributes to expand
      * @return a WebResource
      */
-    private WebResource userWithKey(String key, EnumSet<User.Expand> expands)
+    private WebResource userWithKey(String key, boolean includeDeleted, EnumSet<User.Expand> expands)
     {
         WebResource result = createResource().path("user");
         if (key != null)
         {
             result = result.queryParam("key", percentEncode(key));
+        }
+        if (includeDeleted) {
+            result = result.queryParam("includeDeleted", "true");
         }
 
         return expanded(result, expands);
