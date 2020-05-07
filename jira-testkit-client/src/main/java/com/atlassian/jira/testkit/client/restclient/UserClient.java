@@ -53,9 +53,11 @@ public class UserClient extends RestApiClient<UserClient>
      * GETs the user with the given username.
      *
      * @param username       a String containing the username
-     * @param includeDeleted Whether deleted user should be returned
+     * @param includeDeleted Whether deleted user should be returned (flag is only available to users with administer right). Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
      * @param expand         a set of attributes to expand
      * @return a User
+     *
+     * @since Jira 8.10.0
      */
     public User get(String username, boolean includeDeleted, User.Expand... expand)
     {
@@ -78,9 +80,11 @@ public class UserClient extends RestApiClient<UserClient>
      * GETs the user with the given key.
      *
      * @param key            a String containing the key
-     * @param includeDeleted Whether deleted user should be returned
+     * @param includeDeleted Whether deleted user should be returned (flag is only available to users with administer right). Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
      * @param expand         a set of attributes to expand
      * @return a User
+     *
+     * @since Jira 8.10.0
      */
     public User getByKey(String key, boolean includeDeleted, User.Expand... expand)
     {
@@ -282,8 +286,10 @@ public class UserClient extends RestApiClient<UserClient>
      * GETs the user with the given username, returning a Response object.
      *
      * @param username       a String containing the username
-     * @param includeDeleted Whether deleted user should be returned
+     * @param includeDeleted Whether deleted user should be returned (flag is only available to users with administer right). Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
      * @return a Response
+     *
+     * @since Jira 8.10.0
      */
     public Response getUserResponse(final String username, boolean includeDeleted)
     {
@@ -305,8 +311,10 @@ public class UserClient extends RestApiClient<UserClient>
      * GETs the user with the given key, returning a Response object.
      *
      * @param key            a String containing the key
-     * @param includeDeleted Whether deleted user should be returned
+     * @param includeDeleted Whether deleted user should be returned (flag is only available to users with administer right). Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
      * @return a Response
+     *
+     * @since Jira 8.10.0
      */
     public Response getUserResponseByKey(final String key, final boolean includeDeleted)
     {
@@ -333,8 +341,11 @@ public class UserClient extends RestApiClient<UserClient>
      * Returns a WebResource for the user with the given username.
      *
      * @param username a String containing the username
+     * @param includeDeleted Whether deleted user should be returned (flag is only available to users with administer right). Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
      * @param expands  an EnumSet indicating what attributes to expand
      * @return a WebResource
+     *
+     * @since Jira 8.10.0
      */
     private WebResource userWithUsername(String username, boolean includeDeleted, EnumSet<User.Expand> expands)
     {
@@ -354,8 +365,11 @@ public class UserClient extends RestApiClient<UserClient>
      * Returns a WebResource for the user with the given key.
      *
      * @param key     a String containing the key
+     * @param includeDeleted Whether deleted user should be returned (flag is only available to users with administer right). Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
      * @param expands an EnumSet indicating what attributes to expand
      * @return a WebResource
+     *
+     * @since Jira 8.10.0
      */
     private WebResource userWithKey(String key, boolean includeDeleted, EnumSet<User.Expand> expands)
     {

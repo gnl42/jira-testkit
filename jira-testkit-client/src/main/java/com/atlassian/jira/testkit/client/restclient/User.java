@@ -94,6 +94,9 @@ public class User
         return this;
     }
 
+    /**
+     * Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
+     */
     public User deleted(Boolean deleted)
     {
         this.deleted = deleted;
