@@ -38,6 +38,7 @@ public class User
     public String key;
     public String displayName;
     public boolean active;
+    public Boolean deleted;
     public Map<String, String> avatarUrls;
     public String emailAddress;
     public Expando<Group> groups;
@@ -90,6 +91,15 @@ public class User
     public User active(boolean active)
     {
         this.active = active;
+        return this;
+    }
+
+    /**
+     * Deleted user exists in jira app_users DB table (has user key and username) but does not exist in crowd (no user data eg. Full name, email etc.).
+     */
+    public User deleted(Boolean deleted)
+    {
+        this.deleted = deleted;
         return this;
     }
 
