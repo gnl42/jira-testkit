@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonSetter;
 
 import java.util.List;
 
@@ -29,6 +28,7 @@ public class CustomFieldOption
 
     private Long id;
     private String name;
+    private Boolean disabled;
     private List<CustomFieldOption> children = Lists.newArrayList();
 
     @JsonProperty
@@ -62,6 +62,17 @@ public class CustomFieldOption
     public void setName(final String name)
     {
         this.name = name;
+    }
+
+    @JsonProperty
+    public Boolean getDisabled()
+    {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled)
+    {
+        this.disabled = disabled;
     }
 
     @Override
