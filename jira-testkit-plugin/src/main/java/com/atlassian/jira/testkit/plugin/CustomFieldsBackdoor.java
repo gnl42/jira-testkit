@@ -18,6 +18,7 @@ import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
 import com.atlassian.jira.issue.customfields.CustomFieldUtils;
 import com.atlassian.jira.issue.customfields.config.item.SettableOptionsConfigItem;
+import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
 import com.atlassian.jira.issue.fields.ConfigurableField;
@@ -73,16 +74,19 @@ public class CustomFieldsBackdoor
     private final ConstantsManager constantsManager;
     private final FieldConfigSchemeManager fieldConfigSchemeManager;
     private final ProjectManager projectManager;
+    private final OptionsManager optionsManager;
 
     public CustomFieldsBackdoor(CustomFieldManager customFieldManager,
                                 ConstantsManager constantsManager,
                                 FieldConfigSchemeManager fieldConfigSchemeManager,
-                                ProjectManager projectManager)
+                                ProjectManager projectManager,
+                                OptionsManager optionsManager)
     {
         this.customFieldManager = customFieldManager;
         this.constantsManager = constantsManager;
         this.fieldConfigSchemeManager = fieldConfigSchemeManager;
         this.projectManager = projectManager;
+        this.optionsManager = optionsManager;
     }
 
     @POST
@@ -205,6 +209,22 @@ public class CustomFieldsBackdoor
             options.addOption(options.getOptionById(null), optionValue);
         }
         return Response.ok().build();
+    }
+
+    @PUT
+    @AnonymousAllowed
+    @Path("enableOption/{id}")
+    public Response enableOption(@PathParam("id") Long customFieldOptionId)
+    {
+        return changeOptionState(customFieldOptionId, true);
+    }
+
+    @PUT
+    @AnonymousAllowed
+    @Path("disableOption/{id}")
+    public Response disableOption(@PathParam("id") Long customFieldOptionId)
+    {
+        return changeOptionState(customFieldOptionId, false);
     }
 
     @DELETE
@@ -364,6 +384,38 @@ public class CustomFieldsBackdoor
         return Response.ok(defaultValue.map(Object::toString).orElse(null)).build();
     }
 
+    private Response changeOptionState(Long customFieldOptionId, boolean toEnabled)
+    {
+        if (customFieldOptionId == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Please supply custom field option id")
+                    .build();
+        }
+
+        final Optional<Option> option = Optional.ofNullable(
+                optionsManager.findByOptionId(customFieldOptionId)
+        );
+
+        return option.map(o ->
+        {
+            if (toEnabled)
+            {
+                optionsManager.enableOption(o);
+            }
+            else
+            {
+                optionsManager.disableOption(o);
+            }
+            return Response.ok()
+                    .build();
+        }).orElse(
+                Response.status(Response.Status.BAD_REQUEST)
+                        .entity(String.format("Custom field option with id %s does not exist", customFieldOptionId))
+                        .build()
+        );
+    }
+
     private CustomFieldResponse asResponse(final CustomField input, final boolean config)
     {
         final CustomFieldSearcher customFieldSearcher = input.getCustomFieldSearcher();
@@ -416,6 +468,7 @@ public class CustomFieldsBackdoor
         final CustomFieldOption customFieldOption = new CustomFieldOption();
         customFieldOption.setId(option.getOptionId());
         customFieldOption.setName(option.getValue());
+        customFieldOption.setDisabled(option.getDisabled());
         customFieldOption.setChildren(convertOptions(option.getChildOptions()));
 
         return customFieldOption;

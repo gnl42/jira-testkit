@@ -94,6 +94,30 @@ public class CustomFieldsControl extends BackdoorControl<CustomFieldsControl>
     }
 
     /**
+     * Enables custom field option. The disabled flag is being set to false.
+     * @param customFieldOptionId is of the custom field option to be enabled.
+     */
+    public void enableOption(Long customFieldOptionId)
+    {
+        createResource()
+                .path("customFields/enableOption")
+                .path(customFieldOptionId.toString())
+                .put();
+    }
+
+    /**
+     * Disables custom field option. The disabled flag is being set to true.
+     * @param customFieldOptionId is of the custom field option to be disabled.
+     */
+    public void disableOption(Long customFieldOptionId)
+    {
+        createResource()
+                .path("customFields/disableOption")
+                .path(customFieldOptionId.toString())
+                .put();
+    }
+
+    /**
      * Deletes custom field option. Method will just silently exit if custom field can't contain any options
      * or it doesn't contain deleted one.
      * @param customFieldId is of the custom field which holds deleted option.
