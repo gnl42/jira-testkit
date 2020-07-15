@@ -90,9 +90,33 @@ no additional modifications.
 - testkit_for_jira_7_2 - Jira 7.2 - 7.5
 
 # Development
-
 This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs will contain a stacktrace about "unsupported major.minor version 52.0".
 
+To run plugin locally with Jira navigate to `jira-testkit-plugin` in console. Then execute command:
+```
+mvn jira:run
+```
+or
+```
+mvn jira:debug
+```
+to run in debug mode. By default, debugger is available at port 5005.
+
+To make sure the plugin is working correctly, in the working Jira instance, click settings gear -> 'Manage apps'.
+The plugin should be listed on the UI.
+
+If there are any issues, stop the instance (Ctrl + D), navigate to parent `jira-testkit` in console and run command:
+```
+mvn clean install
+```
+
 ## Releasing ##
-* As there is no Bamboo plan for that you have to release this plugin manually: 
-`mvn release:clean release:prepare release:perform -DskipTests -Darguments="-DskipTests"`
+To release new a version:
+1. Create, review and merge a pull request to a proper branch (eg. master).
+2. Switch to the proper branch (eg. master).
+3. Fetch the newest changes from remote.
+4. Execute the command presented below. 
+As there is no Bamboo plan for that you have to release this plugin manually:
+```
+mvn release:clean release:prepare release:perform -DskipTests -Darguments="-DskipTests"
+```
