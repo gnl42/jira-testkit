@@ -90,9 +90,16 @@ no additional modifications.
 - testkit_for_jira_7_2 - Jira 7.2 - 7.5
 
 # Development
-This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs will contain a stacktrace about "unsupported major.minor version 52.0".
+This project requires JDK 8 in order to build without error. Maven builds will appear to succeed on JDK 7, but the logs 
+will contain a stacktrace about "unsupported major.minor version 52.0".
 
-To run plugin locally with Jira navigate to `jira-testkit-plugin` in console. Then execute command:
+Before the first running there is a need to build the plugin. Navigate in the console to parent `jira-testkit` directory
+and run the build command:
+```
+mvn clean install
+```
+
+To run plugin locally with Jira navigate to `jira-testkit-plugin` in console. Then execute the command:
 ```
 mvn jira:run
 ```
@@ -100,12 +107,15 @@ or
 ```
 mvn jira:debug
 ```
-to run in debug mode. By default, debugger is available at port 5005.
+to run in debug mode. By default, debugger is available at port `5005`.
+
+In both cases the instance should be available at `http://localhost:2990/jira` (by default).
 
 To make sure the plugin is working correctly, in the working Jira instance, click settings gear -> 'Manage apps'.
 The plugin should be listed on the UI.
 
-If there are any issues, stop the instance (Ctrl + D), navigate to parent `jira-testkit` in console and run command:
+If there are any issues, stop the instance (Ctrl + D), navigate to parent `jira-testkit` and run the build command
+again:
 ```
 mvn clean install
 ```
