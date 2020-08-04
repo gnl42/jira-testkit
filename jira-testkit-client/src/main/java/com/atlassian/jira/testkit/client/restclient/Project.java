@@ -45,6 +45,7 @@ public class Project
     public Map<String, String> roles;
     public Map<String, String> avatarUrls;
 	public ProjectCategory projectCategory;
+	public boolean archived;
 
     public Project url(String url)
     {
@@ -151,6 +152,12 @@ public class Project
     public Project projectTypeKey(String projectTypeKey)
     {
         this.projectTypeKey = projectTypeKey;
+        return this;
+    }
+
+    public Project archived(boolean archived)
+    {
+        this.archived = archived;
         return this;
     }
 
